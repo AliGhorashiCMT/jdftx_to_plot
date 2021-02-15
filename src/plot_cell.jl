@@ -62,3 +62,12 @@ function kramers_kronig()
     pyintegrate=pyimport("scipy.integrate")
     pyintegrate.quad(sin, 0, 10)
 end
+
+function plot_wannier_bands(wannier_file::String, cell_map_file::String, k::Array{Float64,1})
+    np=pyimport("numpy")
+    cell_map=np.loadtxt(cell_map_file)
+    Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (43, 1, 1)), [1, 3, 2])
+    eV = 1/27.2114 #in Hartrees
+    phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
+    return E[1]/eV 
+end

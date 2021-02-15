@@ -7,6 +7,7 @@ export(plot_lattice)
 export(plot_bands)
 export(plot_phonons)
 export(kramers_kronig)
+export(plot_wannier_bands)
 
 greet() = print("Hello World!")
 
