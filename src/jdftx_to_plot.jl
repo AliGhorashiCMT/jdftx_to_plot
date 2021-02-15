@@ -6,6 +6,7 @@ export(ion_positions)
 export(plot_lattice)
 export(plot_bands)
 export(plot_phonons)
+export(kramers_kronig)
 
 greet() = print("Hello World!")
 

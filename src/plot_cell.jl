@@ -57,3 +57,8 @@ function pyversion()
     sys=pyimport("sys")
     print("You are currently running this version of python: $(sys.executable)")
 end
+
+function kramers_kronig()
+    pyintegrate=pyimport("scipy.integrate")
+    pyintegrate.quad(sin, 0, 10)
+end
