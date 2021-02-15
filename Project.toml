@@ -1,0 +1,7 @@
+name = "jdftx_to_plot"
+uuid = "b318b7e5-22ea-42dc-8171-912df9bad5ee"
+authors = ["Ali Ghorashi <aligho@mit.edu>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
