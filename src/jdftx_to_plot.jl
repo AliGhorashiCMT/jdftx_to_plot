@@ -8,6 +8,10 @@ export(plot_bands)
 export(plot_phonons)
 export(kramers_kronig)
 export(plot_wannier_bands)
+export(reciprocal_vectors)
+export(brillouin_zone_area)
+export(im_polarization)
+export(normalize_kvector)
 
 greet() = print("Hello World!")
 
