@@ -8,6 +8,7 @@ function cell_vectors(lattice_file::String)
     run(`pwd`)
 end
 
+
 "reciprocal_vectors returns the reciprocal lattice vectors when supplied with three real space vectors"
 function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
     
