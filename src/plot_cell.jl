@@ -1,13 +1,44 @@
 using Plots
 using PyCall
 using LinearAlgebra 
+using Distances
 
-np=pyimport("numpy")
 function cell_vectors(lattice_file::String)
     run(`cat $lattice_file`);
     run(`pwd`)
 end
 
+function density_of_states(dosfile_1::String, dosfile_2::String )
+   
+    np=pyimport("numpy")
+    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up")
+    plot!(np.loadtxt(dosfile_2)[:, 1]*27.2, np.loadtxt(dosfile_2)[:, 2]/27.2, linewidth=4,  size=(800, 400), label="Spin Down")
+
+end
+
+function density_of_states(dosfile_1::String)
+
+    np=pyimport("numpy")
+    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized")
+
+end
+
+function density_of_states_wannier(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
+    np=pyimport("numpy")
+    WannierDOS=np.zeros(histogram_width*energy_range)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ϵ=  wannier_bands(wannier_file, cell_map_file, [x_mesh/mesh, y_mesh/mesh, 0])
+            WannierDOS[round(Int, histogram_width*(ϵ+offset))]=WannierDOS[round(Int, histogram_width*(ϵ+offset))]+histogram_width*(1/mesh)^2
+
+        end
+    end
+
+    return WannierDOS
+
+end
 
 "reciprocal_vectors returns the reciprocal lattice vectors when supplied with three real space vectors"
 function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
@@ -20,6 +51,10 @@ function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Nu
     b3=2π/V*cross(a1, a2)
     return b1, b2, b3
 
+end
+
+function in_wigner_seitz(a1::Array{T, 1}, a2::Array{T, 1}) where T<:Number
+    return euclidean(a1, a2)
 end
 
 function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_kvector) where T <: Number
@@ -64,7 +99,6 @@ function plot_lattice(lattice_file::String)
         readline(io)
         ion_position_vectors=readlines(io);
     end
-
 end
 
 "returns the imaginary value of the polarization at frequency omega (eV) and wavevector q (inverse angstrom)"
@@ -119,10 +153,10 @@ end
 
 function kramers_kronig()
     pyintegrate=pyimport("scipy.integrate")
-    pyintegrate.quad(sin, 0, 10)
+    pyintegrate.quad(sin, 0, π/2)
 end
 
-function plot_wannier_bands(wannier_file::String, cell_map_file::String, k::Array{Float64,1})
+function wannier_bands(wannier_file::String, cell_map_file::String, k::Array{T, 1}) where T<:Number
     np=pyimport("numpy")
     cell_map=np.loadtxt(cell_map_file)
     Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (43, 1, 1)), [1, 3, 2])
