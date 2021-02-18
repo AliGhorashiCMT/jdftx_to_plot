@@ -186,10 +186,14 @@ function pyversion()
     print("You are currently running this version of python: $(sys.executable)")
 end
 
-function kramers_kronig()
-    pyintegrate=pyimport("scipy.integrate")
-    pyintegrate.quad(sin, 0, π/2)
+function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    #pyintegrate=pyimport("scipy.integrate")
+
+    #pyintegrate.quad(sin, 0, max_energy)
+    ω_array=collect(1/histogram_width:1/histogram_width:max_energy)
+    sum(im_pol.*1 ./ ( ω_array.-ω.+0.001*im))*1/histogram_width
 end
+
 
 function wannier_bands(wannier_file::String, cell_map_file::String, k::Array{T, 1}) where T<:Number
     np=pyimport("numpy")
