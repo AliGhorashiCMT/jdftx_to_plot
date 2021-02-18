@@ -190,8 +190,11 @@ function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_wid
     #pyintegrate=pyimport("scipy.integrate")
 
     #pyintegrate.quad(sin, 0, max_energy)
-    ω_array=collect(1/histogram_width:1/histogram_width:max_energy)
-    sum(im_pol.*1 ./ ( ω_array.-ω.+0.001*im))*1/histogram_width
+    #ω_array=collect(1/histogram_width:1/histogram_width:max_energy)
+    #sum(im_pol.*1 ./ ( ω_array.-ω.+0.001*im))*1/histogram_width
+    omegaprime=collect(1:histogram_width*max_energy).*1/histogram_width
+    sum(1/histogram_width*2/π*im_pol.*omegaprime./(omegaprime.^2 .- (ω+ω*0.03im)^2))
+
 end
 
 
