@@ -16,6 +16,10 @@ export(density_of_states)
 export(density_of_states_wannier)
 export(in_wigner_seitz)
 
+include("analytic_models.jl")
+export(show_analytic_model)
+export(analytic_dos)
+
 greet() = print("Hello World!")
 
 export(greet)
