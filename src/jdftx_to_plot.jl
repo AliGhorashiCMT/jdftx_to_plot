@@ -23,6 +23,7 @@ export(density_of_states_wannier)
 export(in_wigner_seitz)
 export(show_analytic_model)
 export(analytic_dos)
+export(return_2d_epsilon)
 
 greet() = print("Hello World!")
 
