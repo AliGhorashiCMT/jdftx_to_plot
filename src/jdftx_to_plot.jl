@@ -24,6 +24,7 @@ export(in_wigner_seitz)
 export(show_analytic_model)
 export(analytic_dos)
 export(return_2d_epsilon)
+export(kramers_kronig_scipy)
 
 greet() = print("Hello World!")
 
