@@ -25,6 +25,7 @@ function in_wigner_seitz(a1::Array{T, 1}, a2::Array{T, 1}) where T<:Number
     return euclidean(a1, a2)
 end
 
+"returns the normalized kvector (in the basis of the reciprocal lattice vectors)"
 function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_kvector) where T <: Number
 
     b1, b2, b3 = reciprocal_vectors(lattice_vectors)

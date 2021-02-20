@@ -43,3 +43,8 @@ function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_wid
     sum(1/histogram_width*2/π*im_pol.*omegaprime./(omegaprime.^2 .- (ω+ω*0.03im)^2))
 
 end
+
+"returns the non-local, non-static dielectric function"
+function return_2d_epsilon(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    return kramers_kronig(ω, im_pol, max_energy, histogram_width)
+end

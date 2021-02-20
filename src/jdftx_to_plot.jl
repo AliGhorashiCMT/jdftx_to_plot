@@ -1,6 +1,12 @@
 module jdftx_to_plot
 
-include("plot_cell.jl")
+include("cell_properties.jl")
+include("phonon_properties.jl")
+include("density_of_states.jl")
+include("susceptibility_from_wannier.jl")
+include("band_structures.jl")
+include("analytic_models.jl")
+
 export(cell_vectors)
 export(ion_positions)
 export(plot_lattice)
@@ -15,8 +21,6 @@ export(normalize_kvector)
 export(density_of_states)
 export(density_of_states_wannier)
 export(in_wigner_seitz)
-
-include("analytic_models.jl")
 export(show_analytic_model)
 export(analytic_dos)
 

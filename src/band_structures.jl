@@ -2,6 +2,7 @@ using Plots
 using PyCall
 using LinearAlgebra 
 using Distances
+
 #define constants for later use
 eV = 1/27.2114 #in Hartrees
 
