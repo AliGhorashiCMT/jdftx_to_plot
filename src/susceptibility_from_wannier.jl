@@ -44,6 +44,19 @@ function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_wid
 
 end
 
+"Applies the kramers-kronig relations but with scipy's cauchy weight; kwargs for scipy.integrate.quad supported"
+function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    pyintegrate=pyimport("scipy.integrate")
+    interpol=pyimport("scipy.interpolate")
+    interpolated_ims=interpol.interp1d((1:histogram_width*maxenergy)*1/histogram_width, im_pol)
+    
+    cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+omega)
+
+    return pyintegrate.quad(cauchy_inner_function, 1/histogram_width, max_energy, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar=omega; kwargs...)[1]
+
+end
+
+
 "returns the non-local, non-static dielectric function"
 function return_2d_epsilon(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     return kramers_kronig(ω, im_pol, max_energy, histogram_width)

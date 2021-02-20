@@ -6,14 +6,14 @@ using Distances
 #define constants for later use
 eV = 1/27.2114 #in Hartrees
 
-function plot_bands(band_file::String, num_bands::Int, num_points::Int)
+function plot_bands(band_file::String, num_bands::Int, num_points::Int; kwargs...)
 
     reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));
     exactenergiesup=permutedims(reshaped, [2, 1])[1:num_points, :]*1/eV;
     exactenergiesdown=permutedims(reshaped, [2, 1])[num_points+1:2*num_points, :]*1/eV;
 
-    plot(exactenergiesdown, color="black", label="", linewidth=2)
-    plot!(exactenergiesup, color="purple", label="", linewidth=2)
+    plot(exactenergiesdown, color="black", label="", linewidth=2; kwargs...)
+    plot!(exactenergiesup, color="purple", label="", linewidth=2; kwargs...)
 
 end
 
