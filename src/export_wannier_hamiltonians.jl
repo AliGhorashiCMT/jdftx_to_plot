@@ -106,7 +106,7 @@ function write_map_write_h(cell_map::String, cell_weights::String, H::String, km
     py"write_map_write_h"(cell_map, cell_weights, H, kmesh, band_file, map_file)
 end
 function phmatrixelements(k1::Array{T, 1}, k2::Array{R, 1}) where {T<:Number, R<:Number}
-    py"calcEph(k1, k2) 
+    py"calcEph"(k1, k2) 
 end
 
 
