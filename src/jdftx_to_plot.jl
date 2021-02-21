@@ -29,6 +29,7 @@ export(analytic_dos)
 export(return_2d_epsilon)
 export(kramers_kronig_scipy)
 export(return_2d_epsilon_scipy)
+export(direct_epsilon)
 
 greet() = print("Hello World!")
 

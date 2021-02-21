@@ -57,6 +57,30 @@ function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogr
 
 end
 
+
+function epsilon_integrand(k₁, k₂, q, μ, ω, ϵ; spin=1)
+    kvector=[k₁, k₂, 0]
+    ϵ₁ =wannier_bands(wannier_file, cell_map_file, kvector,  )
+    ϵ₂ =wannier_bands(wannier_file, cell_map_file, kvector+q  )
+    f = ϵ₁<μ ? 1 : 0
+    real(1/(2π)^2*spin*2*f*(ϵ₁-ϵ₂)/((ϵ₁-ϵ₂)^2-(ω+1im*ϵ)^2))
+end
+
+function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1) where {T<:Number, Q<:Number, S<:Number}
+    
+    qnormalized = normalize_kvector(lattice_vectors, q)
+    qabs=sqrt(sum(q.^2))
+
+    pyintegration=pyimport("scipy.integrate")
+
+    brillouin_area=brillouin_zone_area(lattice_vectors) 
+    
+    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(k₁, k₂, qnormalized, μ, ω, ϵ, spin), [[0, 1], [0, 1]])[1]
+
+    1-90.5/qabs*polarization
+
+end
+
 "returns the non-local, non-static dielectric function"
 function return_2d_epsilon(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     return kramers_kronig(ω, im_pol, max_energy, histogram_width)
