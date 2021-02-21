@@ -20,7 +20,6 @@ function __init__()
         np.savetxt("FullBandsCellMapDefect.txt", cellMapUp)
     """
 end
-function oneoneone(x)
-    print("julia\n")
-    return py"oneoneone"(x)
+function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{Int, 1})
+    py"write_map_write_h"(cell_map, cell_weights, H, kmesh)
 end
