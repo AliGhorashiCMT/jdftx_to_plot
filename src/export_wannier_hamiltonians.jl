@@ -16,10 +16,12 @@ function __init__()
         iReducedUp = np.dot(np.mod(cellMapUp, kfold[None,:]), kStride)
         HwannierUp = WwannierUp * HreducedUp[iReducedUp]
 
-        np.savetxt("FullBandsDefect.txt", HwannierUp.reshape(43, 1 ))
+        np.savetxt("FullBandsDefect.txt", HwannierUp.reshape(len(iReducedUp), 1 ))
         np.savetxt("FullBandsCellMapDefect.txt", cellMapUp)
     """
 end
+
 function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{Int, 1})
     py"write_map_write_h"(cell_map, cell_weights, H, kmesh)
 end
+
