@@ -7,6 +7,7 @@ include("susceptibility_from_wannier.jl")
 include("band_structures.jl")
 include("analytic_models.jl")
 include("export_wannier_hamiltonians.jl")
+include("smooth.jl")
 
 export(py"oneoneone")
 
@@ -31,6 +32,7 @@ export(kramers_kronig_scipy)
 export(return_2d_epsilon_scipy)
 export(direct_epsilon)
 export(direct_epsilon_cubature)
+export(smooth)
 
 greet() = print("Hello World!")
 
