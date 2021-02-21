@@ -60,6 +60,17 @@ function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogr
 
 end
 
+function kramers_kronig_quadgk(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    
+    interpol=pyimport("scipy.interpolate")
+    interpolated_ims=interpol.interp1d(0:1/histogram_width:(max_energy-1/histogram_width), im_pol)
+    
+    cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+ω)
+
+    return quadgk(cauchy_inner_function, 0, max_energy_integration; kwargs...)[1]
+
+end
+
 
 function epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, q, μ, ω, ϵ; spin=1)
     kvector=[k₁, k₂, 0]
@@ -115,4 +126,8 @@ end
 "returns the non-local, non-static dielectric function using scipy functionality"
 function return_2d_epsilon_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     return kramers_kronig_scipy(ω, im_pol, max_energy, histogram_width)
+end
+
+function return_2d_epsilon_quadgk(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    return kramers_kronig_quadgk(ω, im_pol, max_energy, histogram_width)
 end
