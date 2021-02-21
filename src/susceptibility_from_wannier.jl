@@ -2,6 +2,9 @@ using Plots
 using PyCall
 using LinearAlgebra 
 using Distances
+using HCubature
+using QuadGK
+
 
 "returns the imaginary value of the polarization at frequency omega (eV) and wavevector q (inverse angstrom)"
 function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=2, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
@@ -86,6 +89,23 @@ function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vec
     1-90.5/qabs*polarization
 
 end
+
+"Direct 2D integration for Epsilon with HCubature"
+function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, ω::R, μ::S; spin=1, ϵ=0.01, kwargs...) where {T<:Number, Q<:Number, S<:Number, R<:Number}
+
+    qnormalized = normalize_kvector(lattice_vectors, q)
+    qabs=sqrt(sum(q.^2))
+
+    pyintegration=pyimport("scipy.integrate")
+
+    brillouin_area=brillouin_zone_area(lattice_vectors) 
+    
+    polarization=brillouin_area*hcubature((k) -> epsilon_integrand(wannier_file, cell_map_file, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [[0, 0], [1, 1]], kwargs...)[1]
+
+    1-90.5/qabs*polarization
+
+end
+
 
 "returns the non-local, non-static dielectric function"
 function return_2d_epsilon(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}

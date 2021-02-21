@@ -30,6 +30,7 @@ export(return_2d_epsilon)
 export(kramers_kronig_scipy)
 export(return_2d_epsilon_scipy)
 export(direct_epsilon)
+export(direct_epsilon_cubature)
 
 greet() = print("Hello World!")
 

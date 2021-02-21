@@ -45,6 +45,11 @@ git-tree-sha1 = "ac5f2213e56ed8a34a3dd2f681f4df1166b34929"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.6"
 
+[[Combinatorics]]
+git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
+uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+version = "1.0.2"
+
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
 git-tree-sha1 = "919c7f3151e79ff196add81d7f4e45d91bbf420b"
@@ -197,6 +202,12 @@ version = "2.59.0+4"
 git-tree-sha1 = "03d381f65183cb2d0af8b3425fde97263ce9a995"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
 version = "1.0.0"
+
+[[HCubature]]
+deps = ["Combinatorics", "DataStructures", "LinearAlgebra", "QuadGK", "StaticArrays"]
+git-tree-sha1 = "134af3b940d1ca25b19bc9740948157cee7ff8fa"
+uuid = "19dc6840-f33b-545b-b366-655c7e3ffd49"
+version = "1.5.0"
 
 [[HTTP]]
 deps = ["Base64", "Dates", "IniFile", "MbedTLS", "Sockets", "URIs"]
@@ -451,6 +462,12 @@ deps = ["Artifacts", "CompilerSupportLibraries_jll", "Fontconfig_jll", "Glib_jll
 git-tree-sha1 = "7760cfea90bec61814e31dfb204fa4b81bba7b57"
 uuid = "ede63266-ebff-546c-83e0-1c6fb6d0efc8"
 version = "5.15.2+1"
+
+[[QuadGK]]
+deps = ["DataStructures", "LinearAlgebra"]
+git-tree-sha1 = "12fbe86da16df6679be7521dfb39fbc861e1dc7b"
+uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+version = "2.4.1"
 
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets"]
