@@ -58,7 +58,7 @@ function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogr
 end
 
 
-function epsilon_integrand(k₁, k₂, q, μ, ω, ϵ; spin=1)
+function epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, q, μ, ω, ϵ; spin=1)
     kvector=[k₁, k₂, 0]
     ϵ₁ =wannier_bands(wannier_file, cell_map_file, kvector,  )
     ϵ₂ =wannier_bands(wannier_file, cell_map_file, kvector+q  )
@@ -75,7 +75,7 @@ function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vec
 
     brillouin_area=brillouin_zone_area(lattice_vectors) 
     
-    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(k₁, k₂, qnormalized, μ, ω, ϵ, spin), [[0, 1], [0, 1]])[1]
+    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, qnormalized, μ, ω, ϵ, spin), [[0, 1], [0, 1]])[1]
 
     1-90.5/qabs*polarization
 
