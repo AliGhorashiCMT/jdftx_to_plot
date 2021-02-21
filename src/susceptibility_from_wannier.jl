@@ -75,7 +75,7 @@ function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vec
 
     brillouin_area=brillouin_zone_area(lattice_vectors) 
     
-    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, qnormalized, μ, ω, ϵ, spin), [[0, 1], [0, 1]])[1]
+    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, qnormalized, μ, ω, ϵ, spin=spin), [[0, 1], [0, 1]])[1]
 
     1-90.5/qabs*polarization
 
