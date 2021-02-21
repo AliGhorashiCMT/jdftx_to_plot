@@ -48,7 +48,7 @@ end
 function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     pyintegrate=pyimport("scipy.integrate")
     interpol=pyimport("scipy.interpolate")
-    interpolated_ims=interpol.interp1d((1:histogram_width*maxenergy)*1/histogram_width, im_pol)
+    interpolated_ims=interpol.interp1d((1:histogram_width*max_energy)*1/histogram_width, im_pol)
     
     cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+omega)
 
