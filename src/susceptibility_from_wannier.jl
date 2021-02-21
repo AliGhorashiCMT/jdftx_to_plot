@@ -50,9 +50,10 @@ function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogr
     interpol=pyimport("scipy.interpolate")
     interpolated_ims=interpol.interp1d((1:histogram_width*max_energy)*1/histogram_width, im_pol)
     
+    ErrorAbs=1e-20
     cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+omega)
 
-    return pyintegrate.quad(cauchy_inner_function, 1/histogram_width, max_energy, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar=omega; kwargs...)[1]
+    return pyintegrate.quad(cauchy_inner_function, 1/histogram_width, max_energy, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar= ω ; kwargs...)[1]
 
 end
 
