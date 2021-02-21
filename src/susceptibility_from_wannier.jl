@@ -100,7 +100,7 @@ function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, la
 
     brillouin_area=brillouin_zone_area(lattice_vectors) 
     
-    polarization=brillouin_area*hcubature((k) -> epsilon_integrand(wannier_file, cell_map_file, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [0, 0], [1, 1], kwargs...)[1]
+    polarization=brillouin_area*hcubature((k) -> epsilon_integrand(wannier_file, cell_map_file, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [0, 0], [1, 1]; kwargs...)[1]
 
     1-90.5/qabs*polarization
 
