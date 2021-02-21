@@ -2,7 +2,7 @@ using PyCall
 
 function __init__()
     py"""   
-    def write_map_write_h(cell_map, cell_weights, H, kmesh)
+    def write_map_write_h(cell_map, cell_weights, H, kmesh, band_file, cell_map_file)
         cellMapUp = np.loadtxt(cell_map)[:,0:3].astype(np.int)
         WwannierUp = np.fromfile(cell_weights)
         nCellsUp = cellMapUp.shape[0]
@@ -16,12 +16,12 @@ function __init__()
         iReducedUp = np.dot(np.mod(cellMapUp, kfold[None,:]), kStride)
         HwannierUp = WwannierUp * HreducedUp[iReducedUp]
 
-        np.savetxt("FullBandsDefect.txt", HwannierUp.reshape(len(iReducedUp), 1 ))
-        np.savetxt("FullBandsCellMapDefect.txt", cellMapUp)
+        np.savetxt(band_file, HwannierUp.reshape(len(iReducedUp), 1 ))
+        np.savetxt(cell_map_file, cellMapUp)
     """
 end
 
-function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{Int, 1})
-    py"write_map_write_h"(cell_map, cell_weights, H, kmesh)
+function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{Int, 1}, band_file::String, map_file::String)
+    py"write_map_write_h"(cell_map, cell_weights, H, kmesh, band_file, map_file)
 end
 
