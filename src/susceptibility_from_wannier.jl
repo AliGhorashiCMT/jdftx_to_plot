@@ -66,7 +66,7 @@ function epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, q, μ, ω, �
     real(1/(2π)^2*spin*2*f*(ϵ₁-ϵ₂)/((ϵ₁-ϵ₂)^2-(ω+1im*ϵ)^2))
 end
 
-function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, ω::R, μ::S; spin=1, ϵ=0.01) where {T<:Number, Q<:Number, S<:Number, R<:Number}
+function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, ω::R, μ::S; spin=1, ϵ=0.01, kwargs...) where {T<:Number, Q<:Number, S<:Number, R<:Number}
     
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
@@ -75,7 +75,7 @@ function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vec
 
     brillouin_area=brillouin_zone_area(lattice_vectors) 
     
-    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, qnormalized, μ, ω, ϵ, spin=spin), [[0, 1], [0, 1]])[1]
+    polarization=brillouin_area*pyintegration.nquad((k₁, k₂) -> epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, qnormalized, μ, ω, ϵ, spin=spin), [[0, 1], [0, 1]], kwargs...)[1]
 
     1-90.5/qabs*polarization
 
