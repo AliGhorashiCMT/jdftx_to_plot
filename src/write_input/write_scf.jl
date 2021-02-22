@@ -9,8 +9,9 @@ function write_ionpos(ionpos::ionpos, filename::String)
         for ion in ionpos.ionpos
             for coord in ion
                 write(io, string(coord))
+                write(io, "  ")
             end
-            println()
+            write(io, "\n")
         end
     end
 end
