@@ -20,7 +20,7 @@ struct self_consistent_field
     Fermi::Float64
 end
 
-self_consistent_field(xc, kpoints, lattice)=self_consistent_field(xc, kpoints, lattice, ionpos,"GBRV/\$ID_pbsesol.uspp" 0, "no-spin", 0)
+self_consistent_field(xc, kpoints, lattice)=self_consistent_field(xc, kpoints, lattice, ionpos,"GBRV/\$ID_pbsesol.uspp", 0, "no-spin", 0, 0, ["ElecDensity"], 0.00001)
 
 struct non_self_consistent_field
     scf::self_consistent_field
