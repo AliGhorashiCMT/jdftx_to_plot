@@ -74,7 +74,7 @@ end
 
 function write_phonon(phonon::phonon, filename::String, scf_filename::String)
     open(filename, create=true, write=true, append=false) do io
-        write(io, "include  $(filename)\n")
+        write(io, "include  $(scf_filename)\n")
         write(io, "initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))", "\n")
 
         write(io, "dump only \n\n")
