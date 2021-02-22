@@ -16,8 +16,21 @@ function write_ionpos(ionpos::ionpos, filename::String)
     end
 end
 
-function write_scf(scf::self_consistent_field, filename::String)
-    open(filename, create=true, write=true) do io
+function write_scf(scf::self_consistent_field, filename::String, ionpos_filename::String, lattice_filename::String)
+    open(filename, create=true, write=true, append=false) do io
+
+        write(io, "include  $(ionpos_filename) \n")
+        write(io, "include  $(lattice_filename) \n")
+        write(io, "ion-species $(scf.pseudopotential)\n")
+        write(io, "elec-cutoff 20 100\n")
+        write(io, "elec-initial-charge $(scf.charge)\n")
+        write(io, "spintype $(scf.spintype)\n")
+        write(io, "electronic-SCF\n")
+        write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
+        write(io, "dump End $dump\n")
+        write(io, "kpoint-folding $(kpoints[1]), $(kpoints[2]), $(kpoints[3])\n")
+        write(io, "elec-smearing Fermi $(Fermi)\n")
+
         write(io, scf.xc)
     end
 end
