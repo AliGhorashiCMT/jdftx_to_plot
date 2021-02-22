@@ -8,6 +8,7 @@ include("band_structures.jl")
 include("analytic_models.jl")
 include("export_wannier_hamiltonians.jl")
 include("smooth.jl")
+include("matrix_elements.jl")
 
 export(py"oneoneone")
 
