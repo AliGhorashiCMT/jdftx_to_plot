@@ -10,7 +10,10 @@ include("export_wannier_hamiltonians.jl")
 include("smooth.jl")
 include("matrix_elements.jl")
 
-export(py"oneoneone")
+include("input_file_structs.jl")
+export(self_consistent_field)
+export(non_self_consistent_field)
+export(wannier_interpolation)
 
 export(cell_vectors)
 export(ion_positions)
