@@ -1,9 +1,9 @@
 struct lattice
-
+    ionpos::Array{Float64, 2}
 end
 
 struct ionpos
-
+    ionpos::Array{T, 2}
 end
 
 struct self_consistent_field
