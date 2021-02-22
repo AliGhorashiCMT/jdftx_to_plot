@@ -54,8 +54,6 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
             for phonon_mesh in wannier.phononSupercell
                 write(io, "$(phonon_mesh)  ")
             end
-        else
-            pass
         end
 
         write(io, "wannier-initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))")
