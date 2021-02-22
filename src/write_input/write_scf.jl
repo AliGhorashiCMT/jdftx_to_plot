@@ -42,7 +42,7 @@ function write_nscf(nscf::non_self_consistent_field, filename::String)
 end
 
 function write_wannier(wannier::wannier_interpolation, filename::String, scf_filename::String)
-    
+
     open(filename, create=true, write=true, append=false) do io
         write(io, "include $(scf_filename)")
         write(io, "wannier\\ \n")
@@ -66,6 +66,6 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
             end
             write(io, "\n")
         end
-        write(io, "wannier-minimize niterations  $(wannier.wannier-minimize)")
+        write(io, "wannier-minimize niterations  $(wannier.wannier_minimize)")
     end
 end

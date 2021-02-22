@@ -33,7 +33,7 @@ struct wannier_interpolation
     phononSupercell::Array{Int64, 1}
     innerWindow::Array{T, 1} where T<:Number
     outerWindow::Array{S, 1} where S<:Number
-    wannier-minimize::Int
+    wannier_minimize::Int
 end
 
 wannier_interpolation(wannier_centers, inner_Window, outer_Window)=wannier_interpolation(wannier_centers, false, false, [0, 0, 0], innerWindow, outerWindow, 10000)
