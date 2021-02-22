@@ -67,6 +67,7 @@ export(direct_epsilon_cubature)
 export(smooth)
 export(kramers_kronig_quadgk)
 export(return_2d_epsilon_quadgk)
+export(im_polarization_cubature)
 
 export(phmatrixelements)
 
