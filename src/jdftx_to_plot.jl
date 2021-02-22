@@ -3,7 +3,13 @@ using PyCall
 
 const ħ = 6.6e-16
 const c = 3e18
+const α = 1/137
+const e²ϵ = 4π*ħ*c*α  
 
+
+export(ħ)
+export(c)
+export(e²ϵ)
 
 include("cell_properties.jl")
 include("phonon_properties.jl")
