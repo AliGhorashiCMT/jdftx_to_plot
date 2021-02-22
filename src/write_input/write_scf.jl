@@ -6,7 +6,12 @@ end
 
 function write_ionpos(ionpos::ionpos, filename::String)
     open(filename, create=true, write=true) do io
-        write(io, ionpos.ionpos)
+        for ion in ionpos.ionpos
+            for coord in ion
+                write(io, coord)
+            end
+            println()
+        end
     end
 end
 

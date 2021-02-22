@@ -14,12 +14,15 @@ include("input_file_structs.jl")
 export(self_consistent_field)
 export(non_self_consistent_field)
 export(wannier_interpolation)
+export(lattice)
+export(ionpos)
 
 include("./write_input/write_scf.jl")
 export(write_scf)
 export(write_nscf)
 export(write_wannier)
-
+export(write_ionpos)
+export(write_lattice)
 
 export(cell_vectors)
 export(ion_positions)
