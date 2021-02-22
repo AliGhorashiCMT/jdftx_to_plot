@@ -15,6 +15,12 @@ export(self_consistent_field)
 export(non_self_consistent_field)
 export(wannier_interpolation)
 
+include("./write_input/write_scf.jl")
+export(write_scf)
+export(write_nscf)
+export(write_wannier)
+
+
 export(cell_vectors)
 export(ion_positions)
 export(plot_lattice)
