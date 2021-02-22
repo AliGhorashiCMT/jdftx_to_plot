@@ -27,7 +27,13 @@ struct non_self_consistent_field
 end
 
 struct wannier_interpolation
-    wannier_centers::Array{Int64, 2}
+    wannier_centers::Array{Array{Int64, 1}, 1}
+    saveWFNs::Bool
+    phonon::Bool
     phononSupercell::Array{Int64, 1}
+    innerWindow::Array{T, 1} where T<:Number
+    outerWindow::Array{S, 1} where S<:Number
+    wannier-minimize::Int
 end
 
+wannier_interpolation(wannier_centers, inner_Window, outer_Window)=wannier_interpolation(wannier_centers, false, false, [0, 0, 0], innerWindow, outerWindow, 10000)

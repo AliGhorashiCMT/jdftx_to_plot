@@ -28,7 +28,7 @@ function write_scf(scf::self_consistent_field, filename::String, ionpos_filename
         write(io, "electronic-SCF\n")
         write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
         write(io, "dump End $dump\n")
-        write(io, "kpoint-folding $(scf.kpoints[1]), $(scf.kpoints[2]), $(scf.kpoints[3])\n")
+        write(io, "kpoint-folding $(scf.kpoints[1])  $(scf.kpoints[2])  $(scf.kpoints[3])\n")
         write(io, "elec-smearing Fermi $(scf.smearing)\n")
 
         write(io, scf.xc, "\n")
@@ -41,8 +41,31 @@ function write_nscf(nscf::non_self_consistent_field, filename::String)
     end
 end
 
-function write_wannier(wannier::wannier_interpolation, filename::String)
-    open(filename, create=true, write=true) do io
-        write(io, wannier.wannier_centers)
+function write_wannier(wannier::wannier_interpolation, filename::String, scf_filename::String)
+    
+    open(filename, create=true, write=true, append=false) do io
+        write(io, "include $(scf_filename)")
+        write(io, "wannier\\ \n")
+        write(io, "innerWindow $(wannier.inner_Window[1])   $(wannier.inner_Window[2])\\ \n  ")
+        write(io, "outer_Window $(wannier.outer_Window[1])   $(wannier.outer_Window[2])\\ \n  ")
+        write(io, "saveWfnsRealSpace", "$(wannier.saveWFNs==true? "yes" : "no")")
+        if wannier.phonon==true
+            write(io, "\\ \n")
+            write(io, wannier.phononSupercell)
+        else
+            pass
+        end
+
+        write(io, "wannier-initial-state   ", $(string(scf_filename, ".", "\$", "VAR")))
+        write(io, "wannier-dump-name", $(string(filename, ".", "\$", "VAR")) )
+
+        for center in wannier.wannier_centers
+            write(io, "wannier-center Gaussian   ")
+            for coord in center
+                write(io, coord, "   ")
+            end
+            write(io, "\n")
+        end
+        write(io, "wannier-minimize niterations  $(wannier.wannier-minimize)")
     end
 end
