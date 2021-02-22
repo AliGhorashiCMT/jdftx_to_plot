@@ -46,12 +46,14 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
     open(filename, create=true, write=true, append=false) do io
         write(io, "include $(scf_filename)")
         write(io, "wannier\\ \n")
-        write(io, "innerWindow $(wannier.inner_Window[1])   $(wannier.inner_Window[2])\\ \n  ")
-        write(io, "outer_Window $(wannier.outer_Window[1])   $(wannier.outer_Window[2])\\ \n  ")
+        write(io, "innerWindow $(wannier.innerWindow[1])   $(wannier.innerWindow[2])\\ \n  ")
+        write(io, "outer_Window $(wannier.outerWindow[1])   $(wannier.outerWindow[2])\\ \n  ")
         write(io, "saveWfnsRealSpace", "$(wannier.saveWFNs==true ? "yes" : "no")")
         if wannier.phonon==true
             write(io, "\\ \n")
-            write(io, wannier.phononSupercell)
+            for phonon_mesh in wannier.phononSupercell
+                write(io, "$(phonon_mesh)  ")
+            end
         else
             pass
         end

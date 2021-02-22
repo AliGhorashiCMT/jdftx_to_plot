@@ -36,4 +36,4 @@ struct wannier_interpolation
     wannier_minimize::Int
 end
 
-wannier_interpolation(wannier_centers, inner_Window, outer_Window)=wannier_interpolation(wannier_centers, false, false, [0, 0, 0], innerWindow, outerWindow, 10000)
+wannier_interpolation(wannier_centers, innerWindow, outerWindow)=wannier_interpolation(wannier_centers, false, false, [0, 0, 0], innerWindow, outerWindow, 10000)
