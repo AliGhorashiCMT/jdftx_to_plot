@@ -28,10 +28,10 @@ function write_scf(scf::self_consistent_field, filename::String, ionpos_filename
         write(io, "electronic-SCF\n")
         write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
         write(io, "dump End $dump\n")
-        write(io, "kpoint-folding $(kpoints[1]), $(kpoints[2]), $(kpoints[3])\n")
-        write(io, "elec-smearing Fermi $(Fermi)\n")
+        write(io, "kpoint-folding $(scf.kpoints[1]), $(scf.kpoints[2]), $(scf.kpoints[3])\n")
+        write(io, "elec-smearing Fermi $(scf.smearing)\n")
 
-        write(io, scf.xc)
+        write(io, scf.xc, "\n")
     end
 end
 
