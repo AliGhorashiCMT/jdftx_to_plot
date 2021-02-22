@@ -48,21 +48,22 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
         write(io, "wannier\\ \n")
         write(io, "innerWindow $(wannier.innerWindow[1])   $(wannier.innerWindow[2])\\ \n  ")
         write(io, "outer_Window $(wannier.outerWindow[1])   $(wannier.outerWindow[2])\\ \n  ")
-        write(io, "saveWfnsRealSpace", "$(wannier.saveWFNs==true ? "yes" : "no")")
+        write(io, "saveWfnsRealSpace", "$(wannier.saveWFNs==true ? "   yes" : "   no")", "\n")
         if wannier.phonon==true
             write(io, "\\ \n")
             for phonon_mesh in wannier.phononSupercell
                 write(io, "$(phonon_mesh)  ")
             end
+            write(io, "\n")
         end
 
-        write(io, "wannier-initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))")
-        write(io, "wannier-dump-name", "$(string(filename, ".", "\$", "VAR"))" )
+        write(io, "wannier-initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))", "\n")
+        write(io, "wannier-dump-name   ", "$(string(filename, ".", "\$", "VAR"))", "\n" )
 
         for center in wannier.wannier_centers
             write(io, "wannier-center Gaussian   ")
             for coord in center
-                write(io, coord, "   ")
+                write(io, "$(coord)", "   ")
             end
             write(io, "\n")
         end
