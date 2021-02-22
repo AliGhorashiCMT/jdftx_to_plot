@@ -1,5 +1,9 @@
 using Plots
 
+
+
+
+
 function show_analytic_model(f::Function)
     plot(-10:0.1:10, f.(-10:0.1:10), linewidth=5)
 end
