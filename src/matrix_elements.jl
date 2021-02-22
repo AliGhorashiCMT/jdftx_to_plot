@@ -1,6 +1,7 @@
 using PyCall
 
-function phmatrixelements(k1::Array{T, 1}, k2::Array{R, 1}) where {T<:Number, R<:Number}
+#function phmatrixelements(k1::Array{T, 1}, k2::Array{R, 1}) where {T<:Number, R<:Number}
+function phmatrixelements(k1, k2) 
     py"""
     import numpy as np
     cellMap = np.loadtxt("wannierDefect.mlwfCellMapUp")[:,0:3].astype(int)
