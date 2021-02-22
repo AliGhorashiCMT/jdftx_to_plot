@@ -70,3 +70,16 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
         write(io, "wannier-minimize niterations  $(wannier.wannier_minimize)")
     end
 end
+
+
+function write_phonon(phonon::phonon, filename::String, scf_filename::String)
+    open(filename, create=true, write=true, append=false) do io
+        write(io, "include  $(filename)\n")
+        write(io, "initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))", "\n")
+
+        write(io, "dump only \n\n")
+
+        write(io, "phonon supercell  ", "$(phonon.supercell[1])  $(phonon.supercell[2])  $(phonon.supercell[3]) ")
+
+    end
+end
