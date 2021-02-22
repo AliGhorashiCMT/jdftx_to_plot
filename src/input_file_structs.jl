@@ -3,7 +3,7 @@ struct lattice
 end
 
 struct ionpos
-    ionpos::Array{T, 2}
+    ionpos::Array{Any, 2}
 end
 
 struct self_consistent_field
