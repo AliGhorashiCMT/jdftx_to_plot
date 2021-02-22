@@ -56,8 +56,8 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
             pass
         end
 
-        write(io, "wannier-initial-state   ", $(string(scf_filename, ".", "\$", "VAR")))
-        write(io, "wannier-dump-name", $(string(filename, ".", "\$", "VAR")) )
+        write(io, "wannier-initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))")
+        write(io, "wannier-dump-name", "$(string(filename, ".", "\$", "VAR"))" )
 
         for center in wannier.wannier_centers
             write(io, "wannier-center Gaussian   ")
