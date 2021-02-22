@@ -1,5 +1,10 @@
 module jdftx_to_plot
 using PyCall
+
+const ħ = 6.6e-16
+const c = 3e18
+
+
 include("cell_properties.jl")
 include("phonon_properties.jl")
 include("density_of_states.jl")
@@ -25,6 +30,12 @@ export(write_wannier)
 export(write_ionpos)
 export(write_lattice)
 export(write_phonon)
+
+
+include("./loss_calculations/plasmon_losses.jl")
+export(landau_damping)
+export(first_order_damping)
+export(second_order_damping)
 
 export(cell_vectors)
 export(ion_positions)
