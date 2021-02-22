@@ -1,10 +1,10 @@
-function write_scf(lattice::lattice, filename::String)
+function write_lattice(lattice::lattice, filename::String)
     open(filename, create=true, write=true) do io
         write(io, ionpos.lattice)
     end
 end
 
-function write_scf(ionpos::ionpos, filename::String)
+function write_ionpos(ionpos::ionpos, filename::String)
     open(filename, create=true, write=true) do io
         write(io, ionpos.ionpos)
     end
