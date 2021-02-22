@@ -8,7 +8,7 @@ function write_ionpos(ionpos::ionpos, filename::String)
     open(filename, create=true, write=true) do io
         for ion in ionpos.ionpos
             for coord in ion
-                write(io, coord)
+                write(io, string(coord))
             end
             println()
         end
