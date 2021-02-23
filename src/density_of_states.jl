@@ -66,9 +66,10 @@ function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh=
     for x_mesh in 1:mesh
         for y_mesh in 1:mesh
             
-            ω=  phonon_dispersion(cell_map, phononOmegaSq, [x_mesh/mesh, y_mesh/mesh, 0])
-            PhononDOS[round(Int, histogram_width*ω)]=PhononDOS[round(Int, histogram_width*ω)]+histogram_width*(1/mesh)^2
-
+            ωs=  phonon_dispersion(cell_map, phononOmegaSq, [x_mesh/mesh, y_mesh/mesh, 0])
+            for ω in ωs
+                PhononDOS[round(Int, histogram_width*ω)]=PhononDOS[round(Int, histogram_width*ω)]+histogram_width*(1/mesh)^2
+            end
         end
     end
 

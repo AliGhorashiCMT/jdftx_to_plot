@@ -24,7 +24,7 @@ function plot_phonons(cell_map::String, phononOmegaSq::String, kpoints::String)
 end
 
 "Give phonon dispersion at individual kpoints"
-function phonon_dispersion(cell_map::String, phononOmegaSq::String, qnorm::Array{T, 1}), 
+function phonon_dispersion(cell_map::String, phononOmegaSq::String, qnorm::Array{T, 1}) where T<:Number
     np=pyimport("numpy")
     cellMapPh = np.loadtxt(cell_map)[:,1:3]
     forceMatrixPh = np.fromfile(phononOmegaSq, dtype=np.float64)
