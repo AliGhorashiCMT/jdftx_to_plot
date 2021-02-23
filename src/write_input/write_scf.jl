@@ -1,7 +1,7 @@
 function write_lattice(lattice_vectors::lattice, filename::String)
     open(filename, create=true, write=true) do io
         write(io, "lattice \\ \n")
-        for lattice_row in eachrow(lattice_vectors)
+        for lattice_row in eachrow(lattice_vectors.rvectors)
             for coord in lattice_row
                 write(io, string(coord), " ")
             end

@@ -1,5 +1,5 @@
 struct lattice
-    ionpos::Array{Float64, 2}
+    rvectors::Array{Float64, 2}
 end
 
 struct ionpos
