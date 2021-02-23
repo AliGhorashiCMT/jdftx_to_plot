@@ -59,6 +59,7 @@ end
 
 #Next, functions for the calculation of the phonon density of states
 
+"Returns the phonon density of states (phonons per unit energy per unit cell)"
 function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh=100, histogram_width=100, energy_range=2)
     np=pyimport("numpy")
     PhononDOS=np.zeros(histogram_width*energy_range)
