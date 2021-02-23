@@ -78,6 +78,13 @@ function graphene_conductivity( μ, q, ω; kwargs... )
     return -4im*ω/q^2*(B[1]+A[1])
 end
 
+function graphene_real_conductivity( μ, q, ω; kwargs... )
+    delta=.01
+    A= hcubature( x-> x[1]/(pi^2)*real(lower_band_integrand(x[1], x[2], q, ω , delta)), [0, 0], [2, 2π]; kwargs...)
+    B=hcubature( x-> x[1]/(pi^2)*real(upper_band_integrand(x[1], x[2], q, ω, delta)), [0, 0], [μ/6, 2π]; kwargs...)
+    return 4*ω/q^2*(B[1]+A[1])
+end
+
 function graphene_epsilon( μ, q, ω; kwargs... )
     delta=.01
     A= hcubature( x-> x[1]/(pi^2)*real(lower_band_integrand(x[1], x[2], q, ω , delta)), [0, 0], [2, 2π]; kwargs...)
