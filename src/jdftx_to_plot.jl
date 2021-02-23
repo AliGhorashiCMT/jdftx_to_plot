@@ -71,7 +71,14 @@ export(im_polarization_cubature)
 
 export(phmatrixelements)
 
+
+export(phonon_density_of_states)
+export(phonon_dispersion)
+
 greet() = print("Hello World!")
+
+
+
 
 export(greet)
 

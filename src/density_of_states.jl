@@ -56,3 +56,23 @@ function density_of_states_wannier(wannier_file_up::String, cell_map_file_up::St
     return WannierDOSUp, WannierDOSDn
 
 end
+
+#Next, functions for the calculation of the phonon density of states
+
+function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh=100, histogram_width=100, energy_range=2)
+    np=pyimport("numpy")
+    PhononDOS=np.zeros(histogram_width*energy_range)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ω=  phonon_dispersion(cell_map, phononOmegaSq, [x_mesh/mesh, y_mesh/mesh, 0])
+            PhononDOS[round(Int, histogram_width*ω)]=PhononDOS[round(Int, histogram_width*ω)]+histogram_width*(1/mesh)^2
+
+        end
+    end
+
+    return PhononDOS
+
+
+end
