@@ -92,3 +92,16 @@ function graphene_epsilon( μ, q, ω; kwargs... )
     return 1-90.5/q*(B[1]+A[1])
 end
 
+function find_graphene_plasmon(μ, q; nomegas=3, kwargs...)
+    epsilon_array=Array{Float64, 1}(undef, nomegas)
+    
+    for i in 1:nomegas
+        ω=i/nomegas*2μ
+        epsilon_array[i]=(log∘abs)(graphene_epsilon( μ, q, ω; kwargs... ))
+    end
+    #return epsilon_array
+    return argmin(epsilon_array)/nomegas*2μ
+end
+
+
+
