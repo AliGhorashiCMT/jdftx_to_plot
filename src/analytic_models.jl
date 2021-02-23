@@ -50,6 +50,20 @@ function graphene_dos_quad(t::T, ϵ::R, δ::S; kwargs...) where {T<:Number, R<:N
     1/π*hcubature(vec->imag(-1/(ϵ-graphene_energy_normalizedk(2.8, graphene_lattice, vec[1], vec[2])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
 end
 
+
+function check_graphene_dos_quad(t::T, δ::S, npoints::Int; kwargs...) where {T<:Number, S<:Number} 
+    
+    quaddos=[]
+    for i in 1:npoints
+        ω=i/npoints*abs(t)*3
+        push!(quaddos, graphene_dos_quad(t, ω, δ; kwargs...))
+    end
+    
+    return sum(quaddos*1/npoints*abs(t)*3)
+
+end
+
+
 "checks that the integrated value of the dos of graphene over all energies gives 2 orbitals per unit cell"
 function check_graphene_dos(t::T, mesh::R, histogram_width::S) where {T<:Number, R<:Number, S<:Number} 
 
