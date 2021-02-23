@@ -8,6 +8,13 @@ function graphene_energy(t, kx, ky)
     t*sqrt(3+2*cos(sqrt(3)*kx*1.42)+4*cos(3/2*ky*1.42)*cos(sqrt(3)*kx/2*1.42))
 end
 
+function graphene_energy_normalizedk(t, graphene_lattice, k1, k2)
+    
+    kx, ky = unnormalize_kvector(graphene_lattice, [k1, k2, 0])
+    t*sqrt(3+2*cos(sqrt(3)*kx*1.42)+4*cos(3/2*ky*1.42)*cos(sqrt(3)*kx/2*1.42))
+
+end
+
 function graphene_dos(t::T, mesh::R, histogram_width::S) where {T<:Number, R<:Number, S<:Number} 
     max_energy=3*abs(t)
     middle_index=round(Int, max_energy*histogram_width)+1
@@ -33,6 +40,14 @@ function graphene_dos(t::T, mesh::R, histogram_width::S) where {T<:Number, R<:Nu
         end
     end
     return GrapheneDOS
+end
+
+
+function graphene_dos_quad(t::T, ϵ::R, δ::S) where {T<:Number, R<:Number, S<:Number}
+    a=1.42*sqrt(3)
+    graphene_lattice=[[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]]
+
+    1/π*hcubature(vec->imag(-1/(ϵ-graphene_energy_normalizedk(2.8, graphene_lattice, vec[1], vec[2])+1im*δ)), [0, 0], [1, 1])[1]
 end
 
 "checks that the integrated value of the dos of graphene over all energies gives 2 orbitals per unit cell"
