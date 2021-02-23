@@ -38,6 +38,19 @@ function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_k
 
 end
 
+function unnormalize_kvector(lattice_vectors::Array{Array{T, 1},1}, normalized_kvector) where T <: Number
+
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    vectors_array=Array{Float64,2}(undef, (3, 3))
+    
+    vectors_array[:, 1], vectors_array[:, 2], vectors_array[:, 3] = b1, b2, b3
+
+    vectors_array*normalized_kvector
+
+end
+
+
 "Returns the 2d area of the lattice. The assumption is made that the lattice is in the x-y plane"
 function brillouin_zone_area(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
 

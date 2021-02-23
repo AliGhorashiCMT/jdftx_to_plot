@@ -57,8 +57,6 @@ export(normalize_kvector)
 export(density_of_states)
 export(density_of_states_wannier)
 export(in_wigner_seitz)
-export(show_analytic_model)
-export(analytic_dos)
 export(return_2d_epsilon)
 export(kramers_kronig_scipy)
 export(return_2d_epsilon_scipy)
@@ -74,6 +72,8 @@ export(phmatrixelements)
 
 export(phonon_density_of_states)
 export(phonon_dispersion)
+
+export(unnormalize_kvector)
 
 greet() = print("Hello World!")
 
