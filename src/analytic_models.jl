@@ -47,7 +47,7 @@ function graphene_dos_quad(t::T, ϵ::R, δ::S; kwargs...) where {T<:Number, R<:N
     a=1.42*sqrt(3)
     graphene_lattice=[[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]]
 
-    1/π*hcubature(vec->imag(-1/(ϵ-graphene_energy_normalizedk(2.8, graphene_lattice, vec[1], vec[2])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
+    1/π*hcubature(vec->imag(-1/(ϵ-graphene_energy_normalizedk(t, graphene_lattice, vec[1], vec[2])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
 end
 
 
