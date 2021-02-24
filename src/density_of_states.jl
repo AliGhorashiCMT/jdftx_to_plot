@@ -20,7 +20,7 @@ function density_of_states(dosfile_1::String; kwargs...)
 end
 
 
-function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String; δ=.1, kwargs...)
+function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String, ϵ::T; δ=.1, kwargs...) where T<:Number
 
     1/π*hcubature(vec->imag(-1/(ϵ-wannier_bands(wannier_file, cell_map_file, [vec[1], vec[2], 0])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
 
