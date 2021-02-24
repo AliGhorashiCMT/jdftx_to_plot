@@ -2,6 +2,7 @@ using Plots
 using PyCall
 using LinearAlgebra 
 using Distances
+using HCubature
 
 function density_of_states(dosfile_1::String, dosfile_2::String; kwargs... )
    
@@ -17,6 +18,14 @@ function density_of_states(dosfile_1::String; kwargs...)
     plot(np.loadtxt(dosfile_1)[:, 1]*27.2, np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
 
 end
+
+
+function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String; δ=.1, kwargs...)
+
+    1/π*hcubature(vec->imag(-1/(ϵ-wannier_bands(wannier_file, cell_map_file, [vec[1], vec[2], 0])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
+
+end
+
 
 function density_of_states_wannier(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
     np=pyimport("numpy")
