@@ -26,6 +26,18 @@ function density_of_states_wannier_quad(wannier_file::String, cell_map_file::Str
 
 end
 
+function density_of_states_wannier_quad_check(wannier_file::String, cell_map_file::String, ϵmin::T, ϵmax::R, numpoints::Int; δ=.1, kwargs...) where {T<:Number, R<:Number}
+
+    ϵdif=(ϵmax-ϵmin)/numpoints
+    dosarray=[]
+    for i in 0:numpoints
+        ϵ=ϵmin+ϵdif*i
+        push!(dosarray, density_of_states_wannier_quad(wannier_file, cell_map_file, ϵ; δ, kwargs... ))
+    end
+    return sum(ϵdif*dosarray)
+
+end
+
 
 function density_of_states_wannier(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
     np=pyimport("numpy")
