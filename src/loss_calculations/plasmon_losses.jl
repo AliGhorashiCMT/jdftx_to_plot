@@ -2,7 +2,7 @@
 #We calculate losses at 0th (landau damping), 1st, and 2nd orders in phonon-assisted damping
 
 function landau_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{S, 1},1}, histogram_length::Int, mesh::Int, q::Array{T, 1}, μ::R, offset, energy_range) where {T<:Number, R<:Number, S<:Number}
-    lossarray = zeros(historam_width*energy_range)
+    lossarray = zeros(histogram_width*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
     for xmesh in 1:mesh
