@@ -22,6 +22,8 @@ include("smooth.jl")
 include("matrix_elements.jl")
 
 include("input_file_structs.jl")
+include("supercell.jl")
+
 export(self_consistent_field)
 export(non_self_consistent_field)
 export(wannier_interpolation)
@@ -66,6 +68,8 @@ export(smooth)
 export(kramers_kronig_quadgk)
 export(return_2d_epsilon_quadgk)
 export(im_polarization_cubature)
+
+export(supercell)
 
 export(phmatrixelements)
 
