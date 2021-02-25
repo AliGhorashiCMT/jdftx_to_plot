@@ -11,13 +11,13 @@ function landau_damping(wannier_file::String, cell_map_file::String, histogram_l
             ϵ2 = wannier_bands(wannier_file, cell_map_file, [xmesh/mesh, ymesh/mesh, 0]+qnormalized)
             f1 = ϵ1<μ ? 1 : 0
             f2 = ϵ2>μ ? 1 : 0
-            if f1>0 and f2>0
+            if f1>0 && f2>0
                 ω = ϵ2-ϵ1
                 lossarray[round(Int, (ω+offset)*histogram_length  )] = lossarray[round(Int, (ω+offset)*histogram_length  )] + 2π/ħ*e²ϵ/4*ω/q*f1*f2*(1/mesh)^2*histogram_length
             end
         end
     end
-
+    return lossarray
 end
 
 function first_order_damping()
