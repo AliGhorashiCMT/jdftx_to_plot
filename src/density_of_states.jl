@@ -37,7 +37,7 @@ function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_fil
         push!(optdict, kwarg[1]=>kwarg[2])
     end
 
-    1/π*nquad((x, y)->imag(-1/(ϵ-wannier_bands(wannier_file, cell_map_file, [x, y, 0])+1im*δ)), [0, 1], [0, 1], opts=optdict)[1]
+    1/π*nquad((x, y)->imag(-1/(ϵ-wannier_bands(wannier_file, cell_map_file, [x, y, 0])+1im*δ)), [[0, 1], [0, 1]], opts=optdict)[1]
 
 end
 
