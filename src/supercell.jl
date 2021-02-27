@@ -5,7 +5,7 @@ function make_supercell(small_lattice::lattice, small_ionpos::ionpos, cell_mult:
     
     supercell_ionpos = []
     for ion_positions in small_ionpos.ionpos
-        new_base_position = ion_positions[3:end].*(1/mult1, 1/mult2, 1/mult3)
+        new_base_position = ion_positions[3:end].*(1/mult1, 1/mult2, 1/mult3, 1)
         label_1 = ion_positions[1]
         label_2 = ion_positions[2]
         for i in 0:mult1-1
@@ -14,7 +14,7 @@ function make_supercell(small_lattice::lattice, small_ionpos::ionpos, cell_mult:
                     new_pos=[] 
                     push!(new_pos, label_1, label_2)
 
-                    append!(new_pos, new_base_position +[i/mult1, j/mult2, k/mult3] )
+                    append!(new_pos, new_base_position +[i/mult1, j/mult2, k/mult3, 0] )
                     push!(supercell_ionpos, new_pos)
 
                 end
