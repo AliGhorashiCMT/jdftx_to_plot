@@ -50,7 +50,7 @@ function write_nscf(nscf::non_self_consistent_field, filename::String)
     end
 end
 
-function make_wannier_centers(scf::self_consistent_field; perturbation=10)
+function make_wannier_centers(scf::self_consistent_field; perturbation=10, norbitals=1)
     
     centers = []
     
@@ -58,7 +58,9 @@ function make_wannier_centers(scf::self_consistent_field; perturbation=10)
 
     for ion in ionpos_scf.ionpos
         coords = ion[3:5]
-        push!(centers, coords + rand(Float64, 3)/perturbation)
+        for i in 1:norbitals
+            push!(centers, coords + rand(Float64, 3)/perturbation)
+        end
     end
 
     return centers
