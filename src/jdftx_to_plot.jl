@@ -79,6 +79,7 @@ export(phonon_dispersion)
 
 export(unnormalize_kvector)
 export(wannier_vectors)
+export(find_chemical_potential)
 
 greet() = print("Hello World!")
 

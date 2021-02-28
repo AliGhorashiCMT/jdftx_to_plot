@@ -104,8 +104,14 @@ function find_chemical_potential(wannier_file::String, cell_map_file::String; me
     for i in 1:length(doss)
         push!(totalstates, [i/histogram_width-offset, sum(doss[1:i]*1/histogram_width)])
     end
+    xenergies = []
+    yoccupations = []
+    for i in 1:length(doss)
+        push!(xenergies, totalstates[i][1])
+        push!(yoccupations, totalstates[i][2])
+    end
 
-    return totalstates
+    return xenergies, yoccupations
 
 end
 
