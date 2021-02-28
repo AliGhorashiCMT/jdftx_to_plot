@@ -72,6 +72,26 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String; 
 
 end
 
+function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; mesh=100, histogram_width=100, energy_range=10, offset=0)
+    np=pyimport("numpy")
+    WannierDOS=np.zeros(histogram_width*energy_range)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ϵ=  wannier_bands(wannier_file, cell_map_file, [x_mesh/mesh, y_mesh/mesh, 0])
+            for band in 1:nbands
+                ϵ_band = ϵ[band]
+                WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]=WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]+histogram_width*(1/mesh)^2
+            end
+        end
+    end
+
+    return WannierDOS
+
+end
+
+
 function density_of_states_wannier(wannier_file_up::String, cell_map_file_up::String, wannier_file_dn::String, cell_map_file_dn::String,; mesh=100, histogram_width=100, energy_range=10, offset=0)
    
     np=pyimport("numpy")
