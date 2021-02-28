@@ -31,7 +31,7 @@ function write_scf(scf::self_consistent_field, filename::String, ionpos_filename
         write(io, "elec-cutoff 20 100\n")
         write(io, "elec-initial-charge $(scf.charge)\n")
         if scf.spintype != "no-spin"
-            write(io, "elec-initial-magnetization $(scf.magnetization) no")
+            write(io, "elec-initial-magnetization $(scf.magnetization) no \n")
         end
         write(io, "spintype $(scf.spintype)\n")
         write(io, "electronic-SCF\n")
