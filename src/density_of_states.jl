@@ -79,7 +79,7 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String, 
     for x_mesh in 1:mesh
         for y_mesh in 1:mesh
             
-            ϵ=  wannier_bands(wannier_file, cell_map_file, [x_mesh/mesh, y_mesh/mesh, 0])
+            ϵ=  wannier_bands(wannier_file, cell_map_file, [x_mesh/mesh, y_mesh/mesh, 0], nbands)
             for band in 1:nbands
                 ϵ_band = ϵ[band]
                 WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]=WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]+histogram_width*(1/mesh)^2
