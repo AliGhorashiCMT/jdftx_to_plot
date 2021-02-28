@@ -56,13 +56,13 @@ function make_wannier_centers(scf::self_consistent_field)
     
     ionpos_scf = scf.ionpos
 
-    for ion in ionpos_scf
+    for ion in ionpos_scf.ionpos
         coords = ion[3:5]
         push!(centers, coords + rand(Float64, 3)/10)
     end
 
     return centers
-    
+
 end
 
 
