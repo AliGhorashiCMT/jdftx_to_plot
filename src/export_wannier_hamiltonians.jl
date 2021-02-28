@@ -17,7 +17,7 @@ function __init__()
         iReducedUp = np.dot(np.mod(cellMapUp, kfold[None,:]), kStride)
         HwannierUp = WwannierUp * HreducedUp[iReducedUp]
 
-        np.savetxt(band_file, HwannierUp.reshape(len(iReducedUp), 1 ))
+        np.savetxt(band_file, HwannierUp.reshape(len(iReducedUp), nBandsUp*nBandsUp ))
         np.savetxt(cell_map_file, cellMapUp)
     """
 end
