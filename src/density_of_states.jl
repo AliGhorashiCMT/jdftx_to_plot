@@ -72,7 +72,7 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String; 
 
 end
 
-function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; exclude_bands=[], mesh=100, histogram_width=100, energy_range=10, offset=0)
     np=pyimport("numpy")
     WannierDOS=np.zeros(histogram_width*energy_range)
 
@@ -81,14 +81,32 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String, 
             
             ϵ=  wannier_bands(wannier_file, cell_map_file, [x_mesh/mesh, y_mesh/mesh, 0], nbands)
             for band in 1:nbands
-                ϵ_band = ϵ[band]
-                WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]=WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]+histogram_width*(1/mesh)^2
+                if band ∉ exclude_bands
+                    ϵ_band = ϵ[band]
+                    WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]=WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]+histogram_width*(1/mesh)^2
+            
+                end
+        
             end
+    
         end
     end
 
     return WannierDOS
 
+end
+
+
+function find_chemical_potential(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
+    
+    doss = density_of_states_wannier(wannier_file, cell_map_file, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
+    totalstates = []
+    for i in range 1:length(doss)
+        push!(totalstates, [i/histogram_width-offset, sum(doss[1:i]*1/histogram_width)])
+    end
+
+    return totalstates
+    
 end
 
 
