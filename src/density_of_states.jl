@@ -101,12 +101,12 @@ function find_chemical_potential(wannier_file::String, cell_map_file::String; me
     
     doss = density_of_states_wannier(wannier_file, cell_map_file, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
     totalstates = []
-    for i in range 1:length(doss)
+    for i in 1:length(doss)
         push!(totalstates, [i/histogram_width-offset, sum(doss[1:i]*1/histogram_width)])
     end
 
     return totalstates
-    
+
 end
 
 
