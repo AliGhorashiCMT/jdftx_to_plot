@@ -50,6 +50,22 @@ function write_nscf(nscf::non_self_consistent_field, filename::String)
     end
 end
 
+function make_wannier_centers(scf::self_consistent_field)
+    
+    centers = []
+    
+    ionpos_scf = scf.ionpos
+
+    for ion in ionpos_scf
+        coords = ion[3:5]
+        push!(centers, coords + rand(Float64, 3)/10)
+    end
+
+    return centers
+    
+end
+
+
 function write_wannier(wannier::wannier_interpolation, filename::String, scf_filename::String)
 
     open(filename, create=true, write=true, append=false) do io

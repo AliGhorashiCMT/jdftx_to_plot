@@ -27,7 +27,7 @@ struct non_self_consistent_field
 end
 
 struct wannier_interpolation
-    wannier_centers::Array{Array{Int64, 1}, 1}
+    wannier_centers::Array{Array{Any, 1}, 1}
     saveWFNs::Bool
     phonon::Bool
     phononSupercell::Array{Int64, 1}
