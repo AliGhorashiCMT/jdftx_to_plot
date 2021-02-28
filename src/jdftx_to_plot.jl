@@ -78,6 +78,7 @@ export(phonon_density_of_states)
 export(phonon_dispersion)
 
 export(unnormalize_kvector)
+export(wannier_vectors)
 
 greet() = print("Hello World!")
 
