@@ -3,6 +3,7 @@ using PyCall
 function __init__()
     py"""   
     def write_map_write_h(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
+        import numpy as np
         cellMapUp = np.loadtxt(cell_map)[:,0:3].astype(np.int)
         WwannierUp = np.fromfile(cell_weights)
         nCellsUp = cellMapUp.shape[0]
