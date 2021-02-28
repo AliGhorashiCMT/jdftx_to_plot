@@ -53,10 +53,10 @@ end
 function write_wannier(wannier::wannier_interpolation, filename::String, scf_filename::String)
 
     open(filename, create=true, write=true, append=false) do io
-        write(io, "include $(scf_filename)")
+        write(io, "include $(scf_filename) \n")
         write(io, "wannier\\ \n")
         write(io, "innerWindow $(wannier.innerWindow[1])   $(wannier.innerWindow[2])\\ \n  ")
-        write(io, "outer_Window $(wannier.outerWindow[1])   $(wannier.outerWindow[2])\\ \n  ")
+        write(io, "outerWindow $(wannier.outerWindow[1])   $(wannier.outerWindow[2])\\ \n  ")
         write(io, "saveWfnsRealSpace", "$(wannier.saveWFNs==true ? "   yes" : "   no")", "\n")
         if wannier.phonon==true
             write(io, "\\ \n")
