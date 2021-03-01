@@ -154,6 +154,22 @@ function unnormalize_kvector(lattice_vectors::Array{Array{T, 1},1}, normalized_k
 
 end
 
+function unit_cell_area(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
+    a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
+
+    A=sqrt(dot(cross(a1, a2), cross(a1, a2)))
+    return A
+
+end
+
+function unit_cell_area(lattice_vectors::lattice)
+    a1, a2, a3 = lattice_vectors.rvectors[:, 1]*bohrtoangstrom, lattice_vectors.rvectors[:, 2]*bohrtoangstrom, lattice_vectors.rvectors[:, 3]*bohrtoangstrom
+
+    A=sqrt(dot(cross(a1, a2), cross(a1, a2)))
+    return A
+
+end
+
 
 "Returns the 2d area of the lattice. The assumption is made that the lattice is in the x-y plane"
 function brillouin_zone_area(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
