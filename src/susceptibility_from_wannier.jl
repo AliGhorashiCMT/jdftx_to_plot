@@ -102,7 +102,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
     return Polarization_Array
 end
 
-function im_polarization(wannier_file_up::String, wannier_file_dn:String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; kwargs...)
+function im_polarization(wannier_file_up::String, wannier_file_dn::String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; kwargs...)
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(wannier_file_up, cell_map_file_up, nbands, valence_bands_up, lattice_vectors, q, μ; kwargs... )
     spin_dn_pol = im_polarization(wannier_file_dn, cell_map_file_dn, nbands, valence_bands_dn, lattice_vectors, q, μ; kwargs... )
