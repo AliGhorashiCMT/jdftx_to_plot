@@ -63,7 +63,7 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:
         end
     end
 
-    print(minimum(distances_array))
+    #print(minimum(distances_array))
     if euclidean(rvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
