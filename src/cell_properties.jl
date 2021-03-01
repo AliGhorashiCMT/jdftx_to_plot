@@ -31,7 +31,7 @@ function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{R, 1
         for j in -2:2
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
-                push!(distances_array, euclidean(currentvec, rvec) )
+                push!(distances_array, euclidean(current_vec, rvec) )
             end
         end
     end
@@ -54,7 +54,7 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:
         for j in -2:2
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
-                push!(distances_array, euclidean(currentvec, rvec) )
+                push!(distances_array, euclidean(current_vec, rvec) )
             end
         end
     end
@@ -80,7 +80,7 @@ function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{R, 1}) 
         for j in -2:2
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
-                push!(distances_array, euclidean(currentvec, kvec) )
+                push!(distances_array, euclidean(current_vec, kvec) )
             end
         end
     end
@@ -106,7 +106,7 @@ function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Num
         for j in -2:2
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
-                push!(distances_array, euclidean(currentvec, kvec) )
+                push!(distances_array, euclidean(current_vec, kvec) )
             end
         end
     end
