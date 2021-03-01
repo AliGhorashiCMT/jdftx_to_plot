@@ -24,6 +24,7 @@ function first_order_damping(wannier_file::String, cell_map_file::String, lattic
     lossarray = zeros(histogram_length*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
+    cell_area = unit_cell_area(lattice_vectors)
     for xmesh in 1:mesh
         for ymesh in 1:mesh
             ϵinitial = wannier_bands(wannier_file, cell_map_file, [xmesh/mesh, ymesh/mesh, 0])
@@ -43,7 +44,7 @@ function first_order_damping(wannier_file::String, cell_map_file::String, lattic
 
                     ω = ϵfinal-ϵinitial+ϵphonon
                     if ω>0
-                        lossarray[round(Int, ω*histogram_length+1)] = lossarray[round(Int, ω*histogram_length + 1 )] + (1/(ϵmiddle-ϵinitial-ω)+1/(ϵmiddle2-ϵinitial+ϵphonon))^2*gph^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*fmiddle1*ffinal*(1/mesh)^4*histogram_length
+                        lossarray[round(Int, ω*histogram_length+1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*(1/(ϵmiddle-ϵinitial-ω)+1/(ϵmiddle2-ϵinitial+ϵphonon))^2*gph^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*fmiddle1*ffinal*(1/mesh)^4*histogram_length
                     end
                 end
             end
