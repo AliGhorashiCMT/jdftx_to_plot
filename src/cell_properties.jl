@@ -51,8 +51,8 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:
     vec2 = lattice_vectors.rvectors[:, 2]*bohrtoangstrom
     vec3 = lattice_vectors.rvectors[:, 3]*bohrtoangstrom
     distances_array = []
-    for i in -1:1
-        for j in -1:1
+    for i in -2:2
+        for j in -2:2
             if i==0 && j==0
                 continue
                 
