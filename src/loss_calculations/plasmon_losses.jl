@@ -21,7 +21,7 @@ function landau_damping(wannier_file::String, cell_map_file::String, lattice_vec
 end
 
 function first_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{S, 1}, 1}, q::Array{T, 1}, μ::R, ϵphonon, gph; histogram_length=100, mesh=30, energy_range=10) where {T<:Number, R<:Number, S<:Number}
-    lossarray = zeros(histogram_width*energy_range)
+    lossarray = zeros(histogram_length*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
     for xmesh in 1:mesh
