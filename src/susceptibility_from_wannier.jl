@@ -37,7 +37,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattvector
     
     Polarization_Array=zeros(histogram_width*100)
 
-    lattice_vectors = [lattvectors.rvectors[:, 1], lattvectors.rvectors[:, 2], lattvectors.rvectors[:, 3]]
+    lattice_vectors = [lattvectors.rvectors[:, 1]/bohrtoangstromn, lattvectors.rvectors[:, 2]/bohrtoangstromn, lattvectors.rvectors[:, 3]/bohrtoangstromn]
 
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
     np=pyimport("numpy")
