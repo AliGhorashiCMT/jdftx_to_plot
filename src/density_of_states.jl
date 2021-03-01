@@ -115,6 +115,25 @@ function find_chemical_potential(wannier_file::String, cell_map_file::String; me
 
 end
 
+function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh=100, histogram_width=100, energy_range=2)
+    
+    doss = phonon_density_of_states(cell_map, phononOmegaSq; mesh=mesh, histogram_width=histogram_width, energy_range=energy_range)
+    totalstates = []
+    for i in 1:length(doss)
+        push!(totalstates, [i/histogram_width, sum(doss[1:i]*1/histogram_width)])
+    end
+
+    xenergies = []
+    yoccupations = []
+    for i in 1:length(doss)
+        push!(xenergies, totalstates[i][1])
+        push!(yoccupations, totalstates[i][2])
+    end
+
+    return xenergies, yoccupations
+
+end
+
 
 function density_of_states_wannier(wannier_file_up::String, cell_map_file_up::String, wannier_file_dn::String, cell_map_file_dn::String,; mesh=100, histogram_width=100, energy_range=10, offset=0)
    
