@@ -22,15 +22,16 @@ function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Nu
 end
 
 function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{R, 1}) where {T<:Number, R<:Number}
-    
     vec1 = lattice_vectors[1]
     vec2 = lattice_vectors[2]
     vec3 = lattice_vectors[3]
     distances_array = []
     for i in -2:2
         for j in -2:2
-            for k in -2:-2
-                current_vec = vec1*i+vec2*j+vec3*k
+            if i==0 && j==0
+                continue
+            else
+                current_vec = vec1*i+vec2*j
                 push!(distances_array, euclidean(current_vec, rvec) )
             end
         end
@@ -46,19 +47,23 @@ end
 
 function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:Number, R<:Number}
     
-    vec1 = lattice_vectors.rvectors[:, 1]*bohrtoangstromn
-    vec2 = lattice_vectors.rvectors[:, 2]*bohrtoangstromn
-    vec3 = lattice_vectors.rvectors[:, 3]*bohrtoangstromn
+    vec1 = lattice_vectors.rvectors[:, 1]*bohrtoangstrom
+    vec2 = lattice_vectors.rvectors[:, 2]*bohrtoangstrom
+    vec3 = lattice_vectors.rvectors[:, 3]*bohrtoangstrom
     distances_array = []
-    for i in -2:2
-        for j in -2:2
-            for k in -2:-2
-                current_vec = vec1*i+vec2*j+vec3*k
+    for i in -1:1
+        for j in -1:1
+            if i==0 && j==0
+                continue
+                
+            else 
+                current_vec = vec1*i+vec2*j
                 push!(distances_array, euclidean(current_vec, rvec) )
             end
         end
     end
 
+    print(minimum(distances_array))
     if euclidean(rvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
@@ -66,6 +71,7 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:
     end
 
 end
+
 
 
 function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{R, 1}) where {T<:Number, R<:Number}
@@ -78,8 +84,10 @@ function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{R, 1}) 
     distances_array = []
     for i in -2:2
         for j in -2:2
-            for k in -2:-2
-                current_vec = vec1*i+vec2*j+vec3*k
+            if i==0 && j==0
+                continue
+            else 
+                current_vec = vec1*i+vec2*j
                 push!(distances_array, euclidean(current_vec, kvec) )
             end
         end
@@ -95,7 +103,7 @@ end
 
 function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Number, R<:Number}
     
-    lattice_vectors_array = [lattice_vectors.rvectors[:, 1]*bohrtoangstromn,lattice_vectors.rvectors[:, 2]*bohrtoangstromn, lattice_vectors.rvectors[:, 3]*bohrtoangstromn ]
+    lattice_vectors_array = [lattice_vectors.rvectors[:, 1]*bohrtoangstrom,lattice_vectors.rvectors[:, 2]*bohrtoangstrom, lattice_vectors.rvectors[:, 3]*bohrtoangstrom ]
     bvectors = reciprocal_vectors(lattice_vectors_array)
 
     vec1 = bvectors[1]
@@ -104,8 +112,10 @@ function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Num
     distances_array = []
     for i in -2:2
         for j in -2:2
-            for k in -2:-2
-                current_vec = vec1*i+vec2*j+vec3*k
+            if i==0 && j==0
+                continue
+            else 
+                current_vec = vec1*i+vec2*j
                 push!(distances_array, euclidean(current_vec, kvec) )
             end
         end
@@ -118,8 +128,6 @@ function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Num
     end
 
 end
-
-
 
 "returns the normalized kvector (in the basis of the reciprocal lattice vectors)"
 function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_kvector) where T <: Number

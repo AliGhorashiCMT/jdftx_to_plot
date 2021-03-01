@@ -5,13 +5,13 @@ const ħ = 6.6e-16
 const c = 3e18
 const α = 1/137
 const e²ϵ = 4π*ħ*c*α  
-const bohrtoangstromn = 0.529177
+const bohrtoangstrom = 0.529177
 
 
 export(ħ)
 export(c)
 export(e²ϵ)
-export(bohrtoangstromn)
+export(bohrtoangstrom)
 
 include("input_file_structs.jl")
 
