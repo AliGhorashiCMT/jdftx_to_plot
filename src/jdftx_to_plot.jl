@@ -84,6 +84,9 @@ export(unnormalize_kvector)
 export(wannier_vectors)
 export(find_chemical_potential)
 
+export(in_wigner_seitz)
+export(in_brillouin)
+
 greet() = print("Hello World!")
 
 

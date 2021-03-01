@@ -21,9 +21,52 @@ function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Nu
 
 end
 
-function in_wigner_seitz(a1::Array{T, 1}, a2::Array{T, 1}) where T<:Number
-    return euclidean(a1, a2)
+function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{Array{R, 1}, 1}) where {T<:Number, R<:Number}
+    
+    vec1 = lattice_vectors[1]
+    vec2 = lattice_vectors[2]
+    vec3 = lattice_vectors[3]
+    distances_array = []
+    for i in -2:2
+        for j in -2:2
+            for k in -2:-2
+                current_vec = vec1*i+vec2*j+vec3*k
+                push!(distances_array, euclidean(currentvec, rvec) )
+        end
+    end
+
+    if euclidean(rvec, 0) < minimum(distances_array)
+        return true
+    else 
+        return false
+    end
+
 end
+
+function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{Array{R, 1}, 1}) where {T<:Number, R<:Number}
+    
+    bvectors = reciprocal_vectors(lattice_vectors)
+
+    vec1 = bvectors[1]
+    vec2 = bvectors[2]
+    vec3 = bvectors[3]
+    distances_array = []
+    for i in -2:2
+        for j in -2:2
+            for k in -2:-2
+                current_vec = vec1*i+vec2*j+vec3*k
+                push!(distances_array, euclidean(currentvec, kvec) )
+        end
+    end
+
+    if euclidean(kvec, 0) < minimum(distances_array)
+        return true
+    else 
+        return false
+    end
+
+end
+
 
 "returns the normalized kvector (in the basis of the reciprocal lattice vectors)"
 function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_kvector) where T <: Number
