@@ -10,6 +10,7 @@ const e²ϵ = 4π*ħ*c*α
 export(ħ)
 export(c)
 export(e²ϵ)
+include("input_file_structs.jl")
 
 include("cell_properties.jl")
 include("phonon_properties.jl")
@@ -21,7 +22,6 @@ include("export_wannier_hamiltonians.jl")
 include("smooth.jl")
 include("matrix_elements.jl")
 
-include("input_file_structs.jl")
 include("supercell.jl")
 
 export(self_consistent_field)
