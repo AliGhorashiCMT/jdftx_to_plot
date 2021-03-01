@@ -21,7 +21,7 @@ function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Nu
 
 end
 
-function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{Array{R, 1}, 1}) where {T<:Number, R<:Number}
+function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{R, 1}) where {T<:Number, R<:Number}
     
     vec1 = lattice_vectors[1]
     vec2 = lattice_vectors[2]
@@ -44,7 +44,7 @@ function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{Arra
 
 end
 
-function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{Array{R, 1}, 1}) where {T<:Number, R<:Number}
+function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:Number, R<:Number}
     
     vec1 = lattice_vectors.rvectors[:, 1]*bohrtoangstromn
     vec2 = lattice_vectors.rvectors[:, 2]*bohrtoangstromn
@@ -68,7 +68,7 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{Array{R, 1}, 1}) 
 end
 
 
-function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{Array{R, 1}, 1}) where {T<:Number, R<:Number}
+function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{R, 1}) where {T<:Number, R<:Number}
     
     bvectors = reciprocal_vectors(lattice_vectors)
 
@@ -93,7 +93,7 @@ function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{Array{R
 
 end
 
-function in_brillouin(lattice_vectors::lattice, kvec::Array{Array{R, 1}, 1}) where {T<:Number, R<:Number}
+function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Number, R<:Number}
     
     lattice_vectors_array = [lattice_vectors.rvectors[:, 1]*bohrtoangstromn,lattice_vectors.rvectors[:, 2]*bohrtoangstromn, lattice_vectors.rvectors[:, 3]*bohrtoangstromn ]
     bvectors = reciprocal_vectors(lattice_vectors_array)
