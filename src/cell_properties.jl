@@ -32,10 +32,11 @@ function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{Arra
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
                 push!(distances_array, euclidean(currentvec, rvec) )
+            end
         end
     end
 
-    if euclidean(rvec, 0) < minimum(distances_array)
+    if euclidean(rvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
         return false
@@ -54,10 +55,11 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{Array{R, 1}, 1}) 
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
                 push!(distances_array, euclidean(currentvec, rvec) )
+            end
         end
     end
 
-    if euclidean(rvec, 0) < minimum(distances_array)
+    if euclidean(rvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
         return false
@@ -79,10 +81,11 @@ function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{Array{R
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
                 push!(distances_array, euclidean(currentvec, kvec) )
+            end
         end
     end
 
-    if euclidean(kvec, 0) < minimum(distances_array)
+    if euclidean(kvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
         return false
@@ -104,10 +107,11 @@ function in_brillouin(lattice_vectors::lattice, kvec::Array{Array{R, 1}, 1}) whe
             for k in -2:-2
                 current_vec = vec1*i+vec2*j+vec3*k
                 push!(distances_array, euclidean(currentvec, kvec) )
+            end
         end
     end
 
-    if euclidean(kvec, 0) < minimum(distances_array)
+    if euclidean(kvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
         return false
