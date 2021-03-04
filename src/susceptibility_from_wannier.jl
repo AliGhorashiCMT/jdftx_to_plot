@@ -123,8 +123,20 @@ end
 "Mostly provided for checking the reciprocity relation between the real and imaginary susceptibilities. Give the real susceptibility to obtain the imaginary susceptibility"
 function kramers_kronig_reverse(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
 
-    omegaprime=collect(1:domega:max_energy)
+    omegaprime=collect(0:domega:max_energy)
     sum(-domega*2/π*re_pol.*ω./(omegaprime.^2 .- (ω+ω*0.03im)^2))
+
+end
+
+function kramers_kronig_reverse_scipy(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    pyintegrate=pyimport("scipy.integrate")
+    interpol=pyimport("scipy.interpolate")
+    interpolated_res=interpol.interp1d(0:domega:max_energy, re_pol)
+    
+    ErrorAbs=1e-20
+    cauchy_inner_function(omegaprime)=-2/pi*interpolated_res(omegaprime)*ω/(omegaprime+ω)
+
+    return pyintegrate.quad(cauchy_inner_function, 0, max_energy_integration, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar= ω ; kwargs...)[1]
 
 end
 
