@@ -154,6 +154,18 @@ function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogr
 
 end
 
+function kramers_kronig_reverse_quadgk(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q, max_energy_integration; δ=.1, kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+    
+    interpol=pyimport("scipy.interpolate")
+    interpolated_res=interpol.interp1d(0:domega:max_energy, re_pol)
+    
+   inner_function(omegaprime)=-2/pi*interpolated_res(omegaprime)*ω/(omegaprime^2-(ω+1im*δ)^2)
+
+    return real(quadgk(inner_function, 0, max_energy_integration; kwargs...)[1])
+
+end
+
+
 function kramers_kronig_quadgk(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q, max_energy_integration; δ=.1, kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     
     interpol=pyimport("scipy.interpolate")
