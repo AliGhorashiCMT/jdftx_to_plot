@@ -120,6 +120,15 @@ function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_wid
 
 end
 
+"Mostly provided for checking the reciprocity relation between the real and imaginary susceptibilities. Give the real susceptibility to obtain the imaginary susceptibility"
+function kramers_kronig_reverse(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+
+    omegaprime=collect(1:domega:max_energy)
+    sum(-domega*2/π*re_pol.*ω./(omegaprime.^2 .- (ω+ω*0.03im)^2))
+
+end
+
+
 "Applies the kramers-kronig relations but with scipy's cauchy weight; kwargs for scipy.integrate.quad supported"
 function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     pyintegrate=pyimport("scipy.integrate")
