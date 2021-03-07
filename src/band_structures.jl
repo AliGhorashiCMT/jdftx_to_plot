@@ -35,19 +35,19 @@ function wannier_bands(wannier_file::String, cell_map_file::String, k::Array{T, 
     return E./eV 
 end
 
-function wannier_bands(Hwannier, cell_map_file::String, k::Array{Real, 1}, nbands::Int64) 
+function wannier_bands(Hwannier, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
     np=pyimport("numpy")
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
     return E./eV 
 end
 
-function wannier_vectors(Hwannier, cell_map_file::String, k::Array{Real, 1}, nbands::Int64) 
+function wannier_vectors(Hwannier, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
     np=pyimport("numpy")
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
     return U
 end
 
-function wannier_vectors(wannier_file::String, cell_map_file::String, k::Array{Real, 1}, nbands::Int64) 
+function wannier_vectors(wannier_file::String, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
     np=pyimport("numpy")
     cell_map=np.loadtxt(cell_map_file)
     cell_map_numlines=countlines(cell_map_file)
@@ -56,7 +56,7 @@ function wannier_vectors(wannier_file::String, cell_map_file::String, k::Array{R
     return U
 end
 
-function hwannier(wannier_file::String, cell_map_file::String, k::Array{Real, 1}, nbands::Int64) 
+function hwannier(wannier_file::String, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
     np=pyimport("numpy")
     cell_map=np.loadtxt(cell_map_file)
     cell_map_numlines=countlines(cell_map_file)
@@ -64,7 +64,7 @@ function hwannier(wannier_file::String, cell_map_file::String, k::Array{Real, 1}
     return Hwannier
 end
 
-function hwannier(wannier_file::String, cell_map_file::String, k::Array{Real, 1}) 
+function hwannier(wannier_file::String, cell_map_file::String, k::Array{T, 1}) where T<:Real
     np=pyimport("numpy")
     cell_map=np.loadtxt(cell_map_file)
     cell_map_numlines=countlines(cell_map_file)
