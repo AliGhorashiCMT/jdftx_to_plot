@@ -18,7 +18,6 @@ function plot_bands(band_file::String, num_bands::Int, num_points::Int; kwargs..
 end
 
 function wannier_bands(wannier_file::String, cell_map_file::String, k::Array{T, 1}) where T<:Number
-    np=pyimport("numpy")
     cell_map=np.loadtxt(cell_map_file)
     cell_map_numlines=countlines(cell_map_file)
     Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, 1, 1)), [1, 3, 2])
@@ -45,23 +44,23 @@ function wannier_vectors(Hwannier, cell_map_file::String, k::Array{T, 1}, nbands
 end
 
 function wannier_vectors(wannier_file::String, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
-    cell_map=np.loadtxt(cell_map_file)
-    cell_map_numlines=countlines(cell_map_file)
-    Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, nbands, nbands)), [1, 3, 2])
+    cell_map = np.loadtxt(cell_map_file)
+    cell_map_numlines = countlines(cell_map_file)
+    Hwannier = permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, nbands, nbands)), [1, 3, 2])
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
     return U
 end
 
 function hwannier(wannier_file::String, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
-    cell_map=np.loadtxt(cell_map_file)
-    cell_map_numlines=countlines(cell_map_file)
-    Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, nbands, nbands)), [1, 3, 2])
+    cell_map = np.loadtxt(cell_map_file)
+    cell_map_numlines = countlines(cell_map_file)
+    Hwannier = permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, nbands, nbands)), [1, 3, 2])
     return Hwannier
 end
 
 function hwannier(wannier_file::String, cell_map_file::String, k::Array{T, 1}) where T<:Real
-    cell_map=np.loadtxt(cell_map_file)
-    cell_map_numlines=countlines(cell_map_file)
-    Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, 1, 1)), [1, 3, 2])
+    cell_map = np.loadtxt(cell_map_file)
+    cell_map_numlines = countlines(cell_map_file)
+    Hwannier = permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, 1, 1)), [1, 3, 2])
     return Hwannier
 end

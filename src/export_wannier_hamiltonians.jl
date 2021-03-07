@@ -1,7 +1,16 @@
 using PyCall
 
+
+const np = PyNULL()
+const interpol = PyNULL()
+const pyintegrate = PyNULL()
+
 function __init__()
-    np = pyimport("numpy")
+
+    copy!(np, pyimport("numpy"))
+    copy!(interpol, pyimport("scipy.interpolate"))
+    copy!(pyintegrate, pyimport("scipy.integrate"))
+
     py"""   
     def write_map_write_h(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
         import numpy as np

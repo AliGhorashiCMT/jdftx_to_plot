@@ -7,7 +7,6 @@ const α = 1/137
 const e²ϵ = 4π*ħ*c*α  
 const bohrtoangstrom = 0.529177
 
-
 export(ħ)
 export(c)
 export(e²ϵ)

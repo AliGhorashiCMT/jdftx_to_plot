@@ -110,11 +110,6 @@ end
 
 "Applies the kramers-kronig relations onto a 1 dimensional array of numbers consisting of the imaginary value of the polarization to return the real value of polarization"
 function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
-    #pyintegrate=pyimport("scipy.integrate")
-
-    #pyintegrate.quad(sin, 0, max_energy)
-    #ω_array=collect(1/histogram_width:1/histogram_width:max_energy)
-    #sum(im_pol.*1 ./ ( ω_array.-ω.+0.001*im))*1/histogram_width
     omegaprime=collect(1:histogram_width*max_energy).*1/histogram_width
     sum(1/histogram_width*2/π*im_pol.*omegaprime./(omegaprime.^2 .- (ω+ω*0.03im)^2))
 
@@ -129,8 +124,6 @@ function kramers_kronig_reverse(ω::T, re_pol::Array{R, 1}, max_energy::S, domeg
 end
 
 function kramers_kronig_reverse_scipy(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
-    pyintegrate=pyimport("scipy.integrate")
-    interpol=pyimport("scipy.interpolate")
     interpolated_res=interpol.interp1d(0:domega:max_energy, re_pol)
     
     ErrorAbs=1e-20
@@ -140,11 +133,8 @@ function kramers_kronig_reverse_scipy(ω::T, re_pol::Array{R, 1}, max_energy::S,
 
 end
 
-
 "Applies the kramers-kronig relations but with scipy's cauchy weight; kwargs for scipy.integrate.quad supported"
 function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
-    pyintegrate=pyimport("scipy.integrate")
-    interpol=pyimport("scipy.interpolate")
     interpolated_ims=interpol.interp1d(0:1/histogram_width:(max_energy-1/histogram_width), im_pol)
     
     ErrorAbs=1e-20
@@ -156,27 +146,23 @@ end
 
 function kramers_kronig_reverse_quadgk(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q, max_energy_integration; δ=.1, kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     
-    interpol=pyimport("scipy.interpolate")
     interpolated_res=interpol.interp1d(0:domega:max_energy, re_pol)
     
-   inner_function(omegaprime)=-2/pi*interpolated_res(omegaprime)*ω/(omegaprime^2-(ω+1im*δ)^2)
+    inner_function(omegaprime)=-2/pi*interpolated_res(omegaprime)*ω/(omegaprime^2-(ω+1im*δ)^2)
 
     return real(quadgk(inner_function, 0, max_energy_integration; kwargs...)[1])
 
 end
-
 
 function kramers_kronig_quadgk(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q, max_energy_integration; δ=.1, kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
     
-    interpol=pyimport("scipy.interpolate")
     interpolated_ims=interpol.interp1d(0:1/histogram_width:(max_energy-1/histogram_width), im_pol)
     
-   inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime^2-(ω+1im*δ)^2)
+    inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime^2-(ω+1im*δ)^2)
 
     return real(quadgk(inner_function, 0, max_energy_integration; kwargs...)[1])
 
 end
-
 
 function epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, q, μ, ω, ϵ; spin=1)
     kvector=[k₁, k₂, 0]
@@ -243,7 +229,6 @@ function im_polarization_cubature(wannier_file::String, cell_map_file::String, l
     return polarization
 
 end
-
 
 "returns the non-local, non-static dielectric function"
 function return_2d_epsilon(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
