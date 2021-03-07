@@ -3,9 +3,6 @@ using PyCall
 using LinearAlgebra 
 using Distances
 
-#define constants for later use
-eV = 1/27.2114 #in Hartrees
-
 function plot_bands(band_file::String, num_bands::Int, num_points::Int; kwargs...)
 
     reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));
@@ -33,12 +30,12 @@ function wannier_bands(wannier_file::String, cell_map_file::String, k::Array{T, 
     return E./eV 
 end
 
-function wannier_bands(Hwannier, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
+function wannier_bands(Hwannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, k::Array{T, 1}) where T<:Real
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
     return E./eV 
 end
 
-function wannier_vectors(Hwannier, cell_map_file::String, k::Array{T, 1}, nbands::Int64) where T<:Real
+function wannier_vectors(Hwannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, k::Array{T, 1}) where T<:Real
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
     return U
 end

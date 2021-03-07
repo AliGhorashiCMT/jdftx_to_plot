@@ -1,11 +1,10 @@
 module jdftx_to_plot
-using PyCall
-
 const ħ = 6.6e-16
 const c = 3e18
 const α = 1/137
 const e²ϵ = 4π*ħ*c*α  
 const bohrtoangstrom = 0.529177
+const eV = 1/27.2114 
 
 export(ħ)
 export(c)
