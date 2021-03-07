@@ -32,7 +32,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattice_ve
     return Polarization_Array
 end
 
-function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
+function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, S<:Real}
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -61,7 +61,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattvector
 end
 
 
-function im_polarization(wannier_file::String, cell_map_file::String, nbands::Int, valence_bands::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
+function im_polarization(wannier_file::String, cell_map_file::String, nbands::Int, valence_bands::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, Q<:Real, S<:Real}
     
     Polarization_Array=zeros(histogram_width*100)
 
