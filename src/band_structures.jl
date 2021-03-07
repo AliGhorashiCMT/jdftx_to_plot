@@ -27,10 +27,15 @@ function wannier_bands(wannier_file::String, cell_map_file::String, k::Array{T, 
     cell_map_numlines=countlines(cell_map_file)
     Hwannier=permutedims(reshape(np.loadtxt(wannier_file), (cell_map_numlines, nbands, nbands)), [1, 3, 2])
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
-    return E./eV 
+    return E/eV 
 end
 
 function wannier_bands(Hwannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, k::Array{T, 1}) where T<:Real
+    phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
+    return E[1]./eV 
+end
+
+function wannier_bands(Hwannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, k::Array{T, 1}, nbands::Int64) where T<:Real
     phase = np.exp(2im*np.pi*cell_map*k); H = np.tensordot(phase, Hwannier, axes=1); E, U=np.linalg.eigh(H);
     return E./eV 
 end

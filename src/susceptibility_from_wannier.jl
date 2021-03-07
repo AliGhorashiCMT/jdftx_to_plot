@@ -32,6 +32,33 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattice_ve
     return Polarization_Array
 end
 
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
+    
+    Polarization_Array=zeros(histogram_width*100)
+
+    V=(2π)^2/brillouin_zone_area(lattice_vectors)
+    qnormalized = normalize_kvector(lattice_vectors, q)
+
+    for i in 1:mesh
+        for j in 1:mesh
+            kvector=[i/mesh, j/mesh, 0]
+            E1 = wannier_bands(HWannier, cell_map, kvector  )
+            E2 = wannier_bands(HWannier, cell_map, kvector+qnormalized  )
+            
+            f1=np.heaviside( μ-E1, 0.5)
+            f2=np.heaviside( μ-E2, 0.5)
+
+            DeltaE=E2-E1
+            if DeltaE>0
+                Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*(1/mesh)^2*histogram_width*spin
+            end
+        end
+    end
+
+    return Polarization_Array
+end
+
+
 function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, S<:Real}
     
     Polarization_Array=zeros(histogram_width*100)
@@ -46,6 +73,35 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattvector
             kvector=[i/mesh, j/mesh, 0]
             E1=wannier_bands(wannier_file, cell_map_file, kvector  )
             E2=wannier_bands(wannier_file, cell_map_file, kvector+qnormalized  )
+            
+            f1=np.heaviside( μ-E1, 0.5)
+            f2=np.heaviside( μ-E2, 0.5)
+
+            DeltaE=E2-E1
+            if DeltaE>0
+                Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*(1/mesh)^2*histogram_width*spin
+            end
+        end
+    end
+
+    return Polarization_Array
+end
+
+
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattvectors::lattice, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, S<:Real}
+    
+    Polarization_Array=zeros(histogram_width*100)
+
+    lattice_vectors = [lattvectors.rvectors[:, 1]*bohrtoangstrom, lattvectors.rvectors[:, 2]*bohrtoangstrom, lattvectors.rvectors[:, 3]*bohrtoangstrom]
+
+    V=(2π)^2/brillouin_zone_area(lattice_vectors)
+    qnormalized = normalize_kvector(lattice_vectors, q)
+
+    for i in 1:mesh
+        for j in 1:mesh
+            kvector=[i/mesh, j/mesh, 0]
+            E1=wannier_bands(HWannier, cell_map, kvector  )
+            E2=wannier_bands(Hwannier, cell_map, kvector+qnormalized  )
             
             f1=np.heaviside( μ-E1, 0.5)
             f2=np.heaviside( μ-E2, 0.5)
