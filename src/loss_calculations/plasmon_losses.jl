@@ -57,6 +57,14 @@ end
 
 function second_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{S, 1}, 1}, q::Array{T, 1}, μ::R, ϵphonon, gph; histogram_length=100, mesh=30, energy_range=10) where {T<:Number, R<:Number, S<:Number}
     
+
+    #= In all cases, we consider an initial state with an electron at kx, ky = xmesh/mesh, ymesh/mesh and a plasmon with wavevector q 
+     Furthermore, the final state is an electron with momentum (xmesh+xmesh1+xmesh2)/mesh, (ymesh+ymesh1+ymesh2)/mesh - qnormalized
+    as well as two emitted phonons. We sum over all intermmediate states and square the sum in the integrand. The three possible decay channels are 
+    plasmon absorption first, second, or third. Note that thus for each iteration of the sum, we're summing contributions from virtual 
+    electronic intermmediate states. Note also that the matrix elements included here contain Fermi occupation functions 
+     =#
+
     lossarray = zeros(histogram_length*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
