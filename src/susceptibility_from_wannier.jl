@@ -11,7 +11,6 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattice_ve
     Polarization_Array=zeros(histogram_width*100)
 
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    np=pyimport("numpy")
     qnormalized = normalize_kvector(lattice_vectors, q)
 
     for i in 1:mesh
@@ -40,7 +39,6 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattvector
     lattice_vectors = [lattvectors.rvectors[:, 1]*bohrtoangstrom, lattvectors.rvectors[:, 2]*bohrtoangstrom, lattvectors.rvectors[:, 3]*bohrtoangstrom]
 
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    np=pyimport("numpy")
     qnormalized = normalize_kvector(lattice_vectors, q)
 
     for i in 1:mesh
@@ -68,7 +66,6 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
     Polarization_Array=zeros(histogram_width*100)
 
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    np=pyimport("numpy")
     qnormalized = normalize_kvector(lattice_vectors, q)
 
     for i in 1:mesh
