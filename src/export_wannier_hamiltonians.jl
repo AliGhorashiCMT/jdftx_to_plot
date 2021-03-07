@@ -1,6 +1,7 @@
 using PyCall
 
 function __init__()
+    np = pyimport("numpy")
     py"""   
     def write_map_write_h(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
         import numpy as np
