@@ -86,6 +86,7 @@ export(find_chemical_potential)
 
 export(in_wigner_seitz)
 export(in_brillouin)
+export(hwannier)
 
 greet() = print("Hello World!")
 
