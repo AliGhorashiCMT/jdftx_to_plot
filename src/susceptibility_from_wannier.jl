@@ -212,7 +212,7 @@ function kramers_kronig(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, hi
 end
 
 "Mostly provided for checking the reciprocity relation between the real and imaginary susceptibilities. Give the real susceptibility to obtain the imaginary susceptibility"
-function kramers_kronig_reverse(ω::REal, re_pol::Array{<:Real, 1}, max_energy::Real, domega::Real) 
+function kramers_kronig_reverse(ω::Real, re_pol::Array{<:Real, 1}, max_energy::Real, domega::Real) 
 
     omegaprime=collect(0:domega:max_energy)
     sum(-domega*2/π*re_pol.*ω./(omegaprime.^2 .- (ω+ω*0.03im)^2))
