@@ -1,4 +1,3 @@
-using DSP
 function smooth(y; win_len=40, win_method=2)
     if win_len%2==0
       win_len+=1 # only use odd numbers
