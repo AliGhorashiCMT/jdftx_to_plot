@@ -134,8 +134,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
                 for upper in valence_bands+1:nbands
                     Elower = E1[lower]
                     Eupper = E2[upper]
-                    Vlower =  V1[lower]
-                    overlap=(np.abs(np.dot(Vk[:, lower], np.conj(Vkq[:, upper]))))^2;
+                    overlap=(np.abs(np.dot(V1[:, lower], np.conj(V2[:, upper]))))^2;
                     f1=np.heaviside( μ-Elower, 0.5)
                     f2=np.heaviside( μ-Eupper, 0.5)
 
@@ -172,8 +171,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
                 for upper in valence_bands+1:nbands
                     Elower = E1[lower]
                     Eupper = E2[upper]
-                    Vlower =  V1[lower]
-                    overlap=(np.abs(np.dot(Vk[:, lower], np.conj(Vkq[:, upper]))))^2;
+                    overlap=(np.abs(np.dot(V1[:, lower], np.conj(V2[:, upper]))))^2;
                     f1=np.heaviside( μ-Elower, 0.5)
                     f2=np.heaviside( μ-Eupper, 0.5)
 
