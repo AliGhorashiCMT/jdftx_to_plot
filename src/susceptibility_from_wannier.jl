@@ -3,7 +3,7 @@ Returns the imaginary value of the polarization at frequency omega (eV) and wave
 Several methods are provided. Wannier and cell map data may be given either through file names or through passing in 
 HWannier and cell-map as dim 3 and dim 2 arrays of floats, respectively.
 """
-function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin=1, mesh=100, histogram_width=100) 
+function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int = 1, mesh::Int = 100, histogram_width::Real = 100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -29,7 +29,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattice_ve
     return Polarization_Array
 end
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -56,7 +56,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 end
 
 
-function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin=1, mesh=100, histogram_width=100)
+function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin::Int = 1, mesh::Int = 100, histogram_width::Real = 100)
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -300,8 +300,6 @@ function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, la
 
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
-
-    pyintegration=pyimport("scipy.integrate")
 
     brillouin_area=brillouin_zone_area(lattice_vectors) 
     

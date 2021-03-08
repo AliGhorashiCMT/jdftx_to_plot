@@ -4,7 +4,7 @@ function cell_vectors(lattice_file::String)
 end
 
 "reciprocal_vectors returns the reciprocal lattice vectors when supplied with three real space vectors"
-function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
+function reciprocal_vectors(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
     
     a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
 
@@ -16,7 +16,7 @@ function reciprocal_vectors(lattice_vectors::Array{Array{T, 1},1}) where T <: Nu
 
 end
 
-function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{R, 1}) where {T<:Number, R<:Number}
+function in_wigner_seitz(lattice_vectors::Array{<:Array{<:Real, 1},1}, rvec::Array{<:Real, 1}) 
     vec1 = lattice_vectors[1]
     vec2 = lattice_vectors[2]
     vec3 = lattice_vectors[3]
@@ -40,7 +40,7 @@ function in_wigner_seitz(lattice_vectors::Array{Array{T, 1},1}, rvec::Array{R, 1
 
 end
 
-function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:Number, R<:Number}
+function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{<:Real, 1}) 
     
     vec1 = lattice_vectors.rvectors[:, 1]*bohrtoangstrom
     vec2 = lattice_vectors.rvectors[:, 2]*bohrtoangstrom
@@ -58,7 +58,6 @@ function in_wigner_seitz(lattice_vectors::lattice, rvec::Array{R, 1}) where {T<:
         end
     end
 
-    #print(minimum(distances_array))
     if euclidean(rvec, [0, 0, 0]) < minimum(distances_array)
         return true
     else 
@@ -69,7 +68,7 @@ end
 
 
 
-function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{R, 1}) where {T<:Number, R<:Number}
+function in_brillouin(lattice_vectors::Array{<:Array{<:Real, 1},1}, kvec::Array{<:Real, 1}) 
     
     bvectors = reciprocal_vectors(lattice_vectors)
 
@@ -96,7 +95,7 @@ function in_brillouin(lattice_vectors::Array{Array{T, 1},1}, kvec::Array{R, 1}) 
 
 end
 
-function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Number, R<:Number}
+function in_brillouin(lattice_vectors::lattice, kvec::Array{<:Real, 1}) 
     
     lattice_vectors_array = [lattice_vectors.rvectors[:, 1]*bohrtoangstrom,lattice_vectors.rvectors[:, 2]*bohrtoangstrom, lattice_vectors.rvectors[:, 3]*bohrtoangstrom ]
     bvectors = reciprocal_vectors(lattice_vectors_array)
@@ -125,7 +124,7 @@ function in_brillouin(lattice_vectors::lattice, kvec::Array{R, 1}) where {T<:Num
 end
 
 "returns the normalized kvector (in the basis of the reciprocal lattice vectors)"
-function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_kvector) where T <: Number
+function normalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, unnormalized_kvector)
 
     b1, b2, b3 = reciprocal_vectors(lattice_vectors)
 
@@ -137,7 +136,7 @@ function normalize_kvector(lattice_vectors::Array{Array{T, 1},1}, unnormalized_k
 
 end
 
-function unnormalize_kvector(lattice_vectors::Array{Array{T, 1},1}, normalized_kvector) where T <: Number
+function unnormalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, normalized_kvector) 
 
     b1, b2, b3 = reciprocal_vectors(lattice_vectors)
 
@@ -149,7 +148,7 @@ function unnormalize_kvector(lattice_vectors::Array{Array{T, 1},1}, normalized_k
 
 end
 
-function unit_cell_area(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
+function unit_cell_area(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
     a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
 
     A=sqrt(dot(cross(a1, a2), cross(a1, a2)))
@@ -167,7 +166,7 @@ end
 
 
 "Returns the 2d area of the lattice. The assumption is made that the lattice is in the x-y plane"
-function brillouin_zone_area(lattice_vectors::Array{Array{T, 1},1}) where T <: Number
+function brillouin_zone_area(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
 
     b_vectors=reciprocal_vectors(lattice_vectors)
 
