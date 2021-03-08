@@ -41,9 +41,8 @@ end
 
 
 function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_file::String, ϵ::T; δ=.1, kwargs...) where T<:Number
-    integrate_scipy = pyimport("scipy.integrate")
 
-    nquad = integrate_scipy.nquad
+    nquad = pyintegrate.nquad
 
     optdict=Dict()
 
@@ -200,6 +199,25 @@ function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Fl
     return xenergies, yoccupations
 
 end
+
+function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands; mesh=100, histogram_width=100, energy_range=10, offset=0)
+    
+    doss = density_of_states_wannier(HWannier, cell_map, nbands, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
+    totalstates = []
+    for i in 1:length(doss)
+        push!(totalstates, [i/histogram_width-offset, sum(doss[1:i]*1/histogram_width)])
+    end
+    xenergies = []
+    yoccupations = []
+    for i in 1:length(doss)
+        push!(xenergies, totalstates[i][1])
+        push!(yoccupations, totalstates[i][2])
+    end
+
+    return xenergies, yoccupations
+
+end
+
 
 function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh=100, histogram_width=100, energy_range=2)
     
