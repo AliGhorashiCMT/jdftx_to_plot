@@ -1,5 +1,14 @@
 module jdftx_to_plot
 
+#dependencies
+using Plots
+using PyCall
+using LinearAlgebra 
+using Distances
+using HCubature
+using QuadGK
+using DSP
+
 #= We define all constants required for future calculations.
 hbar is given in ev*seconds. 
 c, the speed of light, is given in angstroms/second

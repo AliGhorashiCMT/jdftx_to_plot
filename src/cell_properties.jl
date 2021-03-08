@@ -1,8 +1,3 @@
-using Plots
-using PyCall
-using LinearAlgebra 
-using Distances
-
 function cell_vectors(lattice_file::String)
     run(`cat $lattice_file`);
     run(`pwd`)

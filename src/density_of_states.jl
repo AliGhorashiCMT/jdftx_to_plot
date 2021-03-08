@@ -1,9 +1,3 @@
-using Plots
-using PyCall
-using LinearAlgebra 
-using Distances
-using HCubature
-
 function density_of_states(dosfile_1::String, dosfile_2::String; kwargs... )
    
     plot(np.loadtxt(dosfile_1)[:, 1]*27.2, np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)

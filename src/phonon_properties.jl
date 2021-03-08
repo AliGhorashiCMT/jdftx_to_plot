@@ -1,8 +1,3 @@
-using Plots
-using PyCall
-using LinearAlgebra 
-using Distances
-
 "Plots the phonon band dispersion at the kpoints supplied"
 function plot_phonons(cell_map::String, phononOmegaSq::String, kpoints::String)
     np=pyimport("numpy")

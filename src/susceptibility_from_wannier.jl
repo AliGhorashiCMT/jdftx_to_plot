@@ -1,10 +1,3 @@
-using Plots
-using PyCall
-using LinearAlgebra 
-using Distances
-using HCubature
-using QuadGK
-
 "returns the imaginary value of the polarization at frequency omega (eV) and wavevector q (inverse angstrom)"
 function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
     

@@ -1,5 +1,3 @@
-using PyCall
-
 const np = PyNULL()
 const interpol = PyNULL()
 const pyintegrate = PyNULL()
