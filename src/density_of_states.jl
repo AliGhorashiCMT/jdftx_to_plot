@@ -11,22 +11,21 @@ function density_of_states(dosfile_1::String; kwargs...)
 
 end
 
-function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String, ϵ::T; δ=.1, kwargs...) where T<:Number
+function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ=.1, kwargs...) 
 
     1/π*hcubature(vec->imag(-1/(ϵ-wannier_bands(wannier_file, cell_map_file, [vec[1], vec[2], 0])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
 
 end
 
-function density_of_states_wannier_quad(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵ::T; δ=.1, kwargs...) where T<:Number
+function density_of_states_wannier_quad(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵ::Real; δ::Real = 0.1, kwargs...)
 
     1/π*hcubature(vec->imag(-1/(ϵ-wannier_bands(HWannier, cell_map, [vec[1], vec[2], 0])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
 
 end
 
-function density_of_states_wannier_scipy_quad(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵ::T; δ=.1, kwargs...) where T<:Number
-    integrate_scipy = pyimport("scipy.integrate")
+function density_of_states_wannier_scipy_quad(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵ::Real; δ::Real = 0.1, kwargs...) 
 
-    nquad = integrate_scipy.nquad
+    nquad = pyintegrate.nquad
 
     optdict=Dict()
 
@@ -40,7 +39,7 @@ end
 
 
 
-function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ=.1, kwargs...) 
+function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ::Real = 0.1, kwargs...) 
 
     nquad = pyintegrate.nquad
 
@@ -55,7 +54,7 @@ function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_fil
 end
 
 
-function density_of_states_wannier_quad_check(wannier_file::String, cell_map_file::String, ϵmin::T, ϵmax::R, numpoints::Int; δ=.1, kwargs...) where {T<:Number, R<:Number}
+function density_of_states_wannier_quad_check(wannier_file::String, cell_map_file::String, ϵmin::Real, ϵmax::Real, numpoints::Int; δ=.1, kwargs...) 
 
     ϵdif=(ϵmax-ϵmin)/numpoints
     dosarray=[]
@@ -67,7 +66,7 @@ function density_of_states_wannier_quad_check(wannier_file::String, cell_map_fil
 
 end
 
-function density_of_states_wannier_quad_check(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵmin::T, ϵmax::R, numpoints::Int; δ=.1, kwargs...) where {T<:Number, R<:Number}
+function density_of_states_wannier_quad_check(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵmin::Real, ϵmax::Real, numpoints::Int; δ::Real = 0.1, kwargs...) 
 
     ϵdif=(ϵmax-ϵmin)/numpoints
     dosarray=[]
@@ -80,7 +79,7 @@ function density_of_states_wannier_quad_check(HWannier::Array{Float64, 3}, cell_
 end
 
 
-function density_of_states_wannier(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function density_of_states_wannier(wannier_file::String, cell_map_file::String; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
 
     WannierDOS=np.zeros(histogram_width*energy_range)
 
@@ -97,7 +96,7 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String; 
 
 end
 
-function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
 
     WannierDOS=np.zeros(histogram_width*energy_range)
 
@@ -115,7 +114,7 @@ function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{
 end
 
 
-function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; exclude_bands=[], mesh=100, histogram_width=100, energy_range=10, offset=0)
+function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; exclude_bands=Int[], mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
 
     WannierDOS=np.zeros(histogram_width*energy_range)
 
@@ -139,7 +138,7 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String, 
 
 end
 
-function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int; exclude_bands=[], mesh=100, histogram_width=100, energy_range=10, offset=0)
+function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int; exclude_bands = Int[], mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
 
     WannierDOS=np.zeros(histogram_width*energy_range)
 
@@ -149,6 +148,7 @@ function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{
             ϵ=  wannier_bands(HWannier, cell_map, [x_mesh/mesh, y_mesh/mesh, 0], nbands)
             for band in 1:nbands
                 if band ∉ exclude_bands
+
                     ϵ_band = ϵ[band]
                     WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]=WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]+histogram_width*(1/mesh)^2
             
@@ -164,7 +164,7 @@ function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{
 end
 
 
-function find_chemical_potential(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function find_chemical_potential(wannier_file::String, cell_map_file::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
     
     doss = density_of_states_wannier(wannier_file, cell_map_file, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
     totalstates = []
@@ -182,7 +182,7 @@ function find_chemical_potential(wannier_file::String, cell_map_file::String; me
 
 end
 
-function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}; mesh::Int=100, histogram_width::Int=100, energy_range::Real=10, offset::Real=0)
     
     doss = density_of_states_wannier(HWannier, cell_map, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
     totalstates = []
@@ -200,7 +200,7 @@ function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Fl
 
 end
 
-function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int; mesh::Real = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
     
     doss = density_of_states_wannier(HWannier, cell_map, nbands, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
     totalstates = []
@@ -219,7 +219,7 @@ function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Fl
 end
 
 
-function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh=100, histogram_width=100, energy_range=2)
+function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
     
     doss = phonon_density_of_states(cell_map, phononOmegaSq; mesh=mesh, histogram_width=histogram_width, energy_range=energy_range)
     totalstates = []
@@ -238,8 +238,7 @@ function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh=100, his
 
 end
 
-
-function density_of_states_wannier(wannier_file_up::String, cell_map_file_up::String, wannier_file_dn::String, cell_map_file_dn::String,; mesh=100, histogram_width=100, energy_range=10, offset=0)
+function density_of_states_wannier(wannier_file_up::String, cell_map_file_up::String, wannier_file_dn::String, cell_map_file_dn::String,; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
    
     WannierDOSUp=np.zeros(histogram_width*energy_range)
     WannierDOSDn=np.zeros(histogram_width*energy_range)
@@ -263,7 +262,7 @@ end
 #Next, functions for the calculation of the phonon density of states
 
 "Returns the phonon density of states (phonons per unit energy per unit cell)"
-function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh=100, histogram_width=100, energy_range=2)
+function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
 
     PhononDOS=np.zeros(histogram_width*energy_range)
 
