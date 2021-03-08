@@ -3,7 +3,19 @@ function cell_vectors(lattice_file::String)
     run(`pwd`)
 end
 
-"reciprocal_vectors returns the reciprocal lattice vectors when supplied with three real space vectors"
+"""Returns the reciprocal lattice vectors when supplied with three real space vectors
+
+
+#Examples
+```julia-repl
+julia> reciprocal_vectors([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+([6.283185307179586, 0.0, 0.0], [0.0, 6.283185307179586, 0.0], [0.0, 0.0, 6.283185307179586])
+```
+```julia-repl
+julia> reciprocal_vectors([[1, 0, 0], [-1/2, √3/2, 0], [0, 0, 1]])
+([6.283185307179586, 3.6275987284684357, -0.0], [0.0, 7.255197456936871, 0.0], [0.0, -0.0, 0.6283185307179586])
+```
+"""
 function reciprocal_vectors(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
     
     a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
@@ -123,8 +135,20 @@ function in_brillouin(lattice_vectors::lattice, kvec::Array{<:Real, 1})
 
 end
 
-"returns the normalized kvector (in the basis of the reciprocal lattice vectors)"
-function normalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, unnormalized_kvector)
+"""Returns the normalized kvector (in the basis of the reciprocal lattice vectors)
+
+```
+julia-repl
+julia> a = 1.42*√3; K=[4π/(3*a), 0, 0]
+julia> graphene_lattice = [[a, 0, 0], [-a/2, a*√3/2, 0], [0, 0, 20]]
+julia> normalize_kvector(graphene_lattice, [K, 0, 0])
+3-element Array{Float64,1}:
+  0.6666666666666665
+ -0.33333333333333326
+  0.0
+```
+"""
+function normalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, unnormalized_kvector::Array{<:Real, 1})
 
     b1, b2, b3 = reciprocal_vectors(lattice_vectors)
 
@@ -148,6 +172,21 @@ function unnormalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, norma
 
 end
 
+"""
+Returns the area of the unit cell (required for polarization calculations).
+
+Note that if an object of type lattice is passed, the units are assumed to be in Bohr. 
+
+Results are always given in inverse angstroms squared. 
+```julia-repl
+julia> unit_cell_area([[4, 0, 0], [0, 2, 0], [0, 0, 1]])
+8.0
+julia> a = 1.42*sqrt(3)
+julia> graphene_lattice = lattice([a -a/2 0; 0 a*√3/2 0; 0 0 20])
+julia> unit_cell_area(graphene_lattice)
+1.467001287260355
+```
+"""
 function unit_cell_area(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
     a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
 
@@ -165,7 +204,17 @@ function unit_cell_area(lattice_vectors::lattice)
 end
 
 
-"Returns the 2d area of the lattice. The assumption is made that the lattice is in the x-y plane"
+"""Returns the 2d area of the lattice. The assumption is made that the lattice is in the x-y plane
+Note that this is equivalent to just dividing 4π^2 by the corresponding unit cell area. 
+```julia-repl
+julia> a = 1.42*sqrt(3)
+julia> graphene_lattice = [[a, 0, 0], [-a/2, a*√3/2, 0], [0, 0, 20]]
+julia> brillouin_zone_area(graphene_lattice)
+julia> 7.535831194556713
+julia> unit_cell_area(graphene_lattice)^-1*(4π^2)
+julia> 7.535831194556713
+```
+"""
 function brillouin_zone_area(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
 
     b_vectors=reciprocal_vectors(lattice_vectors)
