@@ -331,7 +331,7 @@ end
 
 
 "Direct 2D integration for Epsilon with HCubature"
-function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
+function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
 
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
@@ -344,7 +344,7 @@ function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, la
 
 end
 
-function direct_epsilon_cubature(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
+function direct_epsilon_cubature(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
 
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
