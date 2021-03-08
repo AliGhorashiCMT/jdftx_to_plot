@@ -1,4 +1,3 @@
-
 function make_supercell(small_lattice::lattice, small_ionpos::ionpos, cell_mult::Array{Int, 1})
     
     mult1, mult2, mult3 = cell_mult
