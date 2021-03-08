@@ -61,7 +61,7 @@ include("susceptibility_from_wannier.jl")
 export im_polarization, kramers_kronig, kramers_kronig_scipy, kramers_kronig_quadgk, im_polarization_cubature, 
 return_2d_epsilon, return_2d_epsilon_scipy, direct_epsilon,
 direct_epsilon_cubature, return_2d_epsilon_quadgk,
-kramers_kronig_reverse_scipy, kramers_kronig_reverse_quadgk, kramers_kronig_reverse
+kramers_kronig_reverse_scipy, kramers_kronig_reverse_quadgk, kramers_kronig_reverse, density_of_states_wannier_quad_check
 
 #=
 Methods to plot band structures- either from direct DFT data or from wannier tight binding data 
