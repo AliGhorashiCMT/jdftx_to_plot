@@ -3,7 +3,7 @@ Returns the imaginary value of the polarization at frequency omega (eV) and wave
 Several methods are provided. Wannier and cell map data may be given either through file names or through passing in 
 HWannier and cell-map as dim 3 and dim 2 arrays of floats, respectively.
 """
-function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Number, Q<:Number, S<:Number}
+function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin=1, mesh=100, histogram_width=100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -56,7 +56,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 end
 
 
-function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, S<:Real}
+function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin=1, mesh=100, histogram_width=100)
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -85,7 +85,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattvector
 end
 
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattvectors::lattice, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, S<:Real}
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -114,7 +114,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 end
 
 
-function im_polarization(wannier_file::String, cell_map_file::String, nbands::Int, valence_bands::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, Q<:Real, S<:Real}
+function im_polarization(wannier_file::String, cell_map_file::String, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -152,7 +152,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
 end
 
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; spin=1, mesh=100, histogram_width=100) where {T<:Real, Q<:Real, S<:Real}
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -190,37 +190,36 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 end
 
 
-function im_polarization(wannier_file_up::String, wannier_file_dn::String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; kwargs...) where {T<:Number, Q<:Number, S<:Number}
+function im_polarization(wannier_file_up::String, wannier_file_dn::String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; kwargs...) 
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(wannier_file_up, cell_map_file_up, nbands, valence_bands_up, lattice_vectors, q, μ; kwargs... )
     spin_dn_pol = im_polarization(wannier_file_dn, cell_map_file_dn, nbands, valence_bands_dn, lattice_vectors, q, μ; kwargs... )
     return (spin_up_pol + spin_dn_pol)
 end
 
-function im_polarization(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, μ::S; kwargs...) where {T<:Number, Q<:Number, S<:Number}
+function im_polarization(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; kwargs...)
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(wannier_file_up, cell_map_file_up, nbands, valence_bands_up, lattice_vectors, q, μ; kwargs... )
     spin_dn_pol = im_polarization(wannier_file_dn, cell_map_file_dn, nbands, valence_bands_dn, lattice_vectors, q, μ; kwargs... )
     return (spin_up_pol + spin_dn_pol)
 end
-
 
 "Applies the kramers-kronig relations onto a 1 dimensional array of numbers consisting of the imaginary value of the polarization to return the real value of polarization"
-function kramers_kronig(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+function kramers_kronig(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, histogram_width::Real) 
     omegaprime=collect(1:histogram_width*max_energy).*1/histogram_width
     sum(1/histogram_width*2/π*im_pol.*omegaprime./(omegaprime.^2 .- (ω+ω*0.03im)^2))
 
 end
 
 "Mostly provided for checking the reciprocity relation between the real and imaginary susceptibilities. Give the real susceptibility to obtain the imaginary susceptibility"
-function kramers_kronig_reverse(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+function kramers_kronig_reverse(ω::REal, re_pol::Array{<:Real, 1}, max_energy::Real, domega::Real) 
 
     omegaprime=collect(0:domega:max_energy)
     sum(-domega*2/π*re_pol.*ω./(omegaprime.^2 .- (ω+ω*0.03im)^2))
 
 end
 
-function kramers_kronig_reverse_scipy(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+function kramers_kronig_reverse_scipy(ω::Real, re_pol::Array{<:Real, 1}, max_energy::Real, domega::Real, max_energy_integration::Real; kwargs...) 
     interpolated_res=interpol.interp1d(0:domega:max_energy, re_pol)
     
     ErrorAbs=1e-20
@@ -231,7 +230,7 @@ function kramers_kronig_reverse_scipy(ω::T, re_pol::Array{R, 1}, max_energy::S,
 end
 
 "Applies the kramers-kronig relations but with scipy's cauchy weight; kwargs for scipy.integrate.quad supported"
-function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogram_width::Q, max_energy_integration; kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+function kramers_kronig_scipy(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real; kwargs...) 
     interpolated_ims=interpol.interp1d(0:1/histogram_width:(max_energy-1/histogram_width), im_pol)
     
     ErrorAbs=1e-20
@@ -241,7 +240,7 @@ function kramers_kronig_scipy(ω::T, im_pol::Array{R, 1}, max_energy::S, histogr
 
 end
 
-function kramers_kronig_reverse_quadgk(ω::T, re_pol::Array{R, 1}, max_energy::S, domega::Q, max_energy_integration; δ=.1, kwargs...) where {T<:Number, R<:Number, Q<:Number, S<:Number}
+function kramers_kronig_reverse_quadgk(ω::Real, re_pol::Array{<:Real, 1}, max_energy::Real, domega::Real, max_energy_integration::Real ; δ::Real = 0.1, kwargs...) 
     
     interpolated_res=interpol.interp1d(0:domega:max_energy, re_pol)
     
@@ -251,7 +250,7 @@ function kramers_kronig_reverse_quadgk(ω::T, re_pol::Array{R, 1}, max_energy::S
 
 end
 
-function kramers_kronig_quadgk(ω::Real, im_pol::Array{R, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real; δ=.1, kwargs...) where {R<:Number}
+function kramers_kronig_quadgk(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real; δ::Real = 0.1, kwargs...) 
     
     interpolated_ims=interpol.interp1d(0:1/histogram_width:(max_energy-1/histogram_width), im_pol)
     
@@ -277,7 +276,7 @@ function epsilon_integrand_imaginary(wannier_file, cell_map_file, k₁, k₂, q,
     imag(1/(2π)^2*spin*2*f*(ϵ₁-ϵ₂)/((ϵ₁-ϵ₂)^2-(ω+1im*ϵ)^2))
 end
 
-function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, ω::R, μ::S; spin=1, ϵ=0.01, kwargs...) where {T<:Number, Q<:Number, S<:Number, R<:Number}
+function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...) 
     
     kwargsdict=Dict()
 
@@ -297,7 +296,7 @@ function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vec
 end
 
 "Direct 2D integration for Epsilon with HCubature"
-function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, ω::R, μ::S; spin=1, ϵ=0.01, kwargs...) where {T<:Number, Q<:Number, S<:Number, R<:Number}
+function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
 
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
@@ -313,7 +312,7 @@ function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, la
 end
 
 "Find the imaginary value of polarization through hcubature "
-function im_polarization_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{Q, 1},1}, q::Array{T, 1}, ω::R, μ::S; spin=1, ϵ=0.01, kwargs...) where {T<:Number, Q<:Number, S<:Number, R<:Number}
+function im_polarization_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int=1, ϵ::Real=0.01, kwargs...) 
 
     qnormalized = normalize_kvector(lattice_vectors, q)
 
@@ -326,15 +325,15 @@ function im_polarization_cubature(wannier_file::String, cell_map_file::String, l
 end
 
 "returns the non-local, non-static dielectric function"
-function return_2d_epsilon(ω::Real, im_pol::Array{R, 1}, max_energy::Real, histogram_width::Real) where {R<:Number}
+function return_2d_epsilon(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, histogram_width::Real) 
     return 1-e²ϵ/(2q)*kramers_kronig(ω, im_pol, max_energy, histogram_width)
 end
 
 "returns the non-local, non-static dielectric function using scipy functionality"
-function return_2d_epsilon_scipy(ω::Real, im_pol::Array{R, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real) where {R<:Number}
+function return_2d_epsilon_scipy(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real) 
     return 1-e²ϵ/(2q)*kramers_kronig_scipy(ω, im_pol, max_energy, histogram_width, max_energy_integration)
 end
 
-function return_2d_epsilon_quadgk(ω::Real, im_pol::Array{R, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real; δ=0.1, kwargs... ) where {R<:Number}
+function return_2d_epsilon_quadgk(ω::Real, im_pol::Array{<:Real, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real; δ::Real = 0.1, kwargs... )
     return 1-e²ϵ/(2q)*kramers_kronig_quadgk(ω, im_pol, max_energy, histogram_width, max_energy_integration; δ, kwargs...)  
 end

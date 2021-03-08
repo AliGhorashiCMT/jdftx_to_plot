@@ -40,7 +40,7 @@ end
 
 
 
-function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_file::String, ϵ::T; δ=.1, kwargs...) where T<:Number
+function density_of_states_wannier_scipy_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ=.1, kwargs...) 
 
     nquad = pyintegrate.nquad
 
