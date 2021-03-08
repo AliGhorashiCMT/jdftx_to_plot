@@ -37,7 +37,7 @@ Methods provided for normalizing the kvectors in the basis of reciprocal lattice
 include("cell_properties.jl")
 export unnormalize_kvector, normalize_kvector, brillouin_zone_area,
 in_wigner_seitz, in_brillouin, reciprocal_vectors, ion_positions, plot_lattice, 
-cell_vectors
+cell_vectors, unit_cell_area
 
 include("phonon_properties.jl")
 export plot_phonons, phonon_dispersion
