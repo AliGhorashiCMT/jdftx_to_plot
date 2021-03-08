@@ -335,6 +335,6 @@ function return_2d_epsilon_scipy(ω::Real, im_pol::Array{R, 1}, max_energy::Real
     return 1-e²ϵ/(2q)*kramers_kronig_scipy(ω, im_pol, max_energy, histogram_width, max_energy_integration)
 end
 
-function return_2d_epsilon_quadgk(ω::Real, im_pol::Array{R, 1}, max_energy::S, histogram_width::Real, max_energy_integration::Real; δ=0.1, kwargs... ) where {R<:Number}
+function return_2d_epsilon_quadgk(ω::Real, im_pol::Array{R, 1}, max_energy::Real, histogram_width::Real, max_energy_integration::Real; δ=0.1, kwargs... ) where {R<:Number}
     return 1-e²ϵ/(2q)*kramers_kronig_quadgk(ω, im_pol, max_energy, histogram_width, max_energy_integration; δ, kwargs...)  
 end
