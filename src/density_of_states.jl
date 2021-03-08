@@ -68,6 +68,18 @@ function density_of_states_wannier_quad_check(wannier_file::String, cell_map_fil
 
 end
 
+function density_of_states_wannier_quad_check(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, ϵmin::T, ϵmax::R, numpoints::Int; δ=.1, kwargs...) where {T<:Number, R<:Number}
+
+    ϵdif=(ϵmax-ϵmin)/numpoints
+    dosarray=[]
+    for i in 0:numpoints
+        ϵ=ϵmin+ϵdif*i
+        push!(dosarray, density_of_states_wannier_quad(HWannier, cell_map, ϵ; δ, kwargs... ))
+    end
+    return sum(ϵdif*dosarray)
+
+end
+
 
 function density_of_states_wannier(wannier_file::String, cell_map_file::String; mesh=100, histogram_width=100, energy_range=10, offset=0)
 
