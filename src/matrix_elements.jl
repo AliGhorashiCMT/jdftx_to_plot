@@ -81,3 +81,8 @@ function phmatrixelements(k1, k2)
     py"calcEph"(k1, k2) 
 
 end
+
+
+#= 
+Next, we will examine the momentum matrix elements
+=#
