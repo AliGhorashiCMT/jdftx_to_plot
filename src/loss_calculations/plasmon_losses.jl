@@ -1,6 +1,6 @@
 #We calculate losses at 0th (landau damping), 1st, and 2nd orders in phonon-assisted damping
 
-function landau_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{S, 1},1}, histogram_length::Int, mesh::Int, q::Array{T, 1}, μ::R, offset, energy_range) where {T<:Number, R<:Number, S<:Number}
+function landau_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_length::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
     lossarray = zeros(histogram_width*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
@@ -19,7 +19,26 @@ function landau_damping(wannier_file::String, cell_map_file::String, lattice_vec
     return lossarray
 end
 
-function first_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{S, 1}, 1}, q::Array{T, 1}, μ::R, ϵphonon, gph; histogram_length=100, mesh=30, energy_range=10) where {T<:Number, R<:Number, S<:Number}
+function landau_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_length::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
+    lossarray = zeros(histogram_width*energy_range)
+    qabs = sqrt(sum(q.^2))
+    qnormalized = normalize_kvector(lattice_vectors, q)
+    for xmesh in 1:mesh
+        for ymesh in 1:mesh
+            ϵ1 = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0])
+            ϵ2 = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+qnormalized)
+            f1 = ϵ1<μ ? 1 : 0
+            f2 = ϵ2>μ ? 1 : 0
+            if f1>0 && f2>0
+                ω = ϵ2-ϵ1
+                lossarray[round(Int, (ω+offset)*histogram_length  )] = lossarray[round(Int, (ω+offset)*histogram_length  )] + 2π/ħ*e²ϵ/4*ω/qabs*f1*f2*(1/mesh)^2*histogram_length
+            end
+        end
+    end
+    return lossarray
+end
+
+function first_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1}, 1}, q::Array{<:Real, 1}, μ::Real, ϵphonon::Real, gph::Real; histogram_length::Real=100, mesh::Int=30, energy_range::Real=10) 
     lossarray = zeros(histogram_length*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
@@ -54,7 +73,7 @@ end
 
 
 
-function second_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{Array{S, 1}, 1}, q::Array{T, 1}, μ::R, ϵphonon, gph; histogram_length=100, mesh=30, energy_range=10) where {T<:Number, R<:Number, S<:Number}
+function second_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1}, 1}, q::Array{<:Real, 1}, μ::Real, ϵphonon::Real, gph::Real; histogram_length::Real=100, mesh::Int=30, energy_range::Real=10) 
     
 
     #= In all cases, we consider an initial state with an electron at kx, ky = xmesh/mesh, ymesh/mesh and a plasmon with wavevector q 
@@ -118,7 +137,7 @@ function second_order_damping(wannier_file::String, cell_map_file::String, latti
 end
 
 
-function second_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{Array{S, 1}, 1}, q::Array{T, 1}, μ::R, ϵphonon, gph; histogram_length=100, mesh=30, energy_range=10) where {T<:Number, R<:Number, S<:Number}
+function second_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1}, 1}, q::Array{<:Real, 1}, μ::Real, ϵphonon::Real, gph::Real; histogram_length::Real=100, mesh::Int=30, energy_range::Real=10) 
     
 
     #= In all cases, we consider an initial state with an electron at kx, ky = xmesh/mesh, ymesh/mesh and a plasmon with wavevector q 
