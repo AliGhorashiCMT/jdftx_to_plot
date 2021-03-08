@@ -160,7 +160,25 @@ function normalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, unnorma
 
 end
 
-function unnormalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, normalized_kvector) 
+"""
+Returns the wavevector in inverse angstroms when provided the wavevector in the basis of reciprocal lattice vectors
+
+
+#Examples
+```
+julia-repl
+julia> a = 1.42*√3
+julia> graphene_lattice = [[a, 0, 0], [-a/2, a*√3/2, 0], [0, 0, 20]]
+julia> unnormalize_kvector(graphene_lattice, [2/3, -1/3, 0])
+3-element Array{Float64,1}:
+ 1.7030979945861202
+ 0.0
+ 0.0
+ julia> 4π/(3a)
+ 1.70309799458612
+```
+"""
+function unnormalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, normalized_kvector::Array{<:Real, 1}) 
 
     b1, b2, b3 = reciprocal_vectors(lattice_vectors)
 
