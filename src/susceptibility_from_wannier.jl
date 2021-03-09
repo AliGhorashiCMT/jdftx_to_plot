@@ -188,6 +188,39 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 end
 
 
+
+"""
+For susceptibility calculations at finite temperature. Temperature is assumed to be provided in Kelvin. 
+"""
+function im_polarization_finite_temperature(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real, T::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100) 
+    
+    Polarization_Array=zeros(histogram_width*100)
+
+    V=(2π)^2/brillouin_zone_area(lattice_vectors)
+    qnormalized = normalize_kvector(lattice_vectors, q)
+
+    for i in 1:mesh
+        for j in 1:mesh
+            kvector=[i/mesh, j/mesh, 0]
+            E1 = wannier_bands(HWannier, cell_map, kvector  )
+            E2 = wannier_bands(HWannier, cell_map, kvector+qnormalized  )
+            
+            f1=1/(1+exp((E1-μ)/(kB*T)))
+            f2=1/(1+exp((E2-μ)/(kB*T)))
+
+            DeltaE=E2-E1
+            if DeltaE>0
+                Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*(1/mesh)^2*histogram_width*spin
+            end
+        end
+    end
+
+    return Polarization_Array
+end
+
+
+
+
 function im_polarization(wannier_file_up::String, wannier_file_dn::String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; kwargs...) 
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(wannier_file_up, cell_map_file_up, nbands, valence_bands_up, lattice_vectors, q, μ; kwargs... )

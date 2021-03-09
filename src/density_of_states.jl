@@ -219,6 +219,24 @@ function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Fl
 end
 
 
+function finite_temperature_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, T::Real; mesh::Real = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
+    
+    doss = density_of_states_wannier(HWannier, cell_map, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
+    occupations_array = Float64[]
+
+    for i in 1:length(doss)
+        μ = i/histogram_width-offset
+        Fermi = x -> 1/(exp(x-μ)/(kB*T))
+
+        Occupations= Fermi.((1/histogram_width-offset):1/histogram_width:(length(doss)/histogram_width-offset))
+        push!(occupations_array, sum(Occupations.*doss))
+    end
+    
+    return occupations_array
+
+end
+
+
 function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
     
     doss = phonon_density_of_states(cell_map, phononOmegaSq; mesh=mesh, histogram_width=histogram_width, energy_range=energy_range)

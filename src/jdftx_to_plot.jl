@@ -23,8 +23,9 @@ const α = 1/137
 const e²ϵ = 4π*ħ*c*α  
 const bohrtoangstrom = 0.529177
 const eV = 1/27.2114 
+const kB = 8.617333262145e-5
 
-export ħ,c, e²ϵ, bohrtoangstrom
+export ħ,c, α, e²ϵ, bohrtoangstrom, eV, kB
 
 include("input_file_structs.jl")
 export self_consistent_field, non_self_consistent_field, wannier_interpolation,
@@ -48,7 +49,8 @@ tight binding data. Functions also provided for the density of states of phonons
 for calculation of the chemical potential at arbitrary filling. 
 =#
 include("density_of_states.jl")
-export density_of_states, density_of_states_wannier, find_chemical_potential, phonon_density_of_states
+export density_of_states, density_of_states_wannier, find_chemical_potential, phonon_density_of_states,
+finite_temperature_chemical_potential
 
 #=
 Methods to find the susceptibility of materials and their logitudinal dielectric response (real and imaginary).
@@ -61,7 +63,8 @@ include("susceptibility_from_wannier.jl")
 export im_polarization, kramers_kronig, kramers_kronig_scipy, kramers_kronig_quadgk, im_polarization_cubature, 
 return_2d_epsilon, return_2d_epsilon_scipy, direct_epsilon,
 direct_epsilon_cubature, return_2d_epsilon_quadgk,
-kramers_kronig_reverse_scipy, kramers_kronig_reverse_quadgk, kramers_kronig_reverse, density_of_states_wannier_quad_check
+kramers_kronig_reverse_scipy, kramers_kronig_reverse_quadgk, kramers_kronig_reverse, density_of_states_wannier_quad_check,
+im_polarization_finite_temperature
 
 #=
 Methods to plot band structures- either from direct DFT data or from wannier tight binding data 
