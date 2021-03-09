@@ -1,6 +1,6 @@
 #We calculate losses at 0th (landau damping), 1st, and 2nd orders in phonon-assisted damping
 
-function landau_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_length::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
+function landau_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_width::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
     lossarray = zeros(histogram_width*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
@@ -19,7 +19,7 @@ function landau_damping(wannier_file::String, cell_map_file::String, lattice_vec
     return lossarray
 end
 
-function landau_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_length::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
+function landau_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_width::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
     lossarray = zeros(histogram_width*energy_range)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
