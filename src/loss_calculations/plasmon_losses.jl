@@ -173,7 +173,7 @@ function second_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float
                     #Then consider second middle states from one phonon and plasmon absoption first, (phonon absorbed last)
 
                     ϵsecondmiddle2 = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+[xmesh1/mesh, ymesh1/mesh, 0] + qnormalized)        
-                    fsecondmiddle2 = ϵsecondmiddle1>μ ? 1 : 0
+                    fsecondmiddle2 = ϵsecondmiddle2>μ ? 1 : 0
 
 
                     for xmesh2 in 1:mesh
