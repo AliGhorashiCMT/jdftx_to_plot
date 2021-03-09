@@ -219,6 +219,9 @@ function find_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Fl
 end
 
 
+"""
+Returns an array of occupations. Method to find chemical potential at finite temperature. 
+"""
 function finite_temperature_chemical_potential(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, T::Real; mesh::Real = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
     
     doss = density_of_states_wannier(HWannier, cell_map, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
