@@ -90,13 +90,13 @@ function first_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float6
                     ϵmiddle2 = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+[xmesh1/mesh, ymesh1/mesh, 0])        
                     fmiddle2 = ϵmiddle2>μ ? 1 : 0
 
-                    ϵfinal = wannier_bands(wannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+qnormalized+[xmesh1/mesh, ymesh1/mesh, 0])        
+                    ϵfinal = wannier_bands(Hwannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+qnormalized+[xmesh1/mesh, ymesh1/mesh, 0])        
                     
                     ffinal = ϵfinal>μ ? 1 : 0
 
                     ω = ϵfinal-ϵinitial+ϵphonon
                     if ω>0
-                        lossarray[round(Int, ω*histogram_length + 1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*(1/(ϵmiddle-ϵinitial-ω)+1/(ϵmiddle2-ϵinitial+ϵphonon))^2*gph^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*fmiddle1*ffinal*(1/mesh)^4*histogram_length
+                        lossarray[round(Int, ω*histogram_length + 1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*(fmiddle1/(ϵmiddle-ϵinitial-ω)+ fmiddle2/(ϵmiddle2-ϵinitial+ϵphonon))^2*gph^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*ffinal*(1/mesh)^4*histogram_length
                     end
                 end
             end
