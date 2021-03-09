@@ -21,6 +21,7 @@ end
 
 function landau_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, histogram_width::Int, mesh::Int, q::Array{<:Real, 1}, μ::Real, energy_range::Real) 
     lossarray = zeros(histogram_width*energy_range)
+    ucellarea = unit_cell_area(lattice_vectors)
     qabs = sqrt(sum(q.^2))
     qnormalized = normalize_kvector(lattice_vectors, q)
     for xmesh in 1:mesh
@@ -31,7 +32,7 @@ function landau_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}
             f2 = ϵ2>μ ? 1 : 0
             if f1>0 && f2>0
                 ω = ϵ2-ϵ1
-                lossarray[round(Int, ω*histogram_width)+1 ] = lossarray[round(Int, ω*histogram_width)+1] + 2π/ħ*e²ϵ/4*ω/qabs*f1*f2*(1/mesh)^2*histogram_width
+                lossarray[round(Int, ω*histogram_width)+1 ] = lossarray[round(Int, ω*histogram_width)+1] + 2π/ħ*e²ϵ/4*ω/qabs*1/ucellarea*f1*f2*(1/mesh)^2*histogram_width
             end
         end
     end
