@@ -151,7 +151,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
 end
 
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands=[], spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands=Int[], spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -235,7 +235,7 @@ function im_polarization(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float6
     return (spin_up_pol + spin_dn_pol)
 end
 
-function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3}, HWannierdefect::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, cell_map_defect{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real, interband_mesh::Int, intraband_mesh::Int; exclude_bands_up=[], exclude_bands_dn = [], kwargs...)
+function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3}, HWannierdefect::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, cell_map_defect::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real, interband_mesh::Int, intraband_mesh::Int; exclude_bands_up=Int[], exclude_bands_dn = Int[], kwargs...)
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(HWannierup, cell_map_up, nbands, valence_bands_up, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_up; kwargs... )
     spin_dn_pol = im_polarization(HWannierdn, cell_map_dn, nbands, valence_bands_dn, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_dn; kwargs... )
