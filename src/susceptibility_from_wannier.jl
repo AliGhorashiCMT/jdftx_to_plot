@@ -235,7 +235,7 @@ function im_polarization(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float6
     return (spin_up_pol + spin_dn_pol)
 end
 
-function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3}, HWannierdefect::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, cell_map_defect::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real, interband_mesh::Int, intraband_mesh::Int, win_len=50, exclude_bands_up = Int[], exclude_bands_dn = Int[]; kwargs...)
+function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3}, HWannierdefect::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, cell_map_defect::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; interband_mesh::Int=10, intraband_mesh::Int=100, win_len=50, exclude_bands_up = Int[], exclude_bands_dn = Int[], kwargs...)
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(HWannierup, cell_map_up, nbands, valence_bands_up, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_up; kwargs... )
     spin_dn_pol = im_polarization(HWannierdn, cell_map_dn, nbands, valence_bands_dn, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_dn; kwargs... )
