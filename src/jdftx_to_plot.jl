@@ -64,7 +64,7 @@ export im_polarization, kramers_kronig, kramers_kronig_scipy, kramers_kronig_qua
 return_2d_epsilon, return_2d_epsilon_scipy, direct_epsilon,
 direct_epsilon_cubature, return_2d_epsilon_quadgk,
 kramers_kronig_reverse_scipy, kramers_kronig_reverse_quadgk, kramers_kronig_reverse, density_of_states_wannier_quad_check,
-im_polarization_finite_temperature
+im_polarization_finite_temperature, im_polarization_mixedmesh
 
 #=
 Methods to plot band structures- either from direct DFT data or from wannier tight binding data 
