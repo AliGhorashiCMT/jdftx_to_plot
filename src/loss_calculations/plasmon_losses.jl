@@ -188,7 +188,7 @@ function second_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float
                     
                             ffinal = ϵfinal>μ ? 1 : 0
 
-                            ω = ϵfinal-ϵinitial+ϵphonon
+                            ω = ϵfinal-ϵinitial+2*ϵphonon
                             if ω>0
                                 lossarray[round(Int, ω*histogram_length+1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*( 1/(ϵmiddle-ϵinitial-ω)*1/(ϵsecondmiddle2-ϵinitial-ω+ϵphonon)*fmiddle1*fsecondmiddle2 + fmiddle2/(ϵmiddle2-ϵinitial+ϵphonon)*( fsecondmiddle1/(ϵsecondmiddle1-ϵinitial+2*ϵphonon) + fsecondmiddle2/(ϵsecondmiddle2-ϵinitial-ω+ϵphonon) ))^2*gph^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*ffinal*(1/mesh)^6*histogram_length
                             end
