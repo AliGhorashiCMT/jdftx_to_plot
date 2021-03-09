@@ -31,7 +31,7 @@ function landau_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}
             f2 = ϵ2>μ ? 1 : 0
             if f1>0 && f2>0
                 ω = ϵ2-ϵ1
-                lossarray[round(Int, (ω+offset)*histogram_length  )] = lossarray[round(Int, (ω+offset)*histogram_length  )] + 2π/ħ*e²ϵ/4*ω/qabs*f1*f2*(1/mesh)^2*histogram_length
+                lossarray[round(Int, ω*histogram_width)+1 ] = lossarray[round(Int, ω*histogram_width)+1] + 2π/ħ*e²ϵ/4*ω/qabs*f1*f2*(1/mesh)^2*histogram_width
             end
         end
     end
