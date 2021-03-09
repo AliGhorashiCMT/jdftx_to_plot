@@ -229,13 +229,13 @@ function finite_temperature_chemical_potential(HWannier::Array{Float64, 3}, cell
 
     for i in 1:length(doss)
         μ = i/histogram_width-offset
-        Fermi = x -> 1/(exp(x-μ)/(kB*T))
+        Fermi = x -> 1/(exp(x-μ)/(kB*T)+1)
 
         Occupations= Fermi.((1/histogram_width-offset):1/histogram_width:(length(doss)/histogram_width-offset))
-        push!(occupations_array, sum(Occupations.*doss))
+        push!(occupations_array, sum(Occupations.*doss)*1/histogram_width)
     end
     
-    return occupations_array
+    return collect((1/histogram_width-offset):1/histogram_width:(length(doss)/histogram_width-offset)), occupations_array
 
 end
 
