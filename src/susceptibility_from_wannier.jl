@@ -239,7 +239,7 @@ function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Ar
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(HWannierup, cell_map_up, nbands, valence_bands_up, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_up; kwargs... )
     spin_dn_pol = im_polarization(HWannierdn, cell_map_dn, nbands, valence_bands_dn, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_dn; kwargs... )
-    spin_defect_pol = im_polarization(HWannierdefect, cell_mapdefect, lattice_vectors, q, μ, mesh = intraband_mesh; kwargs... )
+    spin_defect_pol = im_polarization(HWannierdefect, cell_map_defect, lattice_vectors, q, μ, mesh = intraband_mesh; kwargs... )
     return (spin_up_pol + spin_dn_pol+spin_defect_pol)
 end
 
