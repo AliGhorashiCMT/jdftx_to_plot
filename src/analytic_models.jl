@@ -1,8 +1,121 @@
 # We will include models for the dielectric function of graphene for future reference 
 
-#We start first with the density of states of graphene 
+#We start first with the density of states of graphene
 
-using QuadGK, HCubature
+function real_neutral(q, w)
+    return -1*q^2/(4*(-w^2+36*q^2)^.5)
+end
+
+function imag_neutral(q, w)
+    return -q^2/(4*(w^2-36*q^2)^.5)
+end
+
+function intraband_1a_real(q, w, mu)
+    return -2*mu/(36*pi)+1/4*(q^2)/sqrt(abs(36*(q^2)-w^2))
+end
+
+function gplus(x)
+    return x*sqrt(x^2-1)-log(x+sqrt(x^2-1))
+end
+
+function gminus(x)
+    if x>=0
+        return x*sqrt(1-x^2)-atan(sqrt(1-x^2)/x)
+    else
+        return -pi+x*sqrt(1-x^2)+atan(sqrt(1-x^2)/(-x))
+    end
+end
+
+function f(q, w)
+    return 1/(4*pi)*q^2/sqrt(abs(w^2-(6*q)^2))
+end
+
+
+function intraband_1b_real(q, w, mu)
+    return -2*mu/(6^2*pi)+f(q, w)*(gplus((2*mu+w)/(6*q))-gplus((2*mu-w)/(6*q)))
+end
+
+
+function intraband_1b_imag(q, w, mu)
+    return f(q, w)*pi
+end
+
+
+function intraband_1a_imag(q, w, mu)
+    return f(q, w)*(gplus((2*mu-w)/(6*q))-gplus((2*mu+w)/(6*q)))
+end
+
+
+function intraband_2a_imag(q, w, mu)
+    return -f(q, w)*gplus((2*mu+w)/(6*q))
+end
+
+
+function intraband_2b_imag(q, w, mu)
+    return -f(q, w)*gminus((w-2*mu)/(6*q))
+end
+
+function intraband_2a_real(q, w, mu)
+    return -2*mu/(36*pi)-f(q, w)*gminus((w-2*mu)/(6*q))
+end
+
+function intraband_2b_real(q, w, mu)
+    return -2*mu/(36*pi)+f(q, w)*gplus((w+2*mu)/(6*q))
+end
+
+function intraband_3a_real(q, w, mu)
+    return -2*mu/(36*pi)+f(q, w)*(gminus((2*mu+w)/(6*q))-gminus((w-2*mu)/(6*q)))
+end
+
+function intraband_3b_real(q, w, mu)
+    return -2*mu/(36*pi)+f(q, w)*(gplus((2*mu+w)/(6*q))-gplus((w-2*mu)/(6*q)))
+end
+
+function intraband_real_total(q, w, mu)
+    if w<6*q && w<2*mu-6*q
+        return intraband_1a_real(q, w, mu)
+    elseif w<-2*mu+6*q
+        return intraband_3a_real(q, w, mu)
+    elseif w<6*q && w>2*mu-6*q && w>-2*mu+6*q
+        return intraband_2a_real(q, w, mu)
+    elseif w>6*q && w<2*mu-6*q
+        return intraband_1b_real(q, w, mu)
+    elseif w>6*q && w>2*mu-6*q && w<2*mu+6*q
+        return intraband_2b_real(q, w, mu)
+    elseif w>2*mu+6*q
+        return intraband_3b_real(q, w, mu)
+    else
+        return 0
+    end
+end
+
+function intraband_imag_total(q, w, mu)
+    if w<6*q && w<2*mu-6*q
+        return intraband_1a_real(q, w, mu)
+    elseif w<-2*mu+6*q
+        return 0
+    elseif w<6*q && w>2*mu-6*q && w>-2*mu+6*q
+        return intraband_2a_imag(q, w, mu)
+    elseif w>6*q && w<2*mu-6*q
+        return intraband_1b_imag(q, w, mu)
+    elseif w>6*q && w>2*mu-6*q && w<2*mu+6*q
+        return intraband_2b_imag(q, w, mu)
+    elseif w>2*mu+6*q
+        return 0
+    else
+        return 0
+    end
+end
+
+function graphene_total_polarization(q, w, mu)
+
+    return intraband_real_total(q, w, mu)+ (w<6q ? real_neutral(q, w) : 0 )
+
+end
+
+function exact_graphene_epsilon(q, w, mu)
+    return 1-e²ϵ/2/q*graphene_total_polarization(q, w, mu) 
+end
 
 function graphene_energy(t, kx, ky)
     t*sqrt(3+2*cos(sqrt(3)*kx*1.42)+4*cos(3/2*ky*1.42)*cos(sqrt(3)*kx/2*1.42))
