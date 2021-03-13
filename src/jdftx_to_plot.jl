@@ -9,6 +9,11 @@ using HCubature
 using QuadGK
 using DSP
 using DelimitedFiles
+using Setfield
+
+import Base:*
+import Base:∘
+import Base:+
 
 #= We define all constants required for future calculations.
 hbar is given in ev*seconds. 

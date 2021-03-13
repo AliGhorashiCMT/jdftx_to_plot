@@ -1,3 +1,4 @@
+using Setfield
 struct lattice
     rvectors::Array{Float64, 2}
 end
@@ -41,3 +42,30 @@ struct phonon
 end
 
 wannier_interpolation(wannier_centers, innerWindow, outerWindow)=wannier_interpolation(wannier_centers, false, false, [0, 0, 0], innerWindow, outerWindow, 10000)
+
+#=
+We define functions for multiplying the cells by a given size (for ease of the user)
+=#
+
+*(lat::lattice, new_size::Int) = lattice(lat.rvectors*new_size)
+
+function *(scf::self_consistent_field, new_size::Int) 
+    new_scf = @set scf.lattice = scf.lattice*new_size
+    return new_scf
+end
+
+function *(scf::self_consistent_field, cell_mult::Array{Int64, 1})
+    new_latt, new_ionpos = make_supercell(scf.lattice, scf.ionpos, cell_mult)
+    @set scf.lattice = new_latt
+    @set scf.ionpos = new_ionpos
+end
+
+function ∘(scf::self_consistent_field, defect_mult::Array{<:Any, 1})
+    defect_mult[1]::String
+    defect_mult[2]::Array{Int, 1}
+    new_latt, new_ionpos = make_defectcell(scf.lattice, scf.ionpos, defect_mult[2], defect_mult[1])
+
+    @set scf.lattice = new_latt
+    @set scf.ionpos = new_ionpos
+
+end
