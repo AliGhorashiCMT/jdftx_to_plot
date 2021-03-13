@@ -123,9 +123,58 @@ function graphene_total_polarization(q, w, mu)
 
 end
 
+function graphene_total_impolarization(q, w, mu)
+
+    return intraband_imag_total(q, w, mu)+ (w>6q ? imag_neutral(q, w) : 0 )
+
+end
+
+
 function exact_graphene_epsilon(q, w, mu)
     return 1-e²ϵ/2/q*graphene_total_polarization(q, w, mu) 
 end
+
+function exact_graphene_plasmon(q, mu)
+    Epsilons=zeros(1000)
+    for i in 1:1000
+        ω = mu*i/1000*3
+        Epsilons[i] = 1-e²ϵ/2/q*graphene_total_polarization(q, ω, mu) 
+    end
+    return argmin(log.(abs.(Epsilons)))*3/1000*mu
+end
+
+function exact_graphene_plasmonq(ω, mu)
+    logEpsilons=zeros(100000)
+    for i in 1:100000
+        q = mu*i/100000*3/6
+        #logEpsilons[i] = log(abs(1-e²ϵ/2/q*(graphene_total_polarization(q, ω, mu))))
+        logEpsilons[i] = log(abs(1-e²ϵ/2/q*(graphene_total_polarization(q, ω, mu)+graphene_total_impolarization(q, ω, mu))))
+    end
+    return argmin(logEpsilons)*3/100000*mu/6
+end
+
+function graphene_plasmon_confinement(λ, μ)
+    ω=1.24/λ
+    lambdaair=λ*1e-6
+    lambdap=2*pi/exact_graphene_plasmonq(ω, μ)*1e-10
+    return lambdaair/lambdap
+end
+
+function exact_graphene_landau_damping(q, w, δ, mu)
+    RePolω = graphene_total_polarization(q, w, mu) 
+    RePolδω = graphene_total_polarization(q, w+δ, mu)  
+    ImPol = graphene_total_impolarization(q, w, mu)
+    return ImPol*δ/(RePolδω-RePolω)
+end
+
+function exact_graphene_landau_damping(q, δ, mu)
+    plasmon = exact_graphene_plasmon(q, mu)
+    RePolω = graphene_total_polarization(q, plasmon, mu) 
+    RePolδω = graphene_total_polarization(q, plasmon+δ, mu)  
+    ImPol = graphene_total_impolarization(q, plasmon, mu)
+    return ImPol*δ/(RePolδω-RePolω)
+end
+
 
 function graphene_energy(t, kx, ky)
     t*sqrt(3+2*cos(sqrt(3)*kx*1.42)+4*cos(3/2*ky*1.42)*cos(sqrt(3)*kx/2*1.42))
