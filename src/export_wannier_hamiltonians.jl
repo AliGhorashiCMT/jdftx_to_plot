@@ -50,9 +50,9 @@ function write_momentum(cell_map::String, cell_weights::String, H::String, P::St
     py"write_map_write_p"(cell_map, cell_weights, H, P,  kmesh, momentum_file)
 end
 
-function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_map_ph::String, cell_map_ph_weights::String, HPh::String, nModes::Int, qmesh::Array{Int, 1}, eph_file::String)
+function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_map_ph::String, cell_map_ph_weights::String, HPh::String, nModes::Int, qmesh::Array{Int, 1})
     py"""
-    def write_eph(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh, eph_file)
+    def write_eph(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh):
         import numpy as np
         cellMap = np.loadtxt(cell_map)[:,0:3].astype(np.int)
         Wwannier = np.fromfile(cell_weights)
@@ -71,13 +71,13 @@ function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_
         cellWeightsEph = cellWeightsEph.reshape((nCellsEph,nModes,nBands)) #coombine nAtoms x 3 into single dimension: nModes
 
         iReducedEph = np.dot(np.mod(cellMapEph, phononSup[None,:]), phononSupStride)
-        HePhReduced = np.fromfile('wannier.mlwfHePh').reshape((prodPhononSup,prodPhononSup,nModes,nBands,nBands)).swapaxes(3,4)
+        HePhReduced = np.fromfile(HPh).reshape((prodPhononSup,prodPhononSup,nModes,nBands,nBands)).swapaxes(3,4)
         HePhWannier = cellWeightsEph[:,None,:,:,None] * cellWeightsEph[None,:,:,None,:] * HePhReduced[iReducedEph][:,iReducedEph]
         
         return HePhWannier, cellMapEph
 
     """
-    py"write_eph"(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh, eph_file)
+    py"write_eph"(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh)
 
 end
 

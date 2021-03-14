@@ -95,7 +95,7 @@ export wannier_bands, wannier_vectors, plot_bands, hwannier
 include("analytic_models.jl")
 
 include("export_wannier_hamiltonians.jl")
-export write_momentum, write_map_write_h, write_eph_matrix_elements, 
+export write_momentum, write_map_write_h, write_eph_matrix_elements
 #=
 smoothing functions- useful for kramers kronig calculations for which a smooth imaginary susceptibility is preferable 
 for reliable numerics. 
@@ -104,7 +104,7 @@ include("smooth.jl")
 export smooth
 
 include("matrix_elements.jl")
-export phmatrixelements, pwannier, momentum_matrix_elements, eph_matrix_elements, 
+export phmatrixelements, pwannier, momentum_matrix_elements, eph_matrix_elements 
 
 #= 
 Methods to create supercells/large defect lattices using an underlying smaller unit cell

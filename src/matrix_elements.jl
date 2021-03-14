@@ -6,6 +6,7 @@ function phmatrixelements(k1, k2)
     Wwannier = np.fromfile("wannierDefect.mlwfCellWeightsUp")
     nCells = cellMap.shape[0]
     nBands = int(np.sqrt(Wwannier.shape[0] / nCells))
+    ##print(nBands)
     Wwannier = Wwannier.reshape((nCells,nBands,nBands)).swapaxes(1,2)
     #--- Get k-point folding from totalE.out:
     kfold = np.array([6, 6, 1])
@@ -32,6 +33,8 @@ function phmatrixelements(k1, k2)
     phononSupStride = np.array([phononSup[1]*phononSup[2], phononSup[2], 1])
     #--- Read e-ph cell weights:
     nAtoms = nModes // 3
+    ##print(nAtoms)
+    ##print(nCellsEph)
     cellWeightsEph = np.fromfile("wannierDefect.mlwfCellWeightsPhUp").reshape((nCellsEph,nBands,nAtoms)).swapaxes(1,2)
     cellWeightsEph = np.repeat(cellWeightsEph.reshape((nCellsEph,nAtoms,1,nBands)), 3, axis=2) #repeat atom weights for 3 directions
     cellWeightsEph = cellWeightsEph.reshape((nCellsEph,nModes,nBands)) #coombine nAtoms x 3 into single dimension: nModes
@@ -93,19 +96,23 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
 
     omegaPh, Uph = phonon_dispersionmodes(force_matrix, phonon_cell_map, k1-k2)
 
-    phase1 = exp((2im*π )*(cellMapEph*k1))
-    phase2 = exp((2im*π)*(cellMapEph*k2))
-    normFac = sqrt(0.5/max(omegaPh,1e-6))
+    #phase1 = np.exp((2im*π )*(cellMapEph*k1))
+    phase1 = exp.((2im*π )*(cellMapEph*k1))
+    #phase2 = np.exp((2im*π)*(cellMapEph*k2))
+    phase2 = exp.((2im*π)*(cellMapEph*k2))
+    normFac = np.sqrt(0.5/np.maximum(omegaPh,1e-6))
+    #normFac = np.sqrt(0.5/max.(omegaPh, Ref(1e-6)))
+    print(typeof(normFac))
     #=g=  np.einsum("kKxy,kKxab->kKyab", Uph, #Rotate to phonon eigenbasis
         np.einsum("KR,kRxab->kKxab", phase2, #Fourier transform from r2 -> k2
         np.einsum("kr,rRxab->kRxab", phase1.conj(), #Fourier transform from r1 -> k1
         HePhWannier))) * normFac #Phonon amplitude factor
 
     =#
-    np.einsum("xy, xab-> yab", Uph, #Rotate to phonon eigenbasis
+    g= vec(np.einsum("xy, xab-> yab", Uph, #Rotate to phonon eigenbasis
         np.einsum("R,Rxab->xab", phase2, #Fourier transform from r2 -> k2
-        np.einsum("r,rRxab->Rxab", phase1.conj(), #Fourier transform from r1 -> k1
-        HePhWannier))) * normFac #Phonon amplitude factor
+        np.einsum("r,rRxab->Rxab", conj(phase1), #Fourier transform from r1 -> k1
+        HePhWannier)))) .*normFac  #Phonon amplitude factor
     
     return g/eV
 

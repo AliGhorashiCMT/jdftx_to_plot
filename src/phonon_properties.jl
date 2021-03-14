@@ -37,7 +37,7 @@ function phonon_dispersion(force_matrix::Array{<:Real, 3}, phonon_cell_map::Arra
 end
 
 function phonon_dispersionmodes(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, qnorm::Array{<:Real, 1})
-    forceMatrixTildeq = np.tensordot(exp((2im*π)*np.dot(qnorm,transpose(phonon_cell_map))), force_matrix, axes=1)
+    forceMatrixTildeq = np.tensordot(np.exp((2im*π)*np.dot(qnorm,transpose(phonon_cell_map))), force_matrix, axes=1)
     omegaSq, normalModes = np.linalg.eigh(forceMatrixTildeq)
     return sqrt.(abs.(omegaSq))/eV, normalModes
 end
