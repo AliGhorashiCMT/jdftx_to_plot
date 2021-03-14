@@ -139,8 +139,8 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
     #phase1 = exp.((2im*π )*(cellMapEph*k1))
     #phase2 = np.exp((2im*π)*(cellMapEph*k2))
 
-    phase1 = np.exp((2im*np.pi)*np.dot(k1,cellMapEph.T))
-    phase2 = np.exp((2im*np.pi)*np.dot(k2,cellMapEph.T))
+    phase1 = np.exp((2im*np.pi)*np.dot(k1, transpose(cellMapEph)))
+    phase2 = np.exp((2im*np.pi)*np.dot(k2, transpose(cellMapEph)))
 
     #phase2 = exp.((2im*π)*(cellMapEph*k2))
     normFac = np.sqrt(0.5 ./ np.maximum(omegaPh,1e-6))
