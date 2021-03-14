@@ -338,7 +338,7 @@ Proceedings of the National Academy of Sciences Oct 2019, 116 (42) 20869-20874; 
 
 function levitov_epsilon(qx, qy, ω; kwargs...)
     q=sqrt(qx^2+qy^2)
-    1-e²ϵ*1000/(2*q)*hcubature( x->levitov_integrand(x[1], x[1], qx, qy, ω, .001)*heaviside(limit_up_levitov(x[1])-x[2])*heaviside(-limit_dn_levitov(x[1])+x[2]), [-Klevitov, -Klevitov], [Klevitov, Klevitov]; kwargs...)[1]
+    1-e²ϵ*1000/(2*q)*hcubature( x->levitov_integrand(x[1], x[1], qx, qy, ω, .1)*heaviside(limit_up_levitov(x[1])-x[2])*heaviside(-limit_dn_levitov(x[1])+x[2]), [-Klevitov, -Klevitov], [Klevitov, Klevitov]; kwargs...)[1]
 end
 
 function limit_dn_levitov(x)
