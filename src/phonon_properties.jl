@@ -37,9 +37,14 @@ function phonon_dispersion(force_matrix::Array{<:Real, 3}, phonon_cell_map::Arra
 end
 
 function phonon_dispersionmodes(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, qnorm::Array{<:Real, 1})
-    forceMatrixTildeq = np.tensordot(np.exp((2im*π)*np.dot(qnorm,transpose(phonon_cell_map))), force_matrix, axes=1)
-    omegaSq, normalModes = np.linalg.eigh(forceMatrixTildeq)
-    return sqrt.(abs.(omegaSq))/eV, normalModes
+    
+    phase = np.exp((2im*np.pi)*np.tensordot(qnorm, transpose(phonon_cell_map), axes=1))
+
+    ### Note that we must permute the indices of the force matrix by jdftx convention
+    omegaSq, U = np.linalg.eigh(np.tensordot(phase, permutedims(force_matrix, (1, 3, 2)), axes=1))
+
+    return sqrt.(abs.(omegaSq))/eV, U
+
 end
 
 function phonon_force_matrix(phonon_cell_map::String, phononOmegaSq::String)

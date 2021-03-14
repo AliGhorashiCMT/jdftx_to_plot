@@ -47,7 +47,6 @@ function phmatrixelements(k1, k2)
     '''
     #Constants / calculation parameters:
     eV = 1/27.2114 #in Hartrees
-
     #Calculate energies, eigenvectors and velocities for given k
     def calcE(k):
         #Fourier transform to k:
@@ -115,7 +114,10 @@ function phmatrixelements(k1, k2)
         '''
         g2 = np.einsum('xy, xab-> yab', Uph, np.einsum('R,Rxab->xab', phase2, np.einsum('r,rRxab->Rxab', phase1.conj(),  HePhWannier)))
 
-        return g2.flatten()*normFac
+        #return g2
+        #return Uph
+        return g2.flatten()/eV*normFac
+        #return HePhWannier
         #return g1, g2, omegaPh
     """
     py"calcEph"(k1, k2) 
@@ -136,13 +138,13 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
     ##Note that the phonon energies given by phonon dispersionmodes are in eV, so they must be converted 
     omegaPh *= eV
     #phase1 = np.exp((2im*π )*(cellMapEph*k1))
-    #phase1 = exp.((2im*π )*(cellMapEph*k1))
+    phase1 = exp.((2im*π )*(cellMapEph*k1))
     #phase2 = np.exp((2im*π)*(cellMapEph*k2))
 
-    phase1 = np.exp((2im*np.pi)*np.dot(k1, transpose(cellMapEph)))
-    phase2 = np.exp((2im*np.pi)*np.dot(k2, transpose(cellMapEph)))
+    #phase1 = np.exp((2im*np.pi)*np.dot(k1, transpose(cellMapEph)))
+    #phase2 = np.exp((2im*np.pi)*np.dot(k2, transpose(cellMapEph)))
 
-    #phase2 = exp.((2im*π)*(cellMapEph*k2))
+    phase2 = exp.((2im*π)*(cellMapEph*k2))
     normFac = np.sqrt(0.5 ./ np.maximum(omegaPh,1e-6))
     #normFac = np.sqrt(0.5/max.(omegaPh, Ref(1e-6)))
     #print(typeof(normFac))
@@ -155,7 +157,7 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
     g= vec(np.einsum("xy, xab-> yab", Uph, #Rotate to phonon eigenbasis
         np.einsum("R,Rxab->xab", phase2, #Fourier transform from r2 -> k2
         np.einsum("r,rRxab->Rxab", conj(phase1), #Fourier transform from r1 -> k1
-        HePhWannier)))) .*normFac  #Phonon amplitude factor
+        HePhWannier)))).*normFac  #Phonon amplitude factor
     
     return g/eV
 
