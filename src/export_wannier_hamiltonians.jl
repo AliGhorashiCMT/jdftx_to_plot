@@ -1,16 +1,6 @@
-const np = PyNULL()
-const interpol = PyNULL()
-const pyintegrate = PyNULL()
-export np, interpol, pyintegrate
-
-function __init__()
-
-    copy!(np, pyimport("numpy"))
-    copy!(interpol, pyimport("scipy.interpolate"))
-    copy!(pyintegrate, pyimport("scipy.integrate"))
-
+function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{<:Real, 1}, band_file::String, cell_map_file::String)
     py"""   
-    def write_map_write_h(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
+    def write_map_write_h_py(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
         import numpy as np
         cellMapUp = np.loadtxt(cell_map)[:,0:3].astype(np.int)
         WwannierUp = np.fromfile(cell_weights)
@@ -29,7 +19,7 @@ function __init__()
         np.savetxt(cell_map_file, cellMapUp)
     """
 
-
+    py"write_map_write_h_py"(cell_map, cell_weights, H, kmesh, band_file, cell_map_file)
 end
 
 function write_phonon()
@@ -88,9 +78,8 @@ function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_
         HePhReduced = np.fromfile('wannier.mlwfHePh').reshape((prodPhononSup,prodPhononSup,nModes,nBands,nBands)).swapaxes(3,4)
         HePhWannier = cellWeightsEph[:,None,:,:,None] * cellWeightsEph[None,:,:,None,:] * HePhReduced[iReducedEph][:,iReducedEph]
         
-        np.savetxt(eph_file, HePhWannier.reshape(nCellsEph, nModes*nBands) )
+        return HePhWannier, cellMapEph
 
-        np.savetxt(cell_map_eph_file, cellMapEph)
     """
     py"write_eph"(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh, eph_file)
 

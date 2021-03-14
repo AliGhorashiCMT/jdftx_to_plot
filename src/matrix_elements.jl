@@ -82,13 +82,12 @@ function phmatrixelements(k1, k2)
 
 end
 
-
 #= 
 Next, we will examine the momentum matrix elements. 
 Note that the matrix elements are initially in the Wannier basis and must be transformed to the Bloch basis!
 =#
 
-function eph_matrix_elements(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, k1::Array{<:Real, 1}, k2::Array{<:Real, 1})
+function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:Real, 2}, force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, k1::Array{<:Real, 1}, k2::Array{<:Real, 1})
     #Phonons for all pairs pf k1 - k2:
     #omegaPh, Uph = calcPh(k1[:,None,:] - k2[None,:,:])
 
@@ -125,9 +124,6 @@ function momentum_matrix_elements(Pwannier::Array{Float64, 4}, cell_map::Array{F
     return Pk*ħ*bohrtoangstrom
 end
 
-function ephwannier(eph_file::String, cell_map_eph_file::String)
-    return np.reshape(np.loadtxt(HePhWannier), nCellsEph, :nModes*nBands)
-end
 
 function pwannier(pwannier_file::String, cell_map_file::String, nbands::Int64) 
     cell_map = np.loadtxt(cell_map_file)
