@@ -81,7 +81,7 @@ export wannier_bands, wannier_vectors, plot_bands, hwannier
 include("analytic_models.jl")
 
 include("export_wannier_hamiltonians.jl")
-
+export write_momentum, write_map_write_h
 #=
 smoothing functions- useful for kramers kronig calculations for which a smooth imaginary susceptibility is preferable 
 for reliable numerics. 

@@ -84,5 +84,25 @@ end
 
 
 #= 
-Next, we will examine the momentum matrix elements
+Next, we will examine the momentum matrix elements. 
+Note that the matrix elements are initially in the Wannier basis and must be transformed to the Bloch basis!
 =#
+
+function momentum_matrix_elements(Pwannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, k::Array{<:Real, 1})
+    phase = np.exp(2im*np.pi*cell_map*k); 
+    Pk = np.tensordot(phase, Pwannier, axes=1); 
+    #= 
+    JDFTX output is in Atomic units. Therefore, the units of the momentum matrix elements are in ħ/a₀
+    a₀ is the Bohr radius, which is approximately 0.529 Angstrom. ħ is 6.6*10-16 eV*seconds. Since all 
+    physical calculations perfomed in jdftx_to_plot assume lengths to be given in angstroms and energies 
+    to be given in eV, we multiply Pk by ħ*bohrtoangstrom
+    =#
+    return Pk*ħ*bohrtoangstrom
+end
+
+function pwannier(pwannier_file::String, cell_map_file::String, nbands::Int64) 
+    cell_map = np.loadtxt(cell_map_file)
+    cell_map_numlines = countlines(cell_map_file)
+    Pwannier = np.reshape(np.loadtxt(pwannier_file), (cell_map_numlines, 3, nbands, nbands))
+    return Pwannier
+end
