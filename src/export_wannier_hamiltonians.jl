@@ -22,10 +22,6 @@ function write_map_write_h(cell_map::String, cell_weights::String, H::String, km
     py"write_map_write_h_py"(cell_map, cell_weights, H, kmesh, band_file, cell_map_file)
 end
 
-function write_phonon()
-
-end
-
 
 function write_momentum(cell_map::String, cell_weights::String, H::String, P::String, kmesh::Array{Int, 1}, momentum_file::String)
     py"""
@@ -83,10 +79,6 @@ function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_
     """
     py"write_eph"(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh, eph_file)
 
-end
-
-function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{Int, 1}, band_file::String, map_file::String)
-    py"write_map_write_h"(cell_map, cell_weights, H, kmesh, band_file, map_file)
 end
 
 

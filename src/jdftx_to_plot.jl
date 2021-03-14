@@ -33,6 +33,20 @@ const kB = 8.617333262145e-5
 
 export ħ,c, α, e²ϵ, bohrtoangstrom, eV, kB
 
+const np = PyNULL()
+const interpol = PyNULL()
+const pyintegrate = PyNULL()
+export np, interpol, pyintegrate
+
+function __init__()
+
+    copy!(np, pyimport("numpy"))
+    copy!(interpol, pyimport("scipy.interpolate"))
+    copy!(pyintegrate, pyimport("scipy.integrate"))
+
+end
+
+
 include("input_file_structs.jl")
 export self_consistent_field, non_self_consistent_field, wannier_interpolation,
 lattice, ionpos, phonon
@@ -47,7 +61,7 @@ in_wigner_seitz, in_brillouin, reciprocal_vectors, ion_positions, plot_lattice,
 cell_vectors, unit_cell_area
 
 include("phonon_properties.jl")
-export plot_phonons, phonon_dispersion
+export plot_phonons, phonon_dispersion, phonon_dispersionmodes, phonon_force_matrix
 
 #=
 A multitude of methods for calculating the density of states- either directly from DFT output or from wannier 
@@ -81,7 +95,7 @@ export wannier_bands, wannier_vectors, plot_bands, hwannier
 include("analytic_models.jl")
 
 include("export_wannier_hamiltonians.jl")
-export write_momentum, write_map_write_h
+export write_momentum, write_map_write_h, write_eph_matrix_elements, 
 #=
 smoothing functions- useful for kramers kronig calculations for which a smooth imaginary susceptibility is preferable 
 for reliable numerics. 
@@ -90,7 +104,7 @@ include("smooth.jl")
 export smooth
 
 include("matrix_elements.jl")
-export phmatrixelements, pwannier, momentum_matrix_elements
+export phmatrixelements, pwannier, momentum_matrix_elements, eph_matrix_elements, 
 
 #= 
 Methods to create supercells/large defect lattices using an underlying smaller unit cell
