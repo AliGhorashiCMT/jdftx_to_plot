@@ -70,7 +70,7 @@ function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_
         cellWeightsEph = np.repeat(cellWeightsEph.reshape((nCellsEph,nAtoms,1,nBands)), 3, axis=2) #repeat atom weights for 3 directions
         cellWeightsEph = cellWeightsEph.reshape((nCellsEph,nModes,nBands)) #coombine nAtoms x 3 into single dimension: nModes
 
-        iReducedEph = np.dot(np.mod(cellMapEph, phononSup[None,:]), phononSupStride)
+        iReducedEph = np.dot(np.mod(cellMapEph, qmesh[None,:]), phononSupStride)
         HePhReduced = np.fromfile(HPh).reshape((prodPhononSup,prodPhononSup,nModes,nBands,nBands)).swapaxes(3,4)
         HePhWannier = cellWeightsEph[:,None,:,:,None] * cellWeightsEph[None,:,:,None,:] * HePhReduced[iReducedEph][:,iReducedEph]
         
