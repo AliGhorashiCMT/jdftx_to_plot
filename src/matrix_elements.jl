@@ -88,8 +88,33 @@ Next, we will examine the momentum matrix elements.
 Note that the matrix elements are initially in the Wannier basis and must be transformed to the Bloch basis!
 =#
 
+function eph_matrix_elements(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, k1::Array{<:Real, 1}, k2::Array{<:Real, 1})
+    #Phonons for all pairs pf k1 - k2:
+    #omegaPh, Uph = calcPh(k1[:,None,:] - k2[None,:,:])
+
+    omegaPh, Uph = phonon_dispersionmodes(force_matrix, phonon_cell_map, k1-k2)
+
+    phase1 = exp((2im*π )*(cellMapEph*k1))
+    phase2 = exp((2im*π)*(cellMapEph*k2))
+    normFac = sqrt(0.5/max(omegaPh,1e-6))
+    #=g=  np.einsum("kKxy,kKxab->kKyab", Uph, #Rotate to phonon eigenbasis
+        np.einsum("KR,kRxab->kKxab", phase2, #Fourier transform from r2 -> k2
+        np.einsum("kr,rRxab->kRxab", phase1.conj(), #Fourier transform from r1 -> k1
+        HePhWannier))) * normFac #Phonon amplitude factor
+
+    =#
+    np.einsum("xy, xab-> yab", Uph, #Rotate to phonon eigenbasis
+        np.einsum("R,Rxab->xab", phase2, #Fourier transform from r2 -> k2
+        np.einsum("r,rRxab->Rxab", phase1.conj(), #Fourier transform from r1 -> k1
+        HePhWannier))) * normFac #Phonon amplitude factor
+    
+    return g/eV
+
+end
+
+
 function momentum_matrix_elements(Pwannier::Array{Float64, 4}, cell_map::Array{Float64, 2}, k::Array{<:Real, 1})
-    phase = np.exp(2im*np.pi*cell_map*k); 
+    phase = np.exp(2im*π*cell_map*k); 
     Pk = np.tensordot(phase, Pwannier, axes=1); 
     #= 
     JDFTX output is in Atomic units. Therefore, the units of the momentum matrix elements are in ħ/a₀
@@ -98,6 +123,10 @@ function momentum_matrix_elements(Pwannier::Array{Float64, 4}, cell_map::Array{F
     to be given in eV, we multiply Pk by ħ*bohrtoangstrom
     =#
     return Pk*ħ*bohrtoangstrom
+end
+
+function ephwannier(eph_file::String, cell_map_eph_file::String)
+    return np.reshape(np.loadtxt(HePhWannier), nCellsEph, :nModes*nBands)
 end
 
 function pwannier(pwannier_file::String, cell_map_file::String, nbands::Int64) 
