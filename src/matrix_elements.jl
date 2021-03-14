@@ -96,6 +96,8 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
 
     omegaPh, Uph = phonon_dispersionmodes(force_matrix, phonon_cell_map, k1-k2)
 
+    ##Note that the phonon energies given by phonon dispersionmodes are in eV, so they must be converted 
+    omegaPh *= eV
     #phase1 = np.exp((2im*π )*(cellMapEph*k1))
     phase1 = exp.((2im*π )*(cellMapEph*k1))
     #phase2 = np.exp((2im*π)*(cellMapEph*k2))
