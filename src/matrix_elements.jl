@@ -42,7 +42,9 @@ function phmatrixelements(k1, k2)
     iReducedEph = np.dot(np.mod(cellMapEph, phononSup[None,:]), phononSupStride)
     HePhReduced = np.fromfile('wannierDefect.mlwfHePhUp').reshape((prodPhononSup,prodPhononSup,nModes,nBands,nBands)).swapaxes(3,4)
     HePhWannier = cellWeightsEph[:,None,:,:,None] * cellWeightsEph[None,:,:,None,:] * HePhReduced[iReducedEph][:,iReducedEph]
-
+    '''
+    print(np.shape(HePhWannier))
+    '''
     #Constants / calculation parameters:
     eV = 1/27.2114 #in Hartrees
 
@@ -65,21 +67,49 @@ function phmatrixelements(k1, k2)
     #Calculate e-ph matrix elements, along with ph and e energies, and e velocities
     def calcEph(k1, k2):
         #Electrons:
-        E1, U1= calcE(k1)
-        E2, U2 = calcE(k2)
+        #E1, U1= calcE(k1)
+        #E2, U2 = calcE(k2)
+        #print(U1)
+        #print(U2)
         #Phonons for all pairs pf k1 - k2:
-        omegaPh, Uph = calcPh(k1[:,None,:] - k2[None,:,:])
+        #omegaPh, Uph = calcPh(k1[:,None,:] - k2[None,:,:])
+        omegaPh, Uph = calcPh(k1-k2)
+        '''
+        print(omegaPh)
+        print(np.shape(Uph))
+        '''
         #E-ph matrix elements for all pairs of k1 - k2:
         phase1 = np.exp((2j*np.pi)*np.dot(k1,cellMapEph.T))
         phase2 = np.exp((2j*np.pi)*np.dot(k2,cellMapEph.T))
+
+        '''
+        print(phase1)
+        print(phase2)
+        '''
         normFac = np.sqrt(0.5/np.maximum(omegaPh,1e-6))
-        g = np.einsum('Kbd,kKycb->kKycd', U2, #Rotate to electron 2 eigenbasis
+        '''
+        print(normFac)
+        '''
+        '''
+        g1 = np.einsum('Kbd,kKycb->kKycd', U2, #Rotate to electron 2 eigenbasis
             np.einsum('kac,kKyab->kKycb', U1.conj(), #Rotate to electron 1 eigenbasis
             np.einsum('kKxy,kKxab->kKyab', Uph, #Rotate to phonon eigenbasis
             np.einsum('KR,kRxab->kKxab', phase2, #Fourier transform from r2 -> k2
             np.einsum('kr,rRxab->kRxab', phase1.conj(), #Fourier transform from r1 -> k1
-            HePhWannier))))) * normFac[...,None,None] #Phonon amplitude factor
-        return g#, omegaPh
+            HePhWannier)))))*normFac[...,None,None] #Phonon amplitude factor
+        '''
+
+
+        '''
+        The following g is from only diagonalizing in the phonon basis and performing a fourier transform. This is appropriate
+        if there is only one wannier band in question
+        '''
+        #g2 = np.einsum('kKxy,kKxab->kKyab', Uph, np.einsum('KR,kRxab->kKxab', phase2, np.einsum('kr,rRxab->kRxab', phase1.conj(),  HePhWannier)))*normFac[...,None,None] #Phonon amplitude factor
+        
+        g2 = np.einsum('xy, xab-> yab', Uph, np.einsum('R,Rxab->xab', phase2, np.einsum('r,rRxab->Rxab', phase1.conj(),  HePhWannier))) #Phonon amplitude factor
+
+        return g2.flatten()*normFac
+        #return g1, g2, omegaPh
     """
     py"calcEph"(k1, k2) 
 
@@ -98,13 +128,13 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
 
     ##Note that the phonon energies given by phonon dispersionmodes are in eV, so they must be converted 
     omegaPh *= eV
-    #phase1 = np.exp((2im*π )*(cellMapEph*k1))
-    phase1 = exp.((2im*π )*(cellMapEph*k1))
-    #phase2 = np.exp((2im*π)*(cellMapEph*k2))
-    phase2 = exp.((2im*π)*(cellMapEph*k2))
-    normFac = np.sqrt(0.5/np.maximum(omegaPh,1e-6))
+    phase1 = np.exp((2im*π )*(cellMapEph*k1))
+    #phase1 = exp.((2im*π )*(cellMapEph*k1))
+    phase2 = np.exp((2im*π)*(cellMapEph*k2))
+    #phase2 = exp.((2im*π)*(cellMapEph*k2))
+    normFac = np.sqrt(0.5 ./ np.maximum(omegaPh,1e-6))
     #normFac = np.sqrt(0.5/max.(omegaPh, Ref(1e-6)))
-    print(typeof(normFac))
+    #print(typeof(normFac))
     #=g=  np.einsum("kKxy,kKxab->kKyab", Uph, #Rotate to phonon eigenbasis
         np.einsum("KR,kRxab->kKxab", phase2, #Fourier transform from r2 -> k2
         np.einsum("kr,rRxab->kRxab", phase1.conj(), #Fourier transform from r1 -> k1
