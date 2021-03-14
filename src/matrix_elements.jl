@@ -104,9 +104,16 @@ function phmatrixelements(k1, k2)
         The following g is from only diagonalizing in the phonon basis and performing a fourier transform. This is appropriate
         if there is only one wannier band in question
         '''
-        #g2 = np.einsum('kKxy,kKxab->kKyab', Uph, np.einsum('KR,kRxab->kKxab', phase2, np.einsum('kr,rRxab->kRxab', phase1.conj(),  HePhWannier)))*normFac[...,None,None] #Phonon amplitude factor
         
-        g2 = np.einsum('xy, xab-> yab', Uph, np.einsum('R,Rxab->xab', phase2, np.einsum('r,rRxab->Rxab', phase1.conj(),  HePhWannier))) #Phonon amplitude factor
+        '''
+        g2 = np.einsum('kKxy,kKxab->kKyab', Uph, np.einsum('KR,kRxab->kKxab', phase2, np.einsum('kr,rRxab->kRxab', phase1.conj(),  HePhWannier)))*normFac[...,None,None] #Phonon amplitude factor
+        '''
+
+        '''
+            We alter the einsum such that the convention is that the kvectors given are three element arrays instead of arrays of 
+            three element arrays.
+        '''
+        g2 = np.einsum('xy, xab-> yab', Uph, np.einsum('R,Rxab->xab', phase2, np.einsum('r,rRxab->Rxab', phase1.conj(),  HePhWannier)))
 
         return g2.flatten()*normFac
         #return g1, g2, omegaPh
