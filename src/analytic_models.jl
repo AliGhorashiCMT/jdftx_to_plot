@@ -322,3 +322,53 @@ function graphene_analytic_real_self_energy(ϵ::Real, μ::Real)
 
 end
 
+alevitov= 134/sqrt(3);
+Klevitov=4*pi/(3*sqrt(3)*alevitov);
+heaviside(x)= x>0 ? 1 : 0
+
+#=
+The functions below are to reproduce results from the following paper: 
+
+Intrinsically undamped plasmon modes in narrow electron bands
+Cyprian Lewandowski, Leonid Levitov
+Proceedings of the National Academy of Sciences Oct 2019, 116 (42) 20869-20874; DOI: 10.1073/pnas.1909069116
+
+
+=#
+
+function levitov_epsilon(qx, qy, ω; kwargs...)
+    q=sqrt(qx^2+qy^2)
+    1-e²ϵ*1000/(2*q)*hcubature( x->levitov_integrand(x[1], x[1], qx, qy, ω, .001)*heaviside(limit_up_levitov(x[1])-x[2])*heaviside(-limit_dn_levitov(x[1])+x[2]), [-Klevitov, -Klevitov], [Klevitov, Klevitov]; kwargs...)[1]
+end
+
+function limit_dn_levitov(x)
+    A1=heaviside(x+Klevitov)*heaviside(-x-Klevitov/2)*(-sqrt(3)*x-4*pi./(3*alevitov));
+    A2=heaviside(x+Klevitov/2)*heaviside(-x+Klevitov/2)*(-4*pi/(6*alevitov));
+    A3=heaviside(x-Klevitov/2)*heaviside(Klevitov-x)*(sqrt(3)*x-4*pi/(3*alevitov));
+    A=A1+A2+A3;
+end
+
+function limit_up_levitov(x)
+    B1=heaviside(x+Klevitov)*heaviside(-x-Klevitov/2)*(sqrt(3)*x+4*pi/(3*alevitov));
+    B2=heaviside(x+Klevitov/2)*heaviside(-x+Klevitov/2)*(4*pi./(6*alevitov));
+    B3=heaviside(x-Klevitov/2)*heaviside(Klevitov-x)*(-sqrt(3)*x+4*pi/(3*alevitov));
+    B=B1+B2+B3;
+end
+
+function levitov_integrand(kx, ky, qx, qy, w, delta)
+    kplusqy=ky+qy;
+    kplusqx=kx+qx;
+    E1=exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im);
+    E2=exp(alevitov*kplusqy*1im)+exp(-(alevitov*kplusqx*sqrt(3)/2+alevitov*kplusqy/2)*1im)+exp((alevitov*kplusqx*sqrt(3)/2-alevitov/2*kplusqy)*1im);
+    mixedOverlap=(1-cos(angle(E1)-angle(E2)))/2;
+    sameOverlap=(1+cos(angle(E1)-angle(E2)))/2;
+    Up1=3.75/3*abs(E1);
+    Up2=3.75/3*abs(E2);
+    a=2*sameOverlap*(Up1-Up2)/((Up1-Up2)^2-(w+1im*delta)^2);
+    b=2*mixedOverlap*(Up1+Up2)/((Up1+Up2)^2-(w+1im*delta)^2);
+    fullbands1= 1/(12.12*pi^2)*(a+b)*heaviside(1.81-Up1);
+    fullbands2 = 2/(12.12*pi^2)*mixedOverlap*(-Up1-Up2)/((Up1+Up2)^2-(w+1im*delta)^2);
+    fullbands=fullbands1+fullbands2;
+    return fullbands
+end
+
