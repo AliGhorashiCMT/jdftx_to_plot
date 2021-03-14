@@ -29,10 +29,14 @@ function __init__()
         np.savetxt(cell_map_file, cellMapUp)
     """
 
+
+end
+
+function write_momentum(cell_map::String, cell_weights::String, H::String, P::String, kmesh::Array{Int, 1}, momentum_file::String)
     py"""
 
-    def write_map_write_p(cell_map, cell_weights, H, P, kmesh, band_file, cell_map_file):
-
+    def write_map_write_p(cell_map, cell_weights, H, P, kmesh, momentum_file):
+        import numpy as np
         cellMap = np.loadtxt(cell_map)[:,0:3].astype(np.int)
         Wwannier = np.fromfile(cell_weights)
         nCells = cellMap.shape[0]
@@ -48,13 +52,11 @@ function __init__()
         iReduced = np.dot(np.mod(cellMap, kfold[None,:]), kStride)
         Hwannier = Wwannier * Hreduced[iReduced]
         Pwannier = Wwannier[:,None] * Preduced[iReduced]
-        np.savetxt(momentum_file, Pwannier.reshape(len(iReducedUp), 3*nBands*nBands ))
+        np.savetxt(momentum_file, Pwannier.reshape(len(iReduced), 3*nBands*nBands ))
  
     """
-end
-
-function write_momentum(cell_map::String, cell_weights::String, H::String, P::String, kmesh::Array{Int, 1}, momentum_file::String)
-    py"write_map_write_p"(cell_map, cell_weights, H, P,  kmesh, band_file, map_file)
+    
+    py"write_map_write_p"(cell_map, cell_weights, H, P,  kmesh, momentum_file)
 end
 
 function write_map_write_h(cell_map::String, cell_weights::String, H::String, kmesh::Array{Int, 1}, band_file::String, map_file::String)

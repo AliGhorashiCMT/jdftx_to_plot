@@ -88,7 +88,7 @@ Next, we will examine the momentum matrix elements.
 Note that the matrix elements are initially in the Wannier basis and must be transformed to the Bloch basis!
 =#
 
-function momentum_matrix_elements(Pwannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, k::Array{<:Real, 1})
+function momentum_matrix_elements(Pwannier::Array{Float64, 4}, cell_map::Array{Float64, 2}, k::Array{<:Real, 1})
     phase = np.exp(2im*np.pi*cell_map*k); 
     Pk = np.tensordot(phase, Pwannier, axes=1); 
     #= 
