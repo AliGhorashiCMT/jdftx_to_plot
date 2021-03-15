@@ -79,3 +79,42 @@ function plot_phononsjl(cell_map::String, phononOmegaSq::String, kpoints::String
 end
 
 =#
+
+"""
+Returns the electron self energy to lowest order in the electron-phonon interaction. The expression used is from the paper:
+
+Park, Cheol-Hwan, et al. "Velocity renormalization and carrier lifetime in graphene from the electron-phonon interaction." Physical review letters 99.8 (2007): 086804.
+
+This is commonly referred to as the Migdal approximation. 
+
+The graphene methods for self energy use the same approximation
+
+"""
+function migdal_approximation(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:Real, 2}, force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, lattice_vectors::Array{<:Array{<:Real, 1}, 1}, q::Array{<:Real, 1}, μ::Real; histogram_length::Real=100, mesh::Int=30) 
+    
+    qnormalized = normalize_kvector(lattice_vectors, q)
+    self_energy = 0
+    ϵi = wannier_bands(HWannier, cell_map, qnormalized)
+
+    for xmesh in 1:mesh
+        for ymesh in 1:mesh
+            phonon_energies = phonon_dispersion(force_matrix, phonon_cell_map, [xmesh/mesh, ymesh/mesh, 0])
+            phonon_mat_elements= eph_matrix_elements(HePhWannier, cellMapEph, force_matrix, phonon_cell_map, qnormalized, [xmesh/mesh, ymesh/mesh, 0]+qnormalized)
+            
+            ϵf = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+qnormalized)
+            fermi = ϵf<μ ? 1 : 0
+
+            for phonon in 1:length(phonon_energies)
+                ωph = phonon_energies[phonon] 
+                   
+                if abs((ϵi-ϵf-ωph)*histogram_length)<0.5
+                    self_energy +=  π*abs(phonon_mat_elements[phonon])^2*(1-fermi)*histogram_length/mesh^2
+                end
+
+                if abs((ϵi-ϵf+ωph)*histogram_length)<0.5
+                    self_energy +=  π*abs(phonon_mat_elements[phonon])^2*(fermi)*histogram_length/mesh^2
+                end
+            end
+        end
+    end
+end
