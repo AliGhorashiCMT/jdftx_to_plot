@@ -369,7 +369,7 @@ function second_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float
                                             Second term is phonon first, phonon second, plasmon third
                                             Last term is phonon first, plasmon second, phonon third
                                         =#
-                                        lossarray[round(Int, ω*histogram_length+1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*( g1/(ϵmiddle-ϵinitial-ω)*g2/(ϵsecondmiddle2-ϵinitial-ω+ϵ1)*fmiddle1*fsecondmiddle2 + fmiddle2*g3/(ϵmiddle2-ϵinitial+ϵ1)*( g4*fsecondmiddle1/(ϵsecondmiddle1-ϵinitial+ϵ1+ϵ2) + g5*fsecondmiddle2/(ϵsecondmiddle2-ϵinitial-ω+ϵ1) ))^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*ffinal*(1/mesh)^6*histogram_length
+                                        lossarray[round(Int, ω*histogram_length+1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*abs( g1/(ϵmiddle-ϵinitial-ω)*g2/(ϵsecondmiddle2-ϵinitial-ω+ϵ1)*fmiddle1*fsecondmiddle2 + fmiddle2*g3/(ϵmiddle2-ϵinitial+ϵ1)*( g4*fsecondmiddle1/(ϵsecondmiddle1-ϵinitial+ϵ1+ϵ2) + g5*fsecondmiddle2/(ϵsecondmiddle2-ϵinitial-ω+ϵ1) ))^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*ffinal*(1/mesh)^6*histogram_length
                                     end 
                                 end
                             end
