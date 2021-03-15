@@ -107,6 +107,60 @@ end
 
 
 
+#=
+Next, we will do the same as the above, except with a full phonon band calculation (calculate over all phonon branches, taking into account 
+the different electron phonon matrix elements )
+=#
+
+function first_order_damping(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:Real, 2}, force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, lattice_vectors::Array{<:Array{<:Real, 1}, 1}, q::Array{<:Real, 1}, μ::Real; histogram_length::Real=100, mesh::Int=30, energy_range::Real=10) 
+lossarray = zeros(histogram_length*energy_range)
+qabs = sqrt(sum(q.^2))
+qnormalized = normalize_kvector(lattice_vectors, q)
+cell_area = unit_cell_area(lattice_vectors)
+for xmesh in 1:mesh
+    for ymesh in 1:mesh
+        ϵinitial = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0])
+        ϵmiddle = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+qnormalized)        
+
+        finitial = ϵinitial<μ ? 1 : 0
+        fmiddle1 = ϵmiddle>μ ? 1 : 0
+        for xmesh1 in 1:mesh
+            for ymesh1 in 1:mesh
+
+                phonon_energies = phonon_dispersion(force_matrix, phonon_cell_map, [xmesh1/mesh, ymesh1/mesh, 0])
+
+                phonon_mat_elements1= eph_matrix_elements(HePhWannier, cellMapEph, force_matrix, phonon_cell_map,[xmesh/mesh, ymesh/mesh, 0], [xmesh/mesh+xmesh1/mesh, ymesh/mesh+ymesh1/mesh, 0])
+                phonon_mat_elements2= eph_matrix_elements(HePhWannier, cellMapEph, force_matrix, phonon_cell_map,[xmesh/mesh, ymesh/mesh, 0]+qnormalized , [xmesh/mesh+xmesh1/mesh, ymesh/mesh+ymesh1/mesh, 0]+qnormalized)
+
+                for phonon in 1:length(phonon_energies)
+
+                    g1= phonon_mat_elements1[phonon]
+                    g2= phonon_mat_elements2[phonon]
+
+                    ϵphonon = phonon_energies[phonon]
+
+                    ϵmiddle2 = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+[xmesh1/mesh, ymesh1/mesh, 0])        
+                    fmiddle2 = ϵmiddle2>μ ? 1 : 0
+
+                    ϵfinal = wannier_bands(HWannier, cell_map, [xmesh/mesh, ymesh/mesh, 0]+qnormalized+[xmesh1/mesh, ymesh1/mesh, 0])        
+                
+                    ffinal = ϵfinal>μ ? 1 : 0
+
+                    ω = ϵfinal-ϵinitial+ϵphonon
+                    if ω>0
+                        lossarray[round(Int, ω*histogram_length + 1)] = lossarray[round(Int, ω*histogram_length + 1 )] + 1/cell_area*abs(fmiddle1*g2/(ϵmiddle-ϵinitial-ω)+ fmiddle2*g1/(ϵmiddle2-ϵinitial+ϵphonon))^2*2π/ħ*e²ϵ/4*ω/qabs*finitial*ffinal*(1/mesh)^4*histogram_length
+                    end
+                end
+            end
+        end
+    end
+end
+return lossarray
+end
+
+
+
+
 
 function second_order_damping(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1}, 1}, q::Array{<:Real, 1}, μ::Real, ϵphonon::Real, gph::Real; histogram_length::Real=100, mesh::Int=30, energy_range::Real=10) 
     
