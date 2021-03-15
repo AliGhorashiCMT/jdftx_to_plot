@@ -307,6 +307,55 @@ function graphene_electron_self_energy(ϵ::Real, μ::Real)
     abs(ϵ-μ)>0.2 ? 0.0183*abs(ϵ-sign(ϵ-μ)*0.2) : 0
 end
 
+"""
+The matrix elements used in this function are taken from:
+
+Park, Cheol-Hwan, et al. "Velocity renormalization and carrier lifetime in graphene from the electron-phonon interaction." Physical review letters 99.8 (2007): 086804.
+
+"""
+function graphene_numerical_self_energy(μ::Real; mesh1::Int=100, mesh2::Int=100, histogram_width::Real=100, NQs::Int=50)
+    
+    g = .035*13.605662285137 # The energy provided in the paper is given in Rydberg
+    phononEnergy = 0.2 
+    SelfEnergyMat=zeros(NQs)
+        
+    for ks in 1:NQs
+        k=(ks-NQs/2)/NQs*0.4
+        E=k*6
+        print(ks); flush(stdout)
+        
+        for i in 1:mesh1
+            for j in 1:mesh2
+                q, theta=i/mesh1*1, j/mesh2*(2*π) 
+                qx, qy=q*cos(theta), q*sin(theta)
+                kplusq=sqrt((k+qx)^2+(qy)^2)
+            
+                for band in [1, 2]
+                    
+                    if band==1
+                        Energy = dirac_approximation_upper(kplusq)
+                    elseif band==2
+                        Energy = dirac_approximation_lower(kplusq)
+                    end
+                    Occupation=heaviside(μ-Energy)
+                    DiffEnergies1=Energy+phononEnergy
+                    DiffEnergies2=Energy-phononEnergy
+    
+                    if  abs(E-DiffEnergies1)*histogram_width<.5
+                        SelfEnergyMat[ks]=SelfEnergyMat[ks]+(1-Occupation)*q*π*g^2*(2*π/mesh1)*(1/mesh2)*histogram_width
+                    end
+                    if abs(E-DiffEnergies2)*histogram_width<.5
+                        SelfEnergyMat[ks]=SelfEnergyMat[ks]+(Occupation)*q*π*g^2*(2*π/mesh1)*(1/mesh2)*histogram_width
+                    end
+                end
+            end
+        end
+    end
+    
+    return SelfEnergyMat
+end
+
+
 function graphene_electron_real_self_energy(ϵ::Real, μ::Real)
 
     pyintegrate.quad(x-> -graphene_electron_self_energy(x, μ)/π, -8.4, 8.4,  wvar=ϵ, weight="cauchy", limit=1000, epsrel=1e-10, epsabs=1e-10)[1]
