@@ -28,6 +28,19 @@ function reciprocal_vectors(lattice_vectors::Array{<:Array{<:Real, 1},1})
 
 end
 
+function reciprocal_vectors(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}}) 
+    
+    a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
+
+    V=dot(a1, cross(a2, a3))
+    b1=2π/V*cross(a2, a3)
+    b2=2π/V*cross(a3, a1)
+    b3=2π/V*cross(a1, a2)
+    return b1, b2, b3
+
+end
+
+
 function in_wigner_seitz(lattice_vectors::Array{<:Array{<:Real, 1},1}, rvec::Array{<:Real, 1}) 
     vec1 = lattice_vectors[1]
     vec2 = lattice_vectors[2]
@@ -259,6 +272,32 @@ function unit_cell_volume(lattice_vectors::Array{<:Array{<:Real, 1},1})
 
 end
 
+function unit_cell_volume(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}}) 
+    a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
+
+    V = abs(dot(a1, cross(a2, a3)))
+    return V
+
+end
+
+
+"Used as a cross check to make sure the simpler brillouin_zone_volume method is functioning properly"
+function brillouin_zone_volume_direct(lattice_vectors::Array{<:Array{<:Real, 1}, 1})
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    VBZ= abs(dot(b1, cross(b2, b3)))
+    return VBZ
+
+end
+
+function brillouin_zone_volume_direct(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}} )
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    VBZ= abs(dot(b1, cross(b2, b3)))
+    return VBZ
+
+end
+
 
 function brillouin_zone_volume(lattice_vectors::Array{<:Array{<:Real, 1}, 1})
     a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
@@ -268,6 +307,13 @@ function brillouin_zone_volume(lattice_vectors::Array{<:Array{<:Real, 1}, 1})
 
 end
 
+function brillouin_zone_volume(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}})
+    a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
+
+    V = abs(dot(a1, cross(a2, a3)))
+    return (2π)^3/V
+
+end
 
 """Returns the 2d brillouin zone area of the lattice. The assumption is made that the lattice is in the x-y plane
 Note that this is equivalent to just dividing 4π^2 by the corresponding unit cell area. 
