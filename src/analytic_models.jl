@@ -355,6 +355,57 @@ function graphene_numerical_self_energy(μ::Real; mesh1::Int=100, mesh2::Int=100
     return SelfEnergyMat
 end
 
+function graphene_second_order_losses(; mesh1::Int=10, mesh2::Int=200, μ::Real=0.64, nlambda::Int=50, histogram_width::Real=100)
+    OverallFactor=2π/ħ*(8π/137)*ħ^5*c^5/1e12*1/5.24
+    DiffEnergies=zeros(nlambda)
+    q=(μ/6)*(2/10)
+    
+    for lambdas in 1:nlambda
+        
+        lambda=3+lambdas/nlambda*6
+        omega =1.24/lambda
+    
+        println("Plasmon Freq:", omega)
+    
+        flush(stdout)
+        for i in 1:mesh1
+            k=i/mesh1*.5
+            for j in 1:mesh2
+                theta=j/mesh2*2π
+                kx, ky=k*cos(theta), k*sin(theta)
+                kplusq=sqrt((kx+q)^2+ky^2)
+                
+                Ei = dirac_approximation_upper(k)
+                Em = dirac_approximation_upper(kplusq)
+                
+                overlap=1
+                f1=heaviside(μ-Ei)
+                f2=1-heaviside(μ-Em)
+                
+                for i in 1:mesh1
+                    k2=i/mesh1*.5
+                    for j in 1:mesh2
+                        theta2=j/mesh2*2π 
+                        kplusqplusq2 = sqrt((kx+q+k2*cos(theta2))^2+(ky+k2*sin(theta2))^2)
+                        kplusq2 = sqrt((kx+k2*cos(theta2))^2+(ky+k2*sin(theta2))^2)
+                        Em2 = dirac_approximation_upper(kplusq2)
+
+                        Ef=6*kplusqplusq2
+                        f3=1-heaviside(μ-Ef)
+                        
+                        DiffEnergies2=Ef-Ei+0.2
+                        if abs(DiffEnergies2-omega)*histogram_width<0.5 && DiffEnergies2>0
+                            #k, k2 factors for area, f1, f2, f3 factors for occupation, k2 and omega factors for matrix element, the rest for integral 
+                            DiffEnergies[lambdas]=DiffEnergies[lambdas]+k*k2*f3*f2*f1*overlap*abs(k/(Em-Ei-omega)+kplusq2/(Em2-Ei-0.2+0.01im))^2*1/omega*q*histogram_width*(1/mesh1*.5)^2*(2π/mesh2)^2*0.226576*OverallFactor
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return DiffEnergies
+end
+
 
 function graphene_electron_real_self_energy(ϵ::Real, μ::Real)
 

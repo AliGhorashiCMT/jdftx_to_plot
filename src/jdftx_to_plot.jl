@@ -30,6 +30,7 @@ const e²ϵ = 4π*ħ*c*α
 const bohrtoangstrom = 0.529177
 const eV = 1/27.2114 
 const kB = 8.617333262145e-5
+const mₑ = 0.511e6/c^2
 
 export ħ,c, α, e²ϵ, bohrtoangstrom, eV, kB
 
@@ -58,7 +59,7 @@ Methods provided for normalizing the kvectors in the basis of reciprocal lattice
 include("cell_properties.jl")
 export unnormalize_kvector, normalize_kvector, brillouin_zone_area,
 in_wigner_seitz, in_brillouin, reciprocal_vectors, ion_positions, plot_lattice, 
-cell_vectors, unit_cell_area
+cell_vectors, unit_cell_area, unit_cell_volume, brillouin_zone_volume
 
 include("phonon_properties.jl")
 export plot_phonons, phonon_dispersion, phonon_dispersionmodes, phonon_force_matrix

@@ -213,6 +213,7 @@ function unit_cell_area(lattice_vectors::Array{<:Array{<:Real, 1},1})
 
 end
 
+
 function unit_cell_area(lattice_vectors::lattice)
     a1, a2, a3 = lattice_vectors.rvectors[:, 1]*bohrtoangstrom, lattice_vectors.rvectors[:, 2]*bohrtoangstrom, lattice_vectors.rvectors[:, 3]*bohrtoangstrom
 
@@ -221,8 +222,54 @@ function unit_cell_area(lattice_vectors::lattice)
 
 end
 
+"""
+Returns the volume of the unit cell in question. 
 
-"""Returns the 2d area of the lattice. The assumption is made that the lattice is in the x-y plane
+#Examples
+
+
+
+```julia-repl 
+julia> a =1
+julia> face_centered_vectors = [[a/2, a/2, 0], [0, a/2, a/2], [a/2, 0, a/2]]
+3-element Array{Array{Float64,1},1}:
+[0.5, 0.5, 0.0]
+[0.0, 0.5, 0.5]
+[0.5, 0.0, 0.5]
+julia> unit_cell_volume(face_centered_vectors)
+0.25
+julia> body_centered_vectors = [[a/2, a/2, a/2], [a/2, -a/2, -a/2], [-a/2, -a/2, a/2 ]]
+3-element Array{Array{Float64,1},1}:
+[0.5, 0.5, 0.5]
+[0.5, -0.5, -0.5]
+[-0.5, -0.5, 0.5]
+julia> unit_cell_volume(body_centered_vectors)
+0.5
+```
+
+Note that these results comport with our understanding that a body centered cubic has two atoms per conventional unit cell
+and a face centered cubic has 4 atoms per conventional unit cell. 
+
+"""
+function unit_cell_volume(lattice_vectors::Array{<:Array{<:Real, 1},1}) 
+    a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
+
+    V = abs(dot(a1, cross(a2, a3)))
+    return V
+
+end
+
+
+function brillouin_zone_volume(lattice_vectors::Array{<:Array{<:Real, 1}, 1})
+    a1, a2, a3 = lattice_vectors[1], lattice_vectors[2], lattice_vectors[3]
+
+    V = abs(dot(a1, cross(a2, a3)))
+    return (2π)^3/V
+
+end
+
+
+"""Returns the 2d brillouin zone area of the lattice. The assumption is made that the lattice is in the x-y plane
 Note that this is equivalent to just dividing 4π^2 by the corresponding unit cell area. 
 ```julia-repl
 julia> a = 1.42*sqrt(3)
