@@ -132,13 +132,13 @@ function exact_graphene_epsilon(q::Real, w::Real, mu::Real)
     return 1-e²ϵ/2/q*graphene_total_polarization(q, w, mu) 
 end
 
-function exact_graphene_plasmon(q::Real, mu::Real)
-    Epsilons=zeros(1000)
-    for i in 1:1000
-        ω = mu*i/1000*3
+function exact_graphene_plasmon(q::Real, mu::Real; num_evals::Int= 1000, max_multiple_of_mu::Int=3)
+    Epsilons=zeros(num_evals)
+    for i in 1:num_evals
+        ω = mu*i/num_evals*max_multiple_of_mu
         Epsilons[i] = 1-e²ϵ/2/q*graphene_total_polarization(q, ω, mu) 
     end
-    return argmin(log.(abs.(Epsilons)))*3/1000*mu
+    return argmin(log.(abs.(Epsilons)))*max_multiple_of_mu/num_evals*mu
 end
 
 function exact_graphene_plasmonq(ω::Real, mu::Real)
@@ -171,6 +171,48 @@ function exact_graphene_landau_damping(q::Real, δ::Real, mu::Real)
     RePolδω = graphene_total_polarization(q, plasmon+δ, mu)  
     ImPol = graphene_total_impolarization(q, plasmon, mu)
     return ImPol*δ/(RePolδω-RePolω)
+end
+
+
+function marinko_graphene_landau_damping(q::Real, μ::Real; mesh::Int= 100, histrogram_width::Int=100)
+    Marinko_Plasmon_Element=4π/137*6.6*3*100
+    loss = 0
+    plasmon = exact_graphene_plasmon(q, mu)
+    for i in 1:mesh
+        k=i/mesh*μ/2
+        for j in 1:mesh
+            theta=j/mesh*2*π
+            kx, ky=k*cos(theta), k*sin(theta)
+    
+            kplusq=sqrt((kx+q)^2+ky^2)
+    
+            Eupperk, Elowerkplusq = dirac_approximation_upper(k), dirac_approximation_lower(kplusq)
+            Eupperkplusq = dirac_approximation_upper(kplusq)
+
+            delta=1
+            overlapUL = 1-(k+q*cos(theta))/(Complex(k^2+q^2+2*k*q*cos(theta))^.5+ delta/100000000)
+            overlapUL = 1/2*overlapUL;
+
+            overlapUU = 1-(k+q*cos(theta))/(Complex(k^2+q^2+2*k*q*cos(theta))^.5+ delta/100000000)
+            overlapUU = 1/2*overlapUU;
+
+            fupperk = heaviside(μ-Eupperk)
+            flowerkplusq = heaviside(μ-Elowerkplusq)
+            fupperkplusq = heaviside(μ-Eupperkplusq)
+
+            DiffEnergiesUL = Eupperk-Elowerkplusq
+            DiffEnergiesUU = Eupperk-Eupperkplusq
+
+            if abs(DiffEnergiesUL-plasmon)*histogram_width<0.5 && DiffEnergiesUL>0
+                loss = loss + k*(flowerkplusq)*(1-fupperk)*overlapUL*Marinko_Plasmon_Element/q*plasmon*1/π^2*histogram_width*(μ/mesh*0.5)*(2π/mesh)
+            end
+
+            if abs(DiffEnergiesUU-plasmon)*histogram_width<0.5 && DiffEnergiesUU>0
+                loss = loss + k*(fupperkplusq)*(1-fupperk)*overlapUU*Marinko_Plasmon_Element/q*plasmon*1/π^2*histrogram_width*(μ/mesh*0.5)*(2π/mesh)
+            end
+        end
+    end
+    return loss*2π/ħ
 end
 
 

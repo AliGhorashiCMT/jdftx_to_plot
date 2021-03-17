@@ -318,7 +318,6 @@ function im_polarization_finite_temperature_mc(HWannier::Array{Float64, 3}, cell
 end
 
 
-
 function im_polarization(wannier_file_up::String, wannier_file_dn::String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; kwargs...) 
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization(wannier_file_up, cell_map_file_up, nbands, valence_bands_up, lattice_vectors, q, μ; kwargs... )
