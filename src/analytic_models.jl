@@ -587,8 +587,8 @@ function graphene_analytic_real_self_energy(ϵ::Real, μ::Real)
 
 end
 
-alevitov= 134/sqrt(3);
-Klevitov=4*pi/(3*sqrt(3)*alevitov);
+alevitov= 134/sqrt(3); ##Effective nearest neighbor length in angstrom. 134 angstroms is the superlattice size
+Klevitov=4*pi/(3*sqrt(3)*alevitov); ##The K point for the superlattice. 
 heaviside(x)= x>0 ? 1 : 0
 
 #=
@@ -620,20 +620,97 @@ function limit_up_levitov(x)
     B=B1+B2+B3;
 end
 
-function levitov_integrand(kx, ky, qx, qy, w, delta)
+function levitov_energy(kx, ky)
+    3.75/3*abs(exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im));
+end
+
+function levitov_same_overlap(kx, ky, qx, qy)
+    kplusqy=ky+qy;
+    kplusqx=kx+qx;
+    E1=exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im);
+    E2=exp(alevitov*kplusqy*1im)+exp(-(alevitov*kplusqx*sqrt(3)/2+alevitov*kplusqy/2)*1im)+exp((alevitov*kplusqx*sqrt(3)/2-alevitov/2*kplusqy)*1im);
+    sameOverlap=(1+cos(angle(E1)-angle(E2)))/2;
+end
+
+function levitov_mixed_overlap(kx, ky, qx, qy)
     kplusqy=ky+qy;
     kplusqx=kx+qx;
     E1=exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im);
     E2=exp(alevitov*kplusqy*1im)+exp(-(alevitov*kplusqx*sqrt(3)/2+alevitov*kplusqy/2)*1im)+exp((alevitov*kplusqx*sqrt(3)/2-alevitov/2*kplusqy)*1im);
     mixedOverlap=(1-cos(angle(E1)-angle(E2)))/2;
+end
+
+function levitov_integrand(kx, ky, qx, qy, w, delta)
+    kplusqy=ky+qy;
+    kplusqx=kx+qx;
+    #=
+        The arguments in the exponentials are the "nearest neighbor" distances. 
+        The first one is in the y direction with distance alevitov
+        The second is at 60 degrees from the negative y axis (sin(30) is 1/2 etc)
+        The last one is 30 degrees below the x axis.  
+        Note that since the nearest neighbor is in the y direction, the lattice extends in the x direction
+        This implies that the reciprocal lattice extends in the y direction. 
+    =#
+    E1=exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im);
+    E2=exp(alevitov*kplusqy*1im)+exp(-(alevitov*kplusqx*sqrt(3)/2+alevitov*kplusqy/2)*1im)+exp((alevitov*kplusqx*sqrt(3)/2-alevitov/2*kplusqy)*1im);
+    mixedOverlap=(1-cos(angle(E1)-angle(E2)))/2;
     sameOverlap=(1+cos(angle(E1)-angle(E2)))/2;
-    Up1=3.75/3*abs(E1);
-    Up2=3.75/3*abs(E2);
+    Up1=3.75/3*abs(E1); ## Width of the band is 3.75 meV 
+    Up2=3.75/3*abs(E2); 
     a=2*sameOverlap*(Up1-Up2)/((Up1-Up2)^2-(w+1im*delta)^2);
     b=2*mixedOverlap*(Up1+Up2)/((Up1+Up2)^2-(w+1im*delta)^2);
-    fullbands1= 1/(12.12*pi^2)*(a+b)*heaviside(1.81-Up1);
+    fullbands1= 1/(12.12*pi^2)*(a+b)*heaviside(1.81-Up1); ##The Fermi energy is at 1.81 eV 
     fullbands2 = 2/(12.12*pi^2)*mixedOverlap*(-Up1-Up2)/((Up1+Up2)^2-(w+1im*delta)^2);
+
+    ###Note that there is an effective background dielectric constant of 12.12 
+    ###Note that the prefactors take into account a four fold degeneracy (two layers, two spins)
+
     fullbands=fullbands1+fullbands2;
     return fullbands
+end
+
+function levitov_im_polarization(qx, qy; erange::Real=100, mesh::Int=100, histogram_width::Int=100)
+
+    impols = zeros(histogram_width*erange)
+    for x_mesh in -mesh:mesh
+        for y_mesh in -mesh:mesh
+            x, y = x_mesh/mesh*Klevitov, y_mesh/mesh*Klevitov
+            if y < limit_up_levitov(x) && y > limit_dn_levitov(x)
+                E1 = levitov_energy(x, y)
+                E2 = -levitov_energy(x+qx, y+qy)
+                E3 = levitov_energy(x+qx, y+qy)
+                #The chemical potential is in the upper band, so we may consider intraband transitions in the upper band
+                # and interband transitions between the upper and lower bands
+                f1 = heaviside(1.81-E1)
+                f2 = heaviside(1.81-E2)
+                f3 = heaviside(1.81-E3)
+
+
+                impols[round(Int, histogram_width*(E1-E2))+1] = impols[round(Int, histogram_width*(E1-E2))+1] + (f1-f2)*levitov_mixed_overlap(x, y, qx, qy)*π*(1/π)^2*histogram_width*(Klevitov/mesh)^2
+                
+                if E1-E3>0
+                    impols[round(Int, histogram_width*(E1-E3))+1] = impols[round(Int, histogram_width*(E1-E3))+1] + (f1-f3)*levitov_same_overlap(x, y, qx, qy)*π*(1/π)^2*histogram_width*(Klevitov/mesh)^2
+                end
+            end
+        end
+    end
+    return impols
+
+end
+
+function levitov_kramers_kronig_epsilon(qx::Real, qy::Real, ω::Real; kwargs...)
+
+    levitov_impols = levitov_im_polarization(qx, qy; kwargs...)
+
+    histogram_width = 100
+    max_energy = 100
+    interpolated_ims=interpol.interp1d(0:1/histogram_width:max_energy-1/histogram_width, levitov_impols)
+    
+    ErrorAbs=1e-20
+    cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+ω)
+
+    q=sqrt(qx^2+qy^2)
+    return 12.12-e²ϵ*1000/(2*q)*pyintegrate.quad(cauchy_inner_function, 0, 50, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar= ω ; kwargs...)[1]
+
 end
 
