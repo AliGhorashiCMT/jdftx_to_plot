@@ -55,6 +55,35 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
     return Polarization_Array
 end
 
+function im_polarization_mc(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100) 
+    
+    Polarization_Array=zeros(histogram_width*100)
+
+    V=(2π)^2/brillouin_zone_area(lattice_vectors)
+    qnormalized = normalize_kvector(lattice_vectors, q)
+
+    xmesh = rand(mesh)
+    ymesh = rand(mesh)
+    for i in xmesh
+        for j in ymesh
+            kvector=[i, j, 0]
+            E1 = wannier_bands(HWannier, cell_map, kvector  )
+            E2 = wannier_bands(HWannier, cell_map, kvector+qnormalized  )
+            
+            f1=np.heaviside( μ-E1, 0.5)
+            f2=np.heaviside( μ-E2, 0.5)
+
+            DeltaE=E2-E1
+            if DeltaE>0
+                Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*(1/mesh)^2*histogram_width*spin
+            end
+        end
+    end
+
+    return Polarization_Array
+end
+
+
 
 function im_polarization(wannier_file::String, cell_map_file::String, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin::Int = 1, mesh::Int = 100, histogram_width::Real = 100)
     
@@ -189,6 +218,45 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
     return Polarization_Array
 end
 
+function im_polarization_mc(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands::Array{Int, 1}=Int[], spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
+    
+    Polarization_Array=zeros(histogram_width*100)
+
+    V=(2π)^2/brillouin_zone_area(lattice_vectors)
+    qnormalized = normalize_kvector(lattice_vectors, q)
+
+    xmesh = rand(mesh)
+    ymesh = rand(mesh)
+    for i in xmesh
+        for j in ymesh
+            kvector=[i, j, 0]
+            E1=wannier_bands(HWannier, cell_map, kvector, nbands  )
+            E2=wannier_bands(HWannier, cell_map, kvector+qnormalized, nbands  )
+            
+            V1=wannier_vectors(HWannier, cell_map, kvector)
+            V2=wannier_vectors(HWannier, cell_map, kvector+qnormalized )
+
+            for lower in 1:valence_bands+1
+                for upper in valence_bands+1:nbands
+                    if lower ∉ exclude_bands && upper ∉ exclude_bands
+                        Elower = E1[lower]
+                        Eupper = E2[upper]
+                        overlap=(np.abs(np.dot(V1[:, lower], np.conj(V2[:, upper]))))^2;
+                        f1=np.heaviside( μ-Elower, 0.5)
+                        f2=np.heaviside( μ-Eupper, 0.5)
+
+                        DeltaE=Eupper-Elower
+                        if DeltaE>0
+                            Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*overlap*(1/mesh)^2*histogram_width*spin
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return Polarization_Array
+end
 
 
 """
@@ -242,6 +310,15 @@ function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Ar
     spin_defect_pol = im_polarization(HWannierdefect, cell_map_defect, lattice_vectors, q, μ, mesh = intraband_mesh; kwargs... )
     return (smooth(spin_up_pol + spin_dn_pol, win_len=win_len)+spin_defect_pol)
 end
+
+function im_polarization_mixedmesh_mc(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3}, HWannierdefect::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, cell_map_defect::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; interband_mesh::Int=10, intraband_mesh::Int=100, win_len=50, exclude_bands_up = Int[], exclude_bands_dn = Int[], kwargs...)
+    #Here we add the independent polarizations from different spin channels 
+    spin_up_pol = im_polarization_mc(HWannierup, cell_map_up, nbands, valence_bands_up, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_up; kwargs... )
+    spin_dn_pol = im_polarization_mc(HWannierdn, cell_map_dn, nbands, valence_bands_dn, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_dn; kwargs... )
+    spin_defect_pol = im_polarization_mc(HWannierdefect, cell_map_defect, lattice_vectors, q, μ, mesh = intraband_mesh; kwargs... )
+    return (smooth(spin_up_pol + spin_dn_pol, win_len=win_len)+spin_defect_pol)
+end
+
 
 
 "Applies the kramers-kronig relations onto a 1 dimensional array of numbers consisting of the imaginary value of the polarization to return the real value of polarization"
