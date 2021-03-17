@@ -138,6 +138,7 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String, 
 
 end
 
+
 function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int; exclude_bands = Int[], mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
 
     WannierDOS=np.zeros(histogram_width*energy_range)
@@ -162,6 +163,35 @@ function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{
     return WannierDOS
 
 end
+
+function density_of_states_montecarlo(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int; exclude_bands = Int[], mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
+
+    WannierDOS=np.zeros(histogram_width*energy_range)
+
+    xmesh = rand(mesh)
+    ymesh = rand(mesh)
+
+    for x_iter in xmesh
+        for y_iter in ymesh
+            
+            ϵ=  wannier_bands(HWannier, cell_map, [x_iter, y_iter, 0], nbands)
+            for band in 1:nbands
+                if band ∉ exclude_bands
+
+                    ϵ_band = ϵ[band]
+                    WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]=WannierDOS[round(Int, histogram_width*(ϵ_band+offset))]+histogram_width*(1/mesh)^2
+            
+                end
+        
+            end
+    
+        end
+    end
+
+    return WannierDOS
+
+end
+
 
 
 function find_chemical_potential(wannier_file::String, cell_map_file::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)

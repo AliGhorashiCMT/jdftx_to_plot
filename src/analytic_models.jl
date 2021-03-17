@@ -212,6 +212,37 @@ function graphene_dos(t::Real, mesh::Real, histogram_width::Real)
     return GrapheneDOS
 end
 
+function graphene_dos_monte_carlo(t::Real, mesh::Real, histogram_width::Real) 
+    max_energy=3*abs(t)
+    middle_index=round(Int, max_energy*histogram_width)+1
+    num_indices=middle_index*2
+
+    GrapheneDOS=zeros(num_indices)
+
+    a=1.42*sqrt(3)
+    graphene_lattice=[[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]]
+
+    K=4*pi/(3*sqrt(3)*1.42);
+
+    N=mesh
+
+    rand_kxs, rand_kys = rand(mesh), rand(mesh)
+
+    for rkx in rand_kxs
+        for rky in rand_kys
+            kxnormal, kynormal = rkx, rky
+            kx, ky = unnormalize_kvector(graphene_lattice, [kxnormal, kynormal, 0])
+            Ek=graphene_energy(t, kx, ky)
+
+
+            GrapheneDOS[round(Int, histogram_width*Ek)+middle_index]=GrapheneDOS[round(Int, histogram_width*Ek)+middle_index]+(1/N)^2*histogram_width
+            GrapheneDOS[-round(Int, histogram_width*Ek)+middle_index]=GrapheneDOS[-round(Int, histogram_width*Ek)+middle_index]+(1/N)^2*histogram_width
+        end
+    end
+    return GrapheneDOS
+end
+
+
 
 function graphene_dos_quad(t::Real, ϵ::Real, δ::Real; kwargs...) 
     a=1.42*sqrt(3)
@@ -327,6 +358,52 @@ function graphene_numerical_self_energy(μ::Real; mesh1::Int=100, mesh2::Int=100
         for i in 1:mesh1
             for j in 1:mesh2
                 q, theta=i/mesh1*1, j/mesh2*(2*π) 
+                qx, qy=q*cos(theta), q*sin(theta)
+                kplusq=sqrt((k+qx)^2+(qy)^2)
+            
+                for band in [1, 2]
+                    
+                    if band==1
+                        Energy = dirac_approximation_upper(kplusq)
+                    elseif band==2
+                        Energy = dirac_approximation_lower(kplusq)
+                    end
+                    Occupation=heaviside(μ-Energy)
+                    DiffEnergies1=Energy+phononEnergy
+                    DiffEnergies2=Energy-phononEnergy
+    
+                    if  abs(E-DiffEnergies1)*histogram_width<.5
+                        SelfEnergyMat[ks]=SelfEnergyMat[ks]+(1-Occupation)*q*π*g^2*(2*π/mesh1)*(1/mesh2)*histogram_width
+                    end
+                    if abs(E-DiffEnergies2)*histogram_width<.5
+                        SelfEnergyMat[ks]=SelfEnergyMat[ks]+(Occupation)*q*π*g^2*(2*π/mesh1)*(1/mesh2)*histogram_width
+                    end
+                end
+            end
+        end
+    end
+    
+    return SelfEnergyMat
+end
+
+
+function graphene_monte_carlo_self_energy(μ::Real; mesh1::Int=100, mesh2::Int=100, histogram_width::Real=100, NQs::Int=50)
+    
+    g = .035*13.605662285137 # The energy provided in the paper is given in Rydberg
+    phononEnergy = 0.2 
+    SelfEnergyMat=zeros(NQs)
+        
+    for ks in 1:NQs
+        k=(ks-NQs/2)/NQs*0.4
+        E=k*6
+        print(ks); flush(stdout)
+        
+        random_ks = rand(mesh1)
+        random_thetas = rand(mesh2)
+
+        for rks in random_ks
+            for thetas in random_thetas
+                q, theta=1*rks, 2*π*thetas
                 qx, qy=q*cos(theta), q*sin(theta)
                 kplusq=sqrt((k+qx)^2+(qy)^2)
             
