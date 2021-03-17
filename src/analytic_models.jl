@@ -174,10 +174,10 @@ function exact_graphene_landau_damping(q::Real, δ::Real, mu::Real)
 end
 
 
-function marinko_graphene_landau_damping(q::Real, μ::Real; mesh::Int= 100, histrogram_width::Int=100)
+function marinko_graphene_landau_damping(q::Real, μ::Real; mesh::Int= 100, histogram_width::Int=100)
     Marinko_Plasmon_Element=4π/137*6.6*3*100
     loss = 0
-    plasmon = exact_graphene_plasmon(q, mu)
+    plasmon = exact_graphene_plasmon(q, μ)
     for i in 1:mesh
         k=i/mesh*μ/2
         for j in 1:mesh
@@ -208,7 +208,7 @@ function marinko_graphene_landau_damping(q::Real, μ::Real; mesh::Int= 100, hist
             end
 
             if abs(DiffEnergiesUU-plasmon)*histogram_width<0.5 && DiffEnergiesUU>0
-                loss = loss + k*(fupperkplusq)*(1-fupperk)*overlapUU*Marinko_Plasmon_Element/q*plasmon*1/π^2*histrogram_width*(μ/mesh*0.5)*(2π/mesh)
+                loss = loss + k*(fupperkplusq)*(1-fupperk)*overlapUU*Marinko_Plasmon_Element/q*plasmon*1/π^2*histogram_width*(μ/mesh*0.5)*(2π/mesh)
             end
         end
     end
@@ -216,7 +216,7 @@ function marinko_graphene_landau_damping(q::Real, μ::Real; mesh::Int= 100, hist
 end
 
 
-function marinko_graphene_landau_damping_mc(q::Real, μ::Real; mesh::Int= 100, histrogram_width::Int=100)
+function marinko_graphene_landau_damping_mc(q::Real, μ::Real; mesh::Int= 100, histogram_width::Int=100)
     Marinko_Plasmon_Element=4π/137*6.6*3*100
     loss = 0
     plasmon = exact_graphene_plasmon(q, μ)
@@ -254,7 +254,7 @@ function marinko_graphene_landau_damping_mc(q::Real, μ::Real; mesh::Int= 100, h
             end
 
             if abs(DiffEnergiesUU-plasmon)*histogram_width<0.5 && DiffEnergiesUU>0
-                loss = loss + k*(fupperkplusq)*(1-fupperk)*overlapUU*Marinko_Plasmon_Element/q*plasmon*1/π^2*histrogram_width*(μ/mesh*0.5)*(2π/mesh)
+                loss = loss + k*(fupperkplusq)*(1-fupperk)*overlapUU*Marinko_Plasmon_Element/q*plasmon*1/π^2*histogram_width*(μ/mesh*0.5)*(2π/mesh)
             end
         end
     end
