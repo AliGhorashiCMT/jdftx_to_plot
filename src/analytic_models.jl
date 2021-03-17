@@ -174,6 +174,11 @@ function exact_graphene_landau_damping(q::Real, δ::Real, mu::Real)
 end
 
 
+"""
+Provides another method to compute landau damping in graphene, inspired by formalism in the following paper:
+
+Jablan, Marinko, and Darrick E. Chang. "Multiplasmon absorption in graphene." Physical review letters 114.23 (2015): 236801.
+"""
 function marinko_graphene_landau_damping(q::Real, μ::Real; mesh::Int= 100, histogram_width::Int=100)
     Marinko_Plasmon_Element=4π/137*6.6*3*100
     loss = 0
@@ -710,7 +715,27 @@ function levitov_kramers_kronig_epsilon(qx::Real, qy::Real, ω::Real; kwargs...)
     cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+ω)
 
     q=sqrt(qx^2+qy^2)
-    return 12.12-e²ϵ*1000/(2*q)*pyintegrate.quad(cauchy_inner_function, 0, 50, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar= ω ; kwargs...)[1]
+    return 12.12-e²ϵ*1000/(2*q)*pyintegrate.quad(cauchy_inner_function, 0, 50, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar= ω)[1]
 
+end
+
+function levitov_kramers_kronig_epsilon(qx::Real, qy::Real, ωs::Array{<:Real, 1}; kwargs...)
+
+    levitov_impols = levitov_im_polarization(qx, qy; kwargs...)
+
+    histogram_width = 100
+    max_energy = 100
+    interpolated_ims=interpol.interp1d(0:1/histogram_width:max_energy-1/histogram_width, levitov_impols)
+    
+    ErrorAbs=1e-20
+    real_epses = []
+
+    for ω in ωs
+        cauchy_inner_function(omegaprime)=2/pi*interpolated_ims(omegaprime)*omegaprime/(omegaprime+ω)
+
+        q=sqrt(qx^2+qy^2)
+        push!(real_epses, 12.12-e²ϵ*1000/(2*q)*pyintegrate.quad(cauchy_inner_function, 0, 50, weight="cauchy",  epsrel=ErrorAbs, epsabs=ErrorAbs, limit=75,  wvar= ω)[1])
+    end
+    return real_epses
 end
 
