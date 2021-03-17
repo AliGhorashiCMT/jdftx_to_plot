@@ -173,6 +173,43 @@ function normalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, unnorma
 
 end
 
+function normalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, unnormalized_kvector::Tuple{<:Real, <:Real, <:Real})
+
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    vectors_array=Array{Float64,2}(undef, (3, 3))
+    
+    vectors_array[:, 1], vectors_array[:, 2], vectors_array[:, 3] = b1, b2, b3
+
+    inv(vectors_array)*collect(unnormalized_kvector)
+
+end
+
+function normalize_kvector(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}}, unnormalized_kvector::Array{<:Real, 1})
+
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    vectors_array=Array{Float64,2}(undef, (3, 3))
+    
+    vectors_array[:, 1], vectors_array[:, 2], vectors_array[:, 3] = b1, b2, b3
+
+    inv(vectors_array)*unnormalized_kvector
+
+end
+
+function normalize_kvector(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}}, unnormalized_kvector::Tuple{<:Real, <:Real, <:Real})
+
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    vectors_array=Array{Float64,2}(undef, (3, 3))
+    
+    vectors_array[:, 1], vectors_array[:, 2], vectors_array[:, 3] = b1, b2, b3
+
+    inv(vectors_array)*collect(unnormalized_kvector)
+
+end
+
+
 """
 Returns the wavevector in inverse angstroms when provided the wavevector in the basis of reciprocal lattice vectors
 
@@ -202,6 +239,32 @@ function unnormalize_kvector(lattice_vectors::Array{<:Array{<:Real, 1},1}, norma
     vectors_array*normalized_kvector
 
 end
+
+function unnormalize_kvector(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}}, normalized_kvector::Array{<:Real, 1}) 
+
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    vectors_array=Array{Float64,2}(undef, (3, 3))
+    
+    vectors_array[:, 1], vectors_array[:, 2], vectors_array[:, 3] = b1, b2, b3
+
+    vectors_array*normalized_kvector
+
+end
+
+function unnormalize_kvector(lattice_vectors::Tuple{Array{<:Real, 1}, Array{<:Real, 1}, Array{<:Real, 1}}, normalized_kvector::Tuple{<:Real, <:Real, <:Real}) 
+
+    b1, b2, b3 = reciprocal_vectors(lattice_vectors)
+
+    vectors_array=Array{Float64,2}(undef, (3, 3))
+    
+    vectors_array[:, 1], vectors_array[:, 2], vectors_array[:, 3] = b1, b2, b3
+
+    vectors_array*collect(normalized_kvector)
+
+end
+
+
 
 """
 Returns the area of the unit cell (required for polarization calculations).
