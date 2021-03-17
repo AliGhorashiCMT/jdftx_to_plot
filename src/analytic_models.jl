@@ -219,7 +219,7 @@ end
 function marinko_graphene_landau_damping_mc(q::Real, μ::Real; mesh::Int= 100, histrogram_width::Int=100)
     Marinko_Plasmon_Element=4π/137*6.6*3*100
     loss = 0
-    plasmon = exact_graphene_plasmon(q, mu)
+    plasmon = exact_graphene_plasmon(q, μ)
 
     krand = rand(mesh)
     thetarand = rand(mesh)
