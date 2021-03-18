@@ -768,3 +768,19 @@ function graphene_bilayer_plasmon_modes( q::Real, μ::Real, d::Real; num_evals::
     #return argmin(log.(abs.(Diffs)))*max_multiple_of_mu/num_evals*μ
 end
 
+function find_graphene_bilayer_plasmon_modes(q::Real, μ::Real, d::Real; num_evals::Int = 100, max_multiple_of_mu::Int = 3, background_dielectric::Real = 2.5, kwargs...)
+    
+    delta = 0.01
+    Diffs=zeros(num_evals)
+    for i in 1:num_evals
+        ω = μ*i/num_evals*max_multiple_of_mu
+
+        A = hcubature( x-> x[1]/(pi^2)*real(lower_band_integrand(x[1], x[2], q, ω , delta)), [0, 0], [2, 2π]; kwargs...)[1]
+        B = hcubature( x-> x[1]/(pi^2)*real(upper_band_integrand(x[1], x[2], q, ω, delta)), [0, 0], [μ/6, 2π]; kwargs...)[1]
+        Condoverϵ₀ =  1im*ω/ħ*e²ϵ/q^2*(A+B)  ##The conductivity divided by ϵ₀
+        Diffs[i] = (2*background_dielectric/q+1im*Condoverϵ₀/ω*ħ)^2*exp(2*q*d)-(1im*Condoverϵ₀/ω*ħ)^2
+
+    end
+    return log.(abs.(Diffs))
+end
+

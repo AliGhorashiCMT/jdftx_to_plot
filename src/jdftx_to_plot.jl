@@ -95,7 +95,7 @@ export wannier_bands, wannier_vectors, plot_bands, hwannier
 
 include("analytic_models.jl")
 export levitov_kramers_kronig_epsilon, levitov_epsilon, levitov_im_polarization, levitov_integrand, levitov_energy,
-graphene_bilayer_plasmon_modes, 
+graphene_bilayer_plasmon_modes, find_graphene_bilayer_plasmon_modes
 alevitov, Klevitov
 
 include("export_wannier_hamiltonians.jl")
