@@ -416,6 +416,26 @@ function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh:
     end
 
     return PhononDOS
+end
 
 
+function phonon_density_of_states_per_area(cell_map::String, phononOmegaSq::String, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
+
+
+    ucell_area = unit_cell_area(lattice_vecs)
+    PhononDOS=np.zeros(histogram_width*energy_range)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ωs=  phonon_dispersion(cell_map, phononOmegaSq, [x_mesh/mesh, y_mesh/mesh, 0])
+            for ω in ωs
+                if ω>0
+                    PhononDOS[round(Int, histogram_width*ω)+1]=PhononDOS[round(Int, histogram_width*ω)+1]+histogram_width*(1/mesh)^2
+                end
+            end
+        end
+    end
+
+    return PhononDOS/ucell_area
 end
