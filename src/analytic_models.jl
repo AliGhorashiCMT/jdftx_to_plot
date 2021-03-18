@@ -606,30 +606,30 @@ Proceedings of the National Academy of Sciences Oct 2019, 116 (42) 20869-20874; 
 
 =#
 
-function levitov_epsilon(qx, qy, ω; kwargs...)
+function levitov_epsilon(qx::Real, qy::Real, ω::Real; kwargs...)
     q=sqrt(qx^2+qy^2)
     1-e²ϵ*1000/(2*q)*hcubature( x->levitov_integrand(x[1], x[1], qx, qy, ω, .1)*heaviside(limit_up_levitov(x[1])-x[2])*heaviside(-limit_dn_levitov(x[1])+x[2]), [-Klevitov, -Klevitov], [Klevitov, Klevitov]; kwargs...)[1]
 end
 
-function limit_dn_levitov(x)
+function limit_dn_levitov(x::Real)
     A1=heaviside(x+Klevitov)*heaviside(-x-Klevitov/2)*(-sqrt(3)*x-4*pi./(3*alevitov));
     A2=heaviside(x+Klevitov/2)*heaviside(-x+Klevitov/2)*(-4*pi/(6*alevitov));
     A3=heaviside(x-Klevitov/2)*heaviside(Klevitov-x)*(sqrt(3)*x-4*pi/(3*alevitov));
     A=A1+A2+A3;
 end
 
-function limit_up_levitov(x)
+function limit_up_levitov(x::Real)
     B1=heaviside(x+Klevitov)*heaviside(-x-Klevitov/2)*(sqrt(3)*x+4*pi/(3*alevitov));
     B2=heaviside(x+Klevitov/2)*heaviside(-x+Klevitov/2)*(4*pi./(6*alevitov));
     B3=heaviside(x-Klevitov/2)*heaviside(Klevitov-x)*(-sqrt(3)*x+4*pi/(3*alevitov));
     B=B1+B2+B3;
 end
 
-function levitov_energy(kx, ky)
+function levitov_energy(kx::Real, ky::Real)
     3.75/3*abs(exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im));
 end
 
-function levitov_same_overlap(kx, ky, qx, qy)
+function levitov_same_overlap(kx::Real, ky::Real, qx::Real, qy::Real)
     kplusqy=ky+qy;
     kplusqx=kx+qx;
     E1=exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im);
@@ -637,7 +637,7 @@ function levitov_same_overlap(kx, ky, qx, qy)
     sameOverlap=(1+cos(angle(E1)-angle(E2)))/2;
 end
 
-function levitov_mixed_overlap(kx, ky, qx, qy)
+function levitov_mixed_overlap(kx::Real, ky::Real, qx::Real, qy::Real)
     kplusqy=ky+qy;
     kplusqx=kx+qx;
     E1=exp(alevitov*ky*1im)+exp(-(alevitov*kx*sqrt(3)/2+alevitov*ky/2)*1im)+exp((alevitov*kx*sqrt(3)/2-alevitov/2*ky)*1im);
@@ -645,7 +645,7 @@ function levitov_mixed_overlap(kx, ky, qx, qy)
     mixedOverlap=(1-cos(angle(E1)-angle(E2)))/2;
 end
 
-function levitov_integrand(kx, ky, qx, qy, w, delta)
+function levitov_integrand(kx::Real, ky::Real, qx::Real, qy::Real, w::Real, delta::Real)
     kplusqy=ky+qy;
     kplusqx=kx+qx;
     #=
@@ -674,7 +674,7 @@ function levitov_integrand(kx, ky, qx, qy, w, delta)
     return fullbands
 end
 
-function levitov_im_polarization(qx, qy; erange::Real=100, mesh::Int=100, histogram_width::Int=100)
+function levitov_im_polarization(qx::Real, qy::Real; erange::Real=100, mesh::Int=100, histogram_width::Int=100)
 
     impols = zeros(histogram_width*erange)
     for x_mesh in -mesh:mesh
