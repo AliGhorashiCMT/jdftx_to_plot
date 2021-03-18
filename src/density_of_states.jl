@@ -23,6 +23,14 @@ function density_of_states_per_area(dosfile_1::String, lattice_vecs::Array{<:Arr
 
 end
 
+function density_of_states_per_area(dosfile_1::String, lattice_vecs::lattice; kwargs...)
+
+    ucell_area = unit_cell_area(lattice_vecs)
+    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+
+end
+
+
 function density_of_states_per_area(dosfile_1::String, dosfile_2::String, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; kwargs... )
     ucell_area = unit_cell_area(lattice_vecs)
     plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
@@ -30,6 +38,12 @@ function density_of_states_per_area(dosfile_1::String, dosfile_2::String, lattic
 
 end
 
+function density_of_states_per_area(dosfile_1::String, dosfile_2::String, lattice_vecs::lattice; kwargs... )
+    ucell_area = unit_cell_area(lattice_vecs)
+    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    plot!(np.loadtxt(dosfile_2)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]/27.2, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+
+end
 
 function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ=.1, kwargs...) 
 
