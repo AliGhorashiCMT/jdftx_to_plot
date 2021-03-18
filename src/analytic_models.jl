@@ -739,3 +739,32 @@ function levitov_kramers_kronig_epsilon(qx::Real, qy::Real, ωs::Array{<:Real, 1
     return real_epses
 end
 
+
+#=
+Next we will examine models for the plasmon modes of bilayer graphene. In this case, the most convenient thing to do 
+is to consider the conductivity and solve maxwell's equations. 
+=#
+
+
+"""
+Returns the exact plasmon modes of bilayer graphene (regular not twisted).
+
+Equations used are from:
+
+Gonçalves, Paulo André Dias. Plasmonics and Light–Matter Interactions in Two-Dimensional Materials and in Metal Nanostructures: Classical and Quantum Considerations. Springer Nature, 2020.
+
+"""
+function graphene_bilayer_plasmon_modes( q::Real, μ::Real, d::Real; num_evals::Int =1000, max_multiple_of_mu::Int= 3, background_dielectric::Real=2.5)
+    Diffs=zeros(num_evals)
+    for i in 1:num_evals
+        ω = μ*i/num_evals*max_multiple_of_mu
+        Condoverϵ₀ =  1im*ω/ħ*e²ϵ/q^2*graphene_total_polarization(q, ω, μ)  ##The conductivity divided by ϵ₀
+
+
+        Diffs[i] = (2*background_dielectric/q+1im*Condoverϵ₀/ω*ħ)^2*exp(2*q*d)-(1im*Condoverϵ₀/ω*ħ)^2
+    end
+    
+    return log.(abs.(Diffs))
+    #return argmin(log.(abs.(Diffs)))*max_multiple_of_mu/num_evals*μ
+end
+
