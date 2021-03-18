@@ -278,8 +278,6 @@ function density_of_states_montecarlo_3d(HWannier::Array{Float64, 3}, cell_map::
 end
 
 
-
-
 function find_chemical_potential(wannier_file::String, cell_map_file::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
     
     doss = density_of_states_wannier(wannier_file, cell_map_file, mesh=mesh, histogram_width=histogram_width, energy_range=energy_range, offset=offset )
@@ -416,6 +414,48 @@ function phonon_density_of_states(cell_map::String, phononOmegaSq::String; mesh:
     end
 
     return PhononDOS
+end
+
+
+function phonon_density_of_states(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
+
+    PhononDOS=np.zeros(histogram_width*energy_range)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ωs=  phonon_dispersion(force_matrix, phonon_cell_map, [x_mesh/mesh, y_mesh/mesh, 0])
+            for ω in ωs
+                if ω>0
+                    PhononDOS[round(Int, histogram_width*ω)+1]=PhononDOS[round(Int, histogram_width*ω)+1]+histogram_width*(1/mesh)^2
+                end
+            end
+        end
+    end
+
+    return PhononDOS
+end
+
+
+function phonon_density_of_states_per_area(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
+
+    PhononDOS=np.zeros(histogram_width*energy_range)
+
+    ucell_area = unit_cell_area(lattice_vecs)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ωs=  phonon_dispersion(force_matrix, phonon_cell_map, [x_mesh/mesh, y_mesh/mesh, 0])
+            for ω in ωs
+                if ω>0
+                    PhononDOS[round(Int, histogram_width*ω)+1]=PhononDOS[round(Int, histogram_width*ω)+1]+histogram_width*(1/mesh)^2
+                end
+            end
+        end
+    end
+
+    return PhononDOS/ucell_area
 end
 
 
