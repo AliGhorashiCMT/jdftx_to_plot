@@ -11,6 +11,26 @@ function density_of_states(dosfile_1::String; kwargs...)
 
 end
 
+"""
+The typical density of states outputed by JDFTX is per unit cell. However, sometimes it is more relevant to know the 
+density of states per unit volume. This is simply equivalent to dividing the conventional DOS by the unit cell 
+volume 
+"""
+function density_of_states_per_area(dosfile_1::String, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; kwargs...)
+
+    ucell_area = unit_cell_area(lattice_vecs)
+    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+
+end
+
+function density_of_states_per_area(dosfile_1::String, dosfile_2::String, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; kwargs... )
+    ucell_area = unit_cell_area(lattice_vecs)
+    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    plot!(np.loadtxt(dosfile_2)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]/27.2, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+
+end
+
+
 function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ=.1, kwargs...) 
 
     1/π*hcubature(vec->imag(-1/(ϵ-wannier_bands(wannier_file, cell_map_file, [vec[1], vec[2], 0])+1im*δ)), [0, 0], [1, 1]; kwargs...)[1]
@@ -113,8 +133,30 @@ function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{
 
 end
 
+"""
+The standard DOS function using wannier functions returns the density of states per eV per unit cell. 
+At times it is more convenient to obtain the DOS per eV per angstrom^2 
+"""
+function density_of_states_wannier_per_area(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1}, 1}; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
 
-function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; exclude_bands=Int[], mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
+    ucell_area = unit_cell_area(lattice_vectors)
+    WannierDOS=np.zeros(histogram_width*energy_range)
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            
+            ϵ=  wannier_bands(HWannier, cell_map, [x_mesh/mesh, y_mesh/mesh, 0])
+            WannierDOS[round(Int, histogram_width*(ϵ+offset))]=WannierDOS[round(Int, histogram_width*(ϵ+offset))]+histogram_width*(1/mesh)^2
+
+        end
+    end
+
+    return WannierDOS/ucell_area
+
+end
+
+
+function density_of_states_wannier(wannier_file::String, cell_map_file::String, nbands::Int; exclude_bands::Array{Int, 1}=Int[], mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
 
     WannierDOS=np.zeros(histogram_width*energy_range)
 
@@ -137,7 +179,6 @@ function density_of_states_wannier(wannier_file::String, cell_map_file::String, 
     return WannierDOS
 
 end
-
 
 function density_of_states_wannier(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int; exclude_bands = Int[], mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 10, offset::Real = 0)
 
