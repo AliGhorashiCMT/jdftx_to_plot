@@ -172,6 +172,7 @@ function graphene_plasmon_qloss(λ::Real; μ::Real = 0.135)
     return q/(q2_num/q2_denum)
 end
 
+"Provides the group velocity of the graphene plasmon"
 function graphene_group_velocity(λ::Real, μ::Real = 0.135)
     ω = 1.24/λ
     q1 = exact_graphene_plasmonq(ω, μ, background=2.5) #Find the plasmon wavevector
