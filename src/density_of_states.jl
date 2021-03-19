@@ -436,7 +436,6 @@ function phonon_density_of_states(force_matrix::Array{<:Real, 3}, phonon_cell_ma
     return PhononDOS
 end
 
-
 function phonon_density_of_states_per_area(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
 
     PhononDOS=np.zeros(histogram_width*energy_range)

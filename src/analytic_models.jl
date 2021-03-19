@@ -132,23 +132,23 @@ function exact_graphene_epsilon(q::Real, w::Real, mu::Real)
     return 1-e²ϵ/2/q*graphene_total_polarization(q, w, mu) 
 end
 
-function exact_graphene_plasmon(q::Real, mu::Real; num_evals::Int= 1000, max_multiple_of_mu::Int=3)
+function exact_graphene_plasmon(q::Real, mu::Real; num_evals::Int= 1000, max_multiple_of_mu::Int=3, background::Real=1)
     Epsilons=zeros(num_evals)
     for i in 1:num_evals
         ω = mu*i/num_evals*max_multiple_of_mu
-        Epsilons[i] = 1-e²ϵ/2/q*graphene_total_polarization(q, ω, mu) 
+        Epsilons[i] = background-e²ϵ/2/q*graphene_total_polarization(q, ω, mu) 
     end
     return argmin(log.(abs.(Epsilons)))*max_multiple_of_mu/num_evals*mu
 end
 
-function exact_graphene_plasmonq(ω::Real, mu::Real)
+function exact_graphene_plasmonq(ω::Real, mu::Real; background::Real=1)
     logEpsilons=zeros(100000)
     for i in 1:100000
-        q = mu*i/100000*3/6
+        q = mu*i/100000*20/6
         #logEpsilons[i] = log(abs(1-e²ϵ/2/q*(graphene_total_polarization(q, ω, mu))))
-        logEpsilons[i] = log(abs(1-e²ϵ/2/q*(graphene_total_polarization(q, ω, mu)+graphene_total_impolarization(q, ω, mu))))
+        logEpsilons[i] = log(abs(background-e²ϵ/2/q*(graphene_total_polarization(q, ω, mu))))#+graphene_total_impolarization(q, ω, mu))))
     end
-    return argmin(logEpsilons)*3/100000*mu/6
+    return argmin(logEpsilons)*20/100000*mu/6
 end
 
 function graphene_plasmon_confinement(λ::Real, μ::Real)
@@ -156,6 +156,27 @@ function graphene_plasmon_confinement(λ::Real, μ::Real)
     lambdaair=λ*1e-6
     lambdap=2*pi/exact_graphene_plasmonq(ω, μ)*1e-10
     return lambdaair/lambdap
+end
+
+
+"Provides the loss (q2/q1)"
+function graphene_plasmon_qloss(λ::Real; μ::Real = 0.135)
+    ω = 1.24/λ
+    τ = 1.35e-13/ħ ##Tau in units of 1/eV since ω is always given in eV
+    q = exact_graphene_plasmonq(ω, μ, background=2.5) #Find the plasmon wavevector
+    total_polω =  graphene_total_polarization(q, ω, μ) + 1im*graphene_total_impolarization(q, ω, μ)
+    total_pol0 = graphene_total_polarization(q, 0, μ) + 1im*graphene_total_impolarization(q, 0, μ)
+    q2_num = graphene_total_impolarization(q, ω, μ) + 1/τ*(graphene_total_polarization(q, ω, μ)-graphene_total_polarization(q, ω-μ/100000, μ))/(μ/100000)+1/(ω*τ)*real(total_polω*(1-total_polω/total_pol0))
+    q2_denum = 1/q*graphene_total_polarization(q, ω, μ)-graphene_total_polarization(q, ω, μ)*100000/μ + graphene_total_polarization(q-μ/100000, ω, μ)*100000/μ
+
+    return q/(q2_num/q2_denum)
+end
+
+function graphene_group_velocity(λ::Real, μ::Real = 0.135)
+    ω = 1.24/λ
+    q1 = exact_graphene_plasmonq(ω, μ, background=2.5) #Find the plasmon wavevector
+    q2 = exact_graphene_plasmonq(ω+μ/30, μ, background=2.5) #Find the plasmon wavevector
+    return μ/30/(q2-q1)/(c*ħ)
 end
 
 function exact_graphene_landau_damping(q::Real, w::Real, δ::Real, mu::Real)
