@@ -99,14 +99,14 @@ function write_wannier(wannier::wannier_interpolation, filename::String, scf_fil
 end
 
 
-function write_phonon(phonon::phonon, filename::String, scf_filename::String)
+function write_phonon(phonon_params::phonon, filename::String, scf_filename::String)
     open(filename, create=true, write=true, append=false) do io
         write(io, "include  $(scf_filename)\n")
         write(io, "initial-state   ", "$(string(scf_filename, ".", "\$", "VAR"))", "\n")
 
-        write(io, "dump only \n\n")
+        write(io, "dump-only \n\n")
 
-        write(io, "phonon supercell  ", "$(phonon.supercell[1])  $(phonon.supercell[2])  $(phonon.supercell[3]) ")
+        write(io, "phonon supercell  ", "$(phonon_params.supercell[1])  $(phonon_params.supercell[2])  $(phonon_params.supercell[3]) ")
 
     end
 end
