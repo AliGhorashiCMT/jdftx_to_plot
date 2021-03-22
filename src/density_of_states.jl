@@ -373,7 +373,7 @@ function find_num_phonons(cell_map::String, phononOmegaSq::String; mesh::Int = 1
 
 end
 
-function find_num_phonons(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2};; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
+function find_num_phonons(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
     
     doss = phonon_density_of_states(force_matrix, phonon_cell_map; mesh=mesh, histogram_width=histogram_width, energy_range=energy_range)
     totalstates = []
