@@ -1,3 +1,6 @@
-using jdftx_to_plot, Test
+#using jdftx_to_plot
+using Test, PyCall
 
-@test 1==2 
+include("wannier_bands_tests.jl")
+
+include("matrix_elements_tests.jl")
