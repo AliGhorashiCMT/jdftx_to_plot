@@ -163,6 +163,36 @@ function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:
 
 end
 
+function eph_matrix_elements(HePhWannier::Array{<:Real, 5}, cellMapEph::Array{<:Real, 2}, force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, wannier_file::String, cell_map_file::String, k1::Array{<:Real, 1}, k2::Array{<:Real, 1}, nbands::Int)
+    omegaPh, Uph = phonon_dispersionmodes(force_matrix, phonon_cell_map, k1-k2)
+
+    ##Note that the phonon energies given by phonon dispersionmodes are in eV, so they must be converted 
+    omegaPh *= eV
+    phase1 = exp.((2im*π )*(cellMapEph*k1))
+
+    phase2 = exp.((2im*π)*(cellMapEph*k2))
+    normFac = np.sqrt(0.5 ./ np.maximum(omegaPh,1e-6))
+
+    U2 = wannier_vectors(wannier_file::String, cell_map_file::String, k2, nbands) 
+    U1 = wannier_vectors(wannier_file::String, cell_map_file::String, k2, nbands) 
+
+    g = np.einsum("bd, ycb-> ycd", U2, #Rotate to electron 2 eigenbasis
+    np.einsum("ac,yab -> ycb", conj(U1), #Rotate to electron 1 eigenbasis
+    np.einsum("xy, xab-> yab", Uph, #Rotate to phonon eigenbasis
+    np.einsum("R, Rxab -> xab", phase2, #Fourier transform from r2 -> k2
+    np.einsum("r, rRxab -> Rxab", conj(phase1), #Fourier transform from r1 -> k1
+    HePhWannier))))).*normFac #Phonon amplitude factor
+    #=    
+    g= vec(np.einsum("xy, xab-> yab", Uph, #Rotate to phonon eigenbasis
+        np.einsum("R,Rxab->xab", phase2, #Fourier transform from r2 -> k2
+        np.einsum("r,rRxab->Rxab", conj(phase1), #Fourier transform from r1 -> k1
+        HePhWannier)))).*normFac  #Phonon amplitude factor
+    =#
+    return g/eV
+
+end
+
+
 
 function momentum_matrix_elements(Pwannier::Array{Float64, 4}, cell_map::Array{Float64, 2}, k::Array{<:Real, 1})
     phase = np.exp(2im*π*cell_map*k); 
