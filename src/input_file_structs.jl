@@ -8,19 +8,20 @@ struct ionpos
 end
 
 struct self_consistent_field
+    coulomb_interaction::String
     xc::String
     kpoints::Array{Int, 1}
     lattice::lattice
     ionpos::ionpos
     pseudopotential::String
-    charge::T where T<:Number
+    charge::T where T<:Real
     spintype::String
-    magnetization::R where R<:Number
-    smearing::S where S<:Number
+    magnetization::R where R<:Real
+    smearing::S where S<:Real
     dump::String #Array{String, 1}
 end
 
-self_consistent_field(xc, kpoints, lattice, ionpos)=self_consistent_field(xc, kpoints, lattice, ionpos,"GBRV/\$ID_pbsesol.uspp", 0, "no-spin", 0, 0.00001, "ElecDensity" )
+self_consistent_field(xc, kpoints, lattice, ionpos)=self_consistent_field("Periodic", xc, kpoints, lattice, ionpos,"GBRV/\$ID_pbsesol.uspp", 0, "no-spin", 0, 0.00001, "ElecDensity" )
 
 struct non_self_consistent_field
     scf::self_consistent_field

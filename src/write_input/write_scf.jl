@@ -24,7 +24,7 @@ end
 
 function write_scf(scf::self_consistent_field, filename::String, ionpos_filename::String, lattice_filename::String)
     open(filename, create=true, write=true, append=false) do io
-
+        write(io, "coulomb-interaction $(scf.coulomb_interaction) \n" )
         write(io, "include  $(ionpos_filename) \n")
         write(io, "include  $(lattice_filename) \n")
         write(io, "ion-species $(scf.pseudopotential)\n")
@@ -66,7 +66,6 @@ function make_wannier_centers(scf::self_consistent_field; perturbation=10, norbi
     return centers
 
 end
-
 
 function write_wannier(wannier::wannier_interpolation, filename::String, scf_filename::String)
 
