@@ -130,6 +130,6 @@ include("./loss_calculations/plasmon_losses.jl")
 export landau_damping, first_order_damping, second_order_damping
 
 include("./read_prepared_data/read_prepared_data.jl")
-export dft_graphene_dos_per_area, dft_graphene_phonon_dispersion
+export dft_graphene_dos_per_area, dft_graphene_phonon_dispersion, graphene_dos_check, graphene_wannier_impolarization
 
 end # module

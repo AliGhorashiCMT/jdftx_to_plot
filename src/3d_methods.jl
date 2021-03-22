@@ -6,7 +6,6 @@ function im_epsilon_3d(lattice_vectors::Array{<:Array{<:Real, 1}, 1}, Pwannier::
 
     Vol = unit_cell_volume(lattice_vectors)
 
-
     #=  
     Note that the momentum matrix elements we'll be looking at will be in units of ev*s/angstrom.
 

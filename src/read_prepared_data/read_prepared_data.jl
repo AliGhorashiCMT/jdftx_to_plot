@@ -53,3 +53,36 @@ function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1}
     return abs.(eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, 8)[4, 5, :])
 
 end
+
+function graphene_dos_check()
+    DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene.in.dos")
+
+    x, y = np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2
+
+    sum(y[2:end].*diff(x))
+end
+
+function graphene_wannier_impolarization(qx::Real; mesh::Int = 20, histogram_width::Real = 10)
+    a = 1.42*sqrt(3)
+
+    bands_dir = joinpath(@__DIR__, "../../data/wannierbands.txt")
+    map_dir = joinpath(@__DIR__, "../../data/wanniercellmap.txt")
+    
+    HWannier=hwannier(bands_dir, map_dir, 8);
+    cell_map=np.loadtxt(map_dir);
+    
+    im_pols = im_polarization(HWannier, cell_map, 8, 4, [[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]], [qx, 0, 0], -3;  spin=2, mesh=mesh, histogram_width=histogram_width) 
+    return im_pols
+end
+
+function example_graphene_wannier_plasmon(nqs::Int, nomegas::Int; mesh=30)
+    plasmon = zeros(nqs, nomegas)
+    for i in 1:nqs
+        println(i)
+        gimpol=graphene_wannier_impolarization(i/nqs*1/6, mesh=mesh)
+        for j in 1:nomegas
+            plasmon[i, j] = return_2d_epsilon_scipy(i/nqs*1/6, 2*j/nomegas, smooth(gimpol, win_len=10), 100, 10, 30)
+        end
+    end
+    return plasmon
+end
