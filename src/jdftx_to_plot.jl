@@ -129,5 +129,7 @@ Methods to calculate damping of plasmons up to second order in phonon interactio
 include("./loss_calculations/plasmon_losses.jl")
 export landau_damping, first_order_damping, second_order_damping
 
+include("./read_prepared_data/read_prepared_data.jl")
+export dft_graphene_dos
 
 end # module
