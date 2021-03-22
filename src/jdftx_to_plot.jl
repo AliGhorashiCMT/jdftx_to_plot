@@ -115,7 +115,7 @@ export phmatrixelements, pwannier, momentum_matrix_elements, eph_matrix_elements
 Methods to create supercells/large defect lattices using an underlying smaller unit cell
 =#
 include("supercell.jl")
-export make_supercell, make_defectcell
+export make_supercell, make_defectcell, make_bilayer
 
 #=
 Methods to write DFT input files. Note that these input files are specifically written with JDFTX in mind. 

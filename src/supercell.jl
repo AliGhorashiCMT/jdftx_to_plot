@@ -92,3 +92,16 @@ function make_defectcell(small_lattice::lattice, small_ionpos::ionpos, cell_mult
     return defect_lattice, supercell_ionpos
 
 end
+
+function make_bilayer(monolayer_lattice::lattice, monolayer_ionpos::ionpos, distance::Real, translation::Array{<:Real, 1})
+
+    new_ionpos = []
+    for (index, ion) in enumerate(monolayer_ionpos.ionpos)
+        push!(new_ionpos, ion)
+        second_ion = [ion[1], ion[2], ion[3]+translation[1], ion[4]+translation[2], ion[5]+distance, ion[6]]
+        push!(new_ionpos, second_ion)
+    end
+
+    return monolayer_lattice, ionpos(new_ionpos)
+
+end
