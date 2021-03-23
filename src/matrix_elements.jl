@@ -201,9 +201,9 @@ function momentum_matrix_elements(Pwannier::Array{Float64, 4}, cell_map::Array{F
     JDFTX output is in Atomic units. Therefore, the units of the momentum matrix elements are in ħ/a₀
     a₀ is the Bohr radius, which is approximately 0.529 Angstrom. ħ is 6.6*10-16 eV*seconds. Since all 
     physical calculations perfomed in jdftx_to_plot assume lengths to be given in angstroms and energies 
-    to be given in eV, we multiply Pk by ħ*bohrtoangstrom
+    to be given in eV, we multiply Pk by ħ/bohrtoangstrom
     =#
-    return Pk*ħ*bohrtoangstrom
+    return Pk*ħ/bohrtoangstrom
 end
 
 
@@ -217,9 +217,9 @@ function momentum_matrix_elements(Hwannier::Array{Float64, 3}, cell_map::Array{F
     JDFTX output is in Atomic units. Therefore, the units of the momentum matrix elements are in ħ/a₀
     a₀ is the Bohr radius, which is approximately 0.529 Angstrom. ħ is 6.6*10-16 eV*seconds. Since all 
     physical calculations perfomed in jdftx_to_plot assume lengths to be given in angstroms and energies 
-    to be given in eV, we multiply Pk by ħ*bohrtoangstrom
+    to be given in eV, we multiply Pk by ħ/bohrtoangstrom
     =#
-    return Pk*ħ*bohrtoangstrom
+    return Pk*ħ/bohrtoangstrom
 end
 
 
