@@ -138,5 +138,3 @@ function example_aluminum_imepsilon(;histogram_width=10, mesh=10)
     #return im_epsilon_3d(lattice_vectors, Al_hwannier, Al_cellmap, AlPwannier, 5, 11; mesh=mesh, spin=2, histogram_width= histogram_width )
     return im_epsilon_3d_mc(lattice_vectors, Al_hwannier, Al_cellmap, AlPwannier, 5, 11; mesh=mesh, spin=2, histogram_width= histogram_width )
 end
-
-
