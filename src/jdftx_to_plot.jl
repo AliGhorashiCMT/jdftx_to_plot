@@ -32,7 +32,7 @@ const eV = 1/27.2114
 const kB = 8.617333262145e-5
 const mₑ = 0.511e6/c^2
 
-export ħ,c, α, e²ϵ, bohrtoangstrom, eV, kB
+export ħ,c, α, e²ϵ, bohrtoangstrom, eV, kB, mₑ 
 
 const np = PyNULL()
 const interpol = PyNULL()
@@ -132,4 +132,8 @@ export landau_damping, first_order_damping, second_order_damping
 include("./read_prepared_data/read_prepared_data.jl")
 export dft_graphene_dos_per_area, dft_graphene_phonon_dispersion, graphene_dos_check, graphene_wannier_impolarization
 
+include("3d_methods.jl")
+export im_epsilon_3d
+
 end # module
+

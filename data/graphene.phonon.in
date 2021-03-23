@@ -1,4 +1,0 @@
-include  graphene.in
-initial-state graphene.in.$VAR
-
-phonon supercell  2 2 1 

@@ -2,6 +2,7 @@
     kpoints = rand(1, 3)
     reshape_test_array = rand(100)
     reshape_test_array1 = rand(2, 10, 10)
+    reshape_test_array2 = rand(4, 2, 8, 9, 10)
     conjugate_test_array = rand(ComplexF64, 5, 5)
     np = pyimport("numpy")
     cell_map =rand(10, 3)
@@ -14,4 +15,6 @@
     @test permutedims(reshape(np.reshape(reshape_test_array1, (2, 10*10)), (2, 10, 10)), [1, 3, 2]) ≈ reshape_test_array1
     @test np.exp(np.array([1, 2, 3, 4])) ≈ exp.([1, 2, 3, 4])
     @test np.conj(conjugate_test_array) ≈ conj(conjugate_test_array) #Test that the conjugation method in Julia is equivalent to that in python
+    @test vec(permutedims(reshape_test_array2, (5, 4, 3, 2, 1))) == np.ndarray.flatten(reshape_test_array2)
+ 
 end
