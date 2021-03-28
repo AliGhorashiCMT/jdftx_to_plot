@@ -1,14 +1,25 @@
 function density_of_states(dosfile_1::String, dosfile_2::String; kwargs... )
-   
-    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
-    plot!(np.loadtxt(dosfile_2)[:, 1]*27.2, np.loadtxt(dosfile_2)[:, 2]/27.2, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    
+    try
+        plot(np.loadtxt(dosfile_1)[:, 1]*1/eV, np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    catch ##
+        plot(np.loadtxt(dosfile_1, skiprows=1)[:, 1]*1/eV, np.loadtxt(dosfile_1, skiprows=1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    end
+
+    try
+        plot!(np.loadtxt(dosfile_2)[:, 1]*1/eV, np.loadtxt(dosfile_2)[:, 2]*eV, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    catch
+        plot!(np.loadtxt(dosfile_2, skiprows=1)[:, 1]*1/eV, np.loadtxt(dosfile_2, skiprows=1)[:, 2]*eV, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    end
 
 end
 
 function density_of_states(dosfile_1::String; kwargs...)
-
-    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
-
+    try
+        plot(np.loadtxt(dosfile_1)[:, 1]*1/eV, np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    catch 
+        plot(np.loadtxt(dosfile_1, skiprows=1)[:, 1]*1/eV, np.loadtxt(dosfile_1, skiprows=1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    end
 end
 
 """
@@ -19,30 +30,54 @@ volume
 function density_of_states_per_area(dosfile_1::String, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; kwargs...)
 
     ucell_area = unit_cell_area(lattice_vecs)
-    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    try 
+        plot(np.loadtxt(dosfile_1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    catch
+        plot(np.loadtxt(dosfile_1, skiprows=1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    end
 
 end
 
 function density_of_states_per_area(dosfile_1::String, lattice_vecs::lattice; kwargs...)
 
     ucell_area = unit_cell_area(lattice_vecs)
-    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    try
+        plot(np.loadtxt(dosfile_1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    catch
+        plot(np.loadtxt(dosfile_1, skiprows=1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
+    end
 
 end
 
 
 function density_of_states_per_area(dosfile_1::String, dosfile_2::String, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; kwargs... )
     ucell_area = unit_cell_area(lattice_vecs)
-    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
-    plot!(np.loadtxt(dosfile_2)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]/27.2, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
-
+    try 
+        plot(np.loadtxt(dosfile_1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    catch
+        plot(np.loadtxt(dosfile_1, skiprows=1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    end
+    
+    try
+        plot!(np.loadtxt(dosfile_2)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]*eV, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    catch
+        plot!(np.loadtxt(dosfile_2, skiprows=1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]*eV, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    end
 end
 
 function density_of_states_per_area(dosfile_1::String, dosfile_2::String, lattice_vecs::lattice; kwargs... )
     ucell_area = unit_cell_area(lattice_vecs)
-    plot(np.loadtxt(dosfile_1)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]/27.2, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
-    plot!(np.loadtxt(dosfile_2)[:, 1]*27.2, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]/27.2, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    try 
+        plot(np.loadtxt(dosfile_1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    catch
+        plot(np.loadtxt(dosfile_1, skiprows=1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_1)[:, 2]*eV, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Up"; kwargs...)
+    end
 
+    try
+        plot!(np.loadtxt(dosfile_2)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]*eV, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    catch
+        plot!(np.loadtxt(dosfile_2, skiprows=1)[:, 1]*1/eV, 1/ucell_area*np.loadtxt(dosfile_2)[:, 2]*eV, linewidth=4,  size=(800, 400), label="Spin Down"; kwargs...)
+    end
 end
 
 function density_of_states_wannier_quad(wannier_file::String, cell_map_file::String, ϵ::Real; δ=.1, kwargs...) 

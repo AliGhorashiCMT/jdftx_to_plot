@@ -3,6 +3,14 @@ using PyCall
 using LinearAlgebra 
 using Distances
 
+
+"""
+Plots the bands from a non self consistent calculation. First argument must be the file with 
+the corresponding band eigenvalues. num_bands is the number of bands included in the calculation. Note
+that the spin degeneracy in jdftx is included in the number of k points- not the number of bands. Therefore, 
+the k points from 1:num_points will be for one spin species and those from num_points+1 to 2*npoints
+correspond to the other spin species.
+"""
 function plot_bands(band_file::String, num_bands::Int, num_points::Int; kwargs...)
 
     reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));

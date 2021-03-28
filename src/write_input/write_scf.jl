@@ -10,9 +10,9 @@ function write_lattice(lattice_vectors::lattice, filename::String)
     end
 end
 
-function write_ionpos(ionpos::ionpos, filename::String)
+function write_ionpos(ions::ionpos, filename::String)
     open(filename, create=true, write=true) do io
-        for ion in ionpos.ionpos
+        for ion in ions.ionpos
             for coord in ion
                 write(io, string(coord))
                 write(io, "  ")
@@ -44,9 +44,39 @@ function write_scf(scf::self_consistent_field, filename::String, ionpos_filename
     end
 end
 
-function write_nscf(nscf::non_self_consistent_field, filename::String)
-    open(filename, create=true, write=true) do io
-        write(io, nscf.kpoints)
+function write_kpoints(kvec_coords::Vector{<:Vector{<:Real}}, kvec_labels::Vector{<:AbstractString}, spacing::Real)
+    total_kvecs = Vector{Vector{Any}}()
+
+    for (index, coord) in enumerate(kvec_coords)
+        push!(total_kvecs, ["kpoint", coord..., kvec_labels[index]])
+    end
+    open("bandstruct.kpoints.in", "w") do io
+            writedlm(io, total_kvecs); write(io, " \n ")
+    end;
+    run(`bandstructKpoints bandstruct.kpoints.in $(spacing) bandstruct`) 
+    rm("bandstruct.kpoints.in")
+end
+
+function write_nscf(scf::self_consistent_field, filename::String, scf_filename::String, ionpos_filename::String, lattice_filename::String, kpoints::String)
+    
+    open(filename, create=true, write=true, append=false) do io
+        write(io, "coulomb-interaction $(scf.coulomb_interaction) \n" )
+        write(io, "include  $(ionpos_filename) \n")
+        write(io, "include  $(lattice_filename) \n")
+        write(io, "ion-species $(scf.pseudopotential)\n")
+        write(io, "elec-cutoff 20 100\n")
+        write(io, "elec-initial-charge $(scf.charge)\n")
+        if scf.spintype != "no-spin"
+            write(io, "elec-initial-magnetization $(scf.magnetization) no \n")
+        end
+        write(io, "spintype $(scf.spintype)\n")
+        write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
+        write(io, "dump End $(scf.dump)\n")
+        write(io, "include $(kpoints) \n")
+        write(io, "fix-electron-density $(scf_filename).\$VAR \n")
+        write(io, "elec-smearing Fermi $(scf.smearing)\n")
+
+        write(io, "elec-ex-corr $(scf.xc)", "\n")
     end
 end
 

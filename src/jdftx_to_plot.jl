@@ -35,16 +35,16 @@ const mₑ = 0.511e6/c^2
 export ħ,c, α, e²ϵ, bohrtoangstrom, eV, kB, mₑ 
 
 const np = PyNULL()
+const spatial = PyNULL()
 const interpol = PyNULL()
 const pyintegrate = PyNULL()
-export np, interpol, pyintegrate
+export np, interpol, pyintegrate, spatial
 
 function __init__()
-
     copy!(np, pyimport("numpy"))
     copy!(interpol, pyimport("scipy.interpolate"))
     copy!(pyintegrate, pyimport("scipy.integrate"))
-
+    copy!(spatial, pyimport("scipy.spatial"))
 end
 
 
@@ -121,7 +121,7 @@ export make_supercell, make_defectcell, make_bilayer
 Methods to write DFT input files. Note that these input files are specifically written with JDFTX in mind. 
 =#
 include("./write_input/write_scf.jl")
-export write_scf, write_nscf, write_wannier, write_ionpos, write_lattice, write_phonon
+export write_scf, write_nscf, write_wannier, write_ionpos, write_lattice, write_phonon, write_kpoints
 
 #=
 Methods to calculate damping of plasmons up to second order in phonon interactions 
