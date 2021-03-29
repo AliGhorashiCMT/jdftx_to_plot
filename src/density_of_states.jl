@@ -17,8 +17,48 @@ function bandsoverlayedDOS(dosfile::String, band_file::String, num_bands::Int, n
 
             plot(np.loadtxt(dosfile, skiprows=1)[:, 2]*eV, np.loadtxt(dosfile, skiprows=1)[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, maximum((np.loadtxt(dosfile, skiprows=1)[:, 2]*eV)[lowerDOS:upperDOS]) ])
     end
+    plot(B, C, size = (700, 500), legend = false)
+end
+
+function bandsoverlayedDOS2(dosfile1::String, dosfile2::String, band_file::String, num_bands::Int, num_points::Int, energy_range::Tuple{<:Real, <:Real})
+    reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));
+    exactenergiesup=permutedims(reshaped, [2, 1])[1:num_points, :]*1/eV;
+    exactenergiesdown=permutedims(reshaped, [2, 1])[num_points+1:2*num_points, :]*1/eV;
+
+    A = plot(exactenergiesdown, color="black", label="", linewidth=2, ylims = collect(energy_range))
+    B = plot!(exactenergiesup, color="purple", label="", linewidth=2, ylims = collect(energy_range))
+
+    ##Load DOS 1
+    
+    dosdata1 = try 
+        np.loadtxt(dosfile1)
+    catch 
+        np.loadtxt(dosfile1, skiprows=1)
+    end
+    ##Load DOS 2
+    dosdata2 = try 
+         np.loadtxt(dosfile2)
+    catch 
+        np.loadtxt(dosfile2, skiprows=1)
+    end
+
+    lowerDOS1 = argmin(abs.(dosdata1[:, 1]*1/eV .- energy_range[1]))
+    upperDOS1 = argmin(abs.(dosdata1[:, 1]*1/eV .- energy_range[2]))
+
+    lowerDOS2 = argmin(abs.(dosdata2[:, 1]*1/eV .- energy_range[1]))
+    upperDOS2 = argmin(abs.(dosdata2[:, 1]*1/eV .- energy_range[2]))
+
+    max1 = maximum((dosdata1[:, 2]*eV)[lowerDOS1:upperDOS1])
+    max2 = maximum((dosdata2[:, 2]*eV)[lowerDOS2:upperDOS2])
+
+    max = maximum([max1, max2])
+
+    C = plot(dosdata1[:, 2]*eV, dosdata1[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, max])
+    plot!(dosdata2[:, 2]*eV, dosdata2[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, max], legend = false)
+    
     plot(B, C, size = (700, 500))
 end
+
 
 function density_of_states(dosfile_1::String, dosfile_2::String; kwargs... )
     
