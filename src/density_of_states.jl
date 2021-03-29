@@ -580,6 +580,50 @@ function phonon_density_of_states(force_matrix::Array{<:Real, 3}, phonon_cell_ma
     return PhononDOS
 end
 
+function phononbandsoverlayedDOS(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, kpoints::String; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2, energy_ranges::Tuple{<:Real, <:Real} = (0, 2))
+
+    PhononDOS = np.zeros(round(Int, histogram_width*energy_range))
+
+    kpointlist = np.loadtxt("bandstruct.kpoints", skiprows=2, usecols=[1, 2, 3])
+    num_kpoints = np.shape(kpointlist)[1]
+
+    PhononBands = Array{Float64, 2}( undef, (length(phonon_dispersion(force_matrix, phonon_cell_map, [0, 0, 0])), num_kpoints))
+
+    for k in 1:num_kpoints
+
+        PhononBands[:, k] = phonon_dispersion(force_matrix, phonon_cell_map, kpointlist[k, :])
+    
+    end
+
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+    
+            ωs =  phonon_dispersion(force_matrix, phonon_cell_map, [x_mesh/mesh, y_mesh/mesh, 0])
+            for ω in ωs
+                if ω>0
+                    PhononDOS[round(Int, histogram_width*ω)+1]=PhononDOS[round(Int, histogram_width*ω)+1]+histogram_width*(1/mesh)^2
+                end
+            end
+        end
+    end
+
+    A = plot(transpose(PhononBands), xticks = [], ylims = collect(energy_ranges), legend = false)
+
+    ##Find energy energy_ranges
+
+    lowerbound, upperbound = energy_ranges.*histogram_width
+    println(lowerbound, upperbound)
+
+    max_limit = maximum(PhononDOS[round(Int, lowerbound)+1:round(Int, upperbound)])
+
+    B = plot(PhononDOS, collect(1/histogram_width:1/histogram_width:round(Int, energy_range*histogram_width)/histogram_width), ylims = collect(energy_ranges), xlims = [0, max_limit], yticks = [], legend = false)
+
+    plot(A, B)
+
+end
+
+
+
 function phonon_density_of_states_per_area(force_matrix::Array{<:Real, 3}, phonon_cell_map::Array{<:Real, 2}, lattice_vecs::Array{<:Array{<:Real, 1}, 1}; mesh::Int = 100, histogram_width::Int = 100, energy_range::Real = 2)
 
     PhononDOS=np.zeros(histogram_width*energy_range)
