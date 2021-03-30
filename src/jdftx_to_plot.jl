@@ -38,13 +38,19 @@ const np = PyNULL()
 const spatial = PyNULL()
 const interpol = PyNULL()
 const pyintegrate = PyNULL()
-export np, interpol, pyintegrate, spatial
+const oscillatorstrengths = PyNULL()
+export np, interpol, pyintegrate, spatial, oscillatorstrengths
 
 function __init__()
     copy!(np, pyimport("numpy"))
     copy!(interpol, pyimport("scipy.interpolate"))
     copy!(pyintegrate, pyimport("scipy.integrate"))
     copy!(spatial, pyimport("scipy.spatial"))
+    try
+        copy!(oscillatorstrengths, pyimport("helpercripts.oscillator_strengths"))
+    catch 
+        println("Your version of python is not linked to helperscripts.py")
+    end  
 end
 
 
