@@ -55,6 +55,7 @@ function write_kpoints(kvec_coords::Vector{<:Vector{<:Real}}, kvec_labels::Vecto
     end;
     run(`bandstructKpoints bandstruct.kpoints.in $(spacing) bandstruct`) 
     rm("bandstruct.kpoints.in")
+    rm("bandstruct.plot")
 end
 
 function write_nscf(scf::self_consistent_field, filename::String, scf_filename::String, ionpos_filename::String, lattice_filename::String, kpoints::String)
