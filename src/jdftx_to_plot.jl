@@ -38,8 +38,8 @@ const np = PyNULL()
 const spatial = PyNULL()
 const interpol = PyNULL()
 const pyintegrate = PyNULL()
-const oscillatorstrengths = PyNULL()
-export np, interpol, pyintegrate, spatial, oscillatorstrengths
+const helper_scripts = PyNULL()
+export np, interpol, pyintegrate, spatial, helper_scripts
 
 function __init__()
     copy!(np, pyimport("numpy"))
@@ -47,9 +47,10 @@ function __init__()
     copy!(pyintegrate, pyimport("scipy.integrate"))
     copy!(spatial, pyimport("scipy.spatial"))
     try
-        copy!(oscillatorstrengths, pyimport("helpercripts.oscillator_strengths"))
+        copy!(helper_scripts, pyimport("helper_scripts"))
+        println("Congratulations- Your version of python is linked to helper_scripts.py")
     catch 
-        println("Your version of python is not linked to helperscripts.py")
+        println("Your version of python is not linked to helper_scripts.py")
     end  
 end
 
@@ -88,6 +89,7 @@ For Kramers-Kronig, we've also provided methods to find the imaginary susceptibi
 This may be used to ensure results are reliable. 
 =#
 include("susceptibility_from_wannier.jl")
+include("kramers_kronig.jl")
 export im_polarization, kramers_kronig, kramers_kronig_scipy, kramers_kronig_quadgk, im_polarization_cubature, 
 return_2d_epsilon, return_2d_epsilon_scipy, direct_epsilon,
 direct_epsilon_cubature, return_2d_epsilon_quadgk,

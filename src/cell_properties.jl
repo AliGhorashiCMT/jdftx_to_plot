@@ -419,8 +419,3 @@ function plot_lattice(lattice_file::String)
         ion_position_vectors=readlines(io);
     end
 end
-
-function pyversion()
-    sys=pyimport("sys")
-    print("You are currently running this version of python: $(sys.executable)")
-end

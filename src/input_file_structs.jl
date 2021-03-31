@@ -7,6 +7,21 @@ struct ionpos
     ionpos::Array{Array{Any, 1}, 1}
 end
 
+Base.iterate(ionp::ionpos, state = 1) = state > length(ionp.ionpos) ? nothing : (ionp.ionpos[state], state+1) 
+Base.iterate(latt::lattice, state = 1) = state > size(latt.rvectors)[2] ? nothing : (latt.rvectors[:, state], state+1)
+Base.length(ionp::ionpos) = length(ionp.ionpos)
+function Base.show(io::IO, latt::lattice)
+    for (index, l) in enumerate(latt)
+        println("Vector $index = $l")
+    end
+end
+
+function Base.show(io::IO, ions::ionpos)
+    for (index, ion) in enumerate(ions)
+        println("Ion $index = $ion")
+    end
+end
+
 struct self_consistent_field
     coulomb_interaction::String
     xc::String
