@@ -27,7 +27,7 @@ function nonwannier3dimepsilon(filebase::String, lattice_vectors::Array{<:Array{
     return Epsilons
 end
 
-function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, μ::Real, ::Val{3}; spin::Integer=1, histogram_width::Real=10)
+function nonwannierimpol(filebase::String, lattice_vectors::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, μ::Real, ::Val{3}; spin::Integer=1, histogram_width::Real=10)
     momentumfile = "$filebase.momenta"
     eigfile = "$filebase.eigenvals"
 
@@ -53,7 +53,7 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
                     f2 = heaviside(μ-energy2)
                     f1 = heaviside(μ-energy1)
 
-                    overlap = 2ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)*momentasquared
+                    overlap = 2ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)*momentasquared[k, band1, band2]
 
                     Impols[round(Int, histogram_width*ω)+1] = Impols[round(Int, histogram_width*ω)+1] + π*(f2-f1)/V*overlap*(1/numkpoints)*histogram_width*spin
 
@@ -65,10 +65,9 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
 end
 
 
-function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, μ::Real, ::Val{2}; spin::Integer=1, histogram_width::Real=10)
+function nonwannierimpol(filebase::String, lattice_vectors::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, μ::Real, ::Val{2}; spin::Integer=1, histogram_width::Real=10)
     momentumfile = "$filebase.momenta"
     eigfile = "$filebase.eigenvals"
-
     qx, qy, qz = q
 
     momenta = np.reshape(np.fromfile(momentumfile, dtype=np.complex), (numkpoints, 3, numbands, numbands))
@@ -88,13 +87,13 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
 
                 energy1, energy2 = energies[k, band1], energies[k, band2]
                 ω  = energy2-energy1
+                #println(ω)
                 if ω>0
                     pabs = momentasquared[k, band1, band2]
                     f2 = heaviside(μ-energy2)
                     f1 = heaviside(μ-energy1)
 
-                    overlap = ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)*momentasquared
-
+                    overlap = ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)*momentasquared[k, band1, band2]
                     Impols[round(Int, histogram_width*ω)+1] = Impols[round(Int, histogram_width*ω)+1] + π*(f2-f1)/V*overlap*(1/numkpoints)*histogram_width*spin
 
                 end

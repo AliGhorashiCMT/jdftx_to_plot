@@ -26,10 +26,9 @@ function bandsoverlayedDOS2(dosfile1::String, dosfile2::String, band_file::Strin
     exactenergiesdown=permutedims(reshaped, [2, 1])[num_points+1:2*num_points, :]*1/eV;
 
     A = plot(exactenergiesdown, color="black", label="", linewidth=2, ylims = collect(energy_range))
-    B = plot!(exactenergiesup, color="purple", label="", linewidth=2, ylims = collect(energy_range))
+    B = plot!(exactenergiesup, color="purple", label="", linewidth=2, ylims = collect(energy_range), xticks=[], ylabel = "Energy (eV)")
 
     ##Load DOS 1
-    
     dosdata1 = try 
         np.loadtxt(dosfile1)
     catch 
@@ -54,9 +53,9 @@ function bandsoverlayedDOS2(dosfile1::String, dosfile2::String, band_file::Strin
     max = maximum([max1, max2])
 
     C = plot(dosdata1[:, 2]*eV, dosdata1[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, max])
-    plot!(dosdata2[:, 2]*eV, dosdata2[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, max], legend = false)
+    plot!(dosdata2[:, 2]*eV, dosdata2[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, max], legend = false, xlabel="DOS (1/eV)")
     
-    plot(B, C, size = (700, 500))
+    plot(B, C, size = (1000, 500))
 end
 
 
