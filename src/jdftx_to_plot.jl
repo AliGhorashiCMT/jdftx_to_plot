@@ -145,7 +145,7 @@ include("3d_methods.jl")
 export im_epsilon_3d
 
 include("non_wannier_methods.jl")
-export nonwannier3dimepsilon
+export nonwannier3dimepsilon, nonwannierimpol
 
 end # module
 
