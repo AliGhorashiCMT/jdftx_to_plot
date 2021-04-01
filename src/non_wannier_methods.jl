@@ -41,6 +41,9 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
     for k in 1:numkpoints
         for band1 in 1:numbands
             for band2 in 1:numbands
+
+                band1 == band2 && continue ##Don't consider intraband transitions
+
                 energy1, energy2 = energies[k, band1], energies[k, band2]
                 ω  = energy2-energy1
                 if ω>0
@@ -75,6 +78,9 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
     for k in 1:numkpoints
         for band1 in 1:numbands
             for band2 in 1:numbands
+
+                band1 == band2 && continue ##Don't consider intraband transitions
+
                 energy1, energy2 = energies[k, band1], energies[k, band2]
                 ω  = energy2-energy1
                 if ω>0
