@@ -606,18 +606,18 @@ function phononbandsoverlayedDOS(force_matrix::Array{<:Real, 3}, phonon_cell_map
         end
     end
 
-    A = plot(transpose(PhononBands), xticks = [], ylims = collect(energy_ranges), legend = false)
+    A = plot(transpose(PhononBands), xticks = [], ylims = collect(energy_ranges), legend = false, ylabel = "Energy (eV)")
 
     ##Find energy energy_ranges
 
     lowerbound, upperbound = energy_ranges.*histogram_width
-    println(lowerbound, upperbound)
+    #println(lowerbound, upperbound)
 
     max_limit = maximum(PhononDOS[round(Int, lowerbound)+1:round(Int, upperbound)])
 
-    B = plot(PhononDOS, collect(1/histogram_width:1/histogram_width:round(Int, energy_range*histogram_width)/histogram_width), ylims = collect(energy_ranges), xlims = [0, max_limit], yticks = [], legend = false)
+    B = plot(PhononDOS, collect(1/histogram_width:1/histogram_width:round(Int, energy_range*histogram_width)/histogram_width),  xlabel = "DOS(1/eV)", ylims = collect(energy_ranges), xlims = [0, max_limit], yticks = [], legend = false)
 
-    plot(A, B)
+    plot(A, B, size=(1000, 500))
 
 end
 
