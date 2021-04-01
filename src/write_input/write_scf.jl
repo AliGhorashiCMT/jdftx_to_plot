@@ -58,6 +58,32 @@ function write_kpoints(kvec_coords::Vector{<:Vector{<:Real}}, kvec_labels::Vecto
     rm("bandstruct.plot")
 end
 
+function write_randkpoints(numkpoints::Integer, ::Val{3})
+    total_kvecs = Vector{Vector{Any}}()
+    kpoints = []
+    open("bandstruct.kpoints", "w") do io
+        write(io, "kpoint-folding 1 1 1 \n\n\n")
+        for i in 1:numkpoints
+            kpoint = ["kpoint", rand(3)..., 1]
+            push!(kpoints, kpoint)
+        end
+        writedlm(io, kpoints); write(io, " \n ")
+    end;
+end
+
+function write_randkpoints(numkpoints::Integer, ::Val{2})
+    total_kvecs = Vector{Vector{Any}}()
+    kpoints = []
+    open("bandstruct.kpoints", "w") do io
+        write(io, "kpoint-folding 1 1 1 \n\n\n")
+        for i in 1:numkpoints
+            kpoint = ["kpoint", rand(2)..., 0, 1]
+            push!(kpoints, kpoint)
+        end
+        writedlm(io, kpoints); write(io, " \n ")
+    end;
+end
+
 function write_nscf(scf::self_consistent_field, filename::String, scf_filename::String, ionpos_filename::String, lattice_filename::String, kpoints::String)
     
     open(filename, create=true, write=true, append=false) do io

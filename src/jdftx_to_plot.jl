@@ -130,7 +130,7 @@ export make_supercell, make_defectcell, make_bilayer
 Methods to write DFT input files. Note that these input files are specifically written with JDFTX in mind. 
 =#
 include("./write_input/write_scf.jl")
-export write_scf, write_nscf, write_wannier, write_ionpos, write_lattice, write_phonon, write_kpoints
+export write_scf, write_nscf, write_wannier, write_ionpos, write_lattice, write_phonon, write_kpoints, write_randkpoints
 
 #=
 Methods to calculate damping of plasmons up to second order in phonon interactions 
@@ -143,6 +143,9 @@ export dft_graphene_dos_per_area, dft_graphene_phonon_dispersion, graphene_dos_c
 
 include("3d_methods.jl")
 export im_epsilon_3d
+
+include("non_wannier_methods.jl")
+export nonwannier3dimepsilon
 
 end # module
 
