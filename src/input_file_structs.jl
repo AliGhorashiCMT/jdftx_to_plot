@@ -3,6 +3,15 @@ struct lattice
     rvectors::Array{Float64, 2}
 end
 
+function lattice(rvecs::Array{<:Array{<:Real, 1}, 1}) 
+    v = Array{Float64, 2}(undef, (3, 3))
+    @warn "Note that you created a lattice with dimensions of agnstroms- conversion to Bohr will be automatic"
+    for col in 1:3
+        v[:, col] = rvecs[col]./bohrtoangstrom
+    end
+    return lattice(v)
+end
+
 struct ionpos
     ionpos::Array{Array{Any, 1}, 1}
 end
@@ -10,6 +19,8 @@ end
 Base.iterate(ionp::ionpos, state = 1) = state > length(ionp.ionpos) ? nothing : (ionp.ionpos[state], state+1) 
 Base.iterate(latt::lattice, state = 1) = state > size(latt.rvectors)[2] ? nothing : (latt.rvectors[:, state], state+1)
 Base.length(ionp::ionpos) = length(ionp.ionpos)
+
+
 function Base.show(io::IO, latt::lattice)
     for (index, l) in enumerate(latt)
         println("Vector $index = $l")

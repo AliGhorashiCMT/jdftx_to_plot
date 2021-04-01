@@ -65,7 +65,7 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
 end
 
 
-function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, ::Val{2}; spin::Integer=1, histogram_width::Real=10)
+function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, μ::Real, ::Val{2}; spin::Integer=1, histogram_width::Real=10)
     momentumfile = "$filebase.momenta"
     eigfile = "$filebase.eigenvals"
 
