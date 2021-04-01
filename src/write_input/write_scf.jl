@@ -64,7 +64,7 @@ function write_randkpoints(numkpoints::Integer, ::Val{3})
     open("bandstruct.kpoints", "w") do io
         write(io, "kpoint-folding 1 1 1 \n\n\n")
         for i in 1:numkpoints
-            kpoint = ["kpoint", rand(3)..., 1]
+            kpoint = ["kpoint", rand(3)..., 1/numkpoints]
             push!(kpoints, kpoint)
         end
         writedlm(io, kpoints); write(io, " \n ")
@@ -77,7 +77,7 @@ function write_randkpoints(numkpoints::Integer, ::Val{2})
     open("bandstruct.kpoints", "w") do io
         write(io, "kpoint-folding 1 1 1 \n\n\n")
         for i in 1:numkpoints
-            kpoint = ["kpoint", rand(2)..., 0, 1]
+            kpoint = ["kpoint", rand(2)..., 0, 1/numkpoints]
             push!(kpoints, kpoint)
         end
         writedlm(io, kpoints); write(io, " \n ")

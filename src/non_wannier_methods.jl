@@ -1,9 +1,9 @@
-function nonwannier3dimepsilon(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  numkpoints::Integer, numbands::Integer; spin::Integer=1, histogram_width::Real=10)
+function nonwannier3dimepsilon(filebase::String, lattice_vectors::Array{<:Array{<:Real, 1}, 1},  numkpoints::Integer, numbands::Integer, μ::Real; spin::Integer=1, histogram_width::Real=10)
     
     momentumfile = "$filebase.momenta"
     eigfile = "$filebase.eigenvals"
     momenta = np.reshape(np.fromfile(momentumfile, dtype=np.complex), (numkpoints, 3, numbands, numbands))
-    momentasquared = sum(abs.(momenta), dims=2)[:, 1, :, : ] ##Get rid of extra axis now that summation has been performed
+    momentasquared = sum((abs.(momenta)).^2, dims=2)[:, 1, :, : ] ##Get rid of extra axis now that summation has been performed
     energies = np.reshape(np.fromfile(eigfile), (numkpoints, numbands)) ./ eV
     prefactor = e²ϵ*π*(spin/3)*ħ^2/(mₑ^2) #Factor of three takes into account isotropy. Spin is conventionally taken to be 2
     Epsilons = zeros(100*histogram_width)
@@ -14,6 +14,7 @@ function nonwannier3dimepsilon(filebase::String, lattice::Array{<:Array{<:Real, 
             for band2 in 1:numbands
                 energy1, energy2 = energies[k, band1], energies[k, band2]
                 ω  = energy2-energy1
+                #println(ω)
                 if ω>0
                     pabs = momentasquared[k, band1, band2]*(ħ/bohrtoangstrom)^2
                     f2 = heaviside(μ-energy2)
@@ -26,12 +27,13 @@ function nonwannier3dimepsilon(filebase::String, lattice::Array{<:Array{<:Real, 
     return Epsilons
 end
 
-function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Real, numkpoints::Integer, numbands::Integer, ::Val{3}; spin::Integer=1, histogram_width::Real=10)
+function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, μ::Real, ::Val{3}; spin::Integer=1, histogram_width::Real=10)
     momentumfile = "$filebase.momenta"
     eigfile = "$filebase.eigenvals"
 
+    qx, qy, qz = q
     momenta = np.reshape(np.fromfile(momentumfile, dtype=np.complex), (numkpoints, 3, numbands, numbands))
-    momentasquared = sum(abs.(momenta), dims=2)[:, 1, :, : ] ##Get rid of extra axis now that summation has been performed
+    momentasquared = (abs.(qx*(momenta)[:, 1, :, : ] + qy*(momenta)[:, 2, :, : ] + qz*(momenta)[:, 3, :, : ])).^2##Get rid of extra axis now that summation has been performed
     
     energies = np.reshape(np.fromfile(eigfile), (numkpoints, numbands)) ./ eV
     
@@ -51,7 +53,7 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
                     f2 = heaviside(μ-energy2)
                     f1 = heaviside(μ-energy1)
 
-                    overlap = q^2ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)
+                    overlap = 2ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)*momentasquared
 
                     Impols[round(Int, histogram_width*ω)+1] = Impols[round(Int, histogram_width*ω)+1] + π*(f2-f1)/V*overlap*(1/numkpoints)*histogram_width*spin
 
@@ -63,12 +65,15 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
 end
 
 
-function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Real, numkpoints::Integer, numbands::Integer, ::Val{2}; spin::Integer=1, histogram_width::Real=10)
+function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1},  q::Array{<:Real, 1}, numkpoints::Integer, numbands::Integer, ::Val{2}; spin::Integer=1, histogram_width::Real=10)
     momentumfile = "$filebase.momenta"
     eigfile = "$filebase.eigenvals"
 
+    qx, qy, qz = q
+
     momenta = np.reshape(np.fromfile(momentumfile, dtype=np.complex), (numkpoints, 3, numbands, numbands))
-    momentasquared = sum(abs.(momenta), dims=2)[:, 1, :, : ] ##Get rid of extra axis now that summation has been performed
+
+    momentasquared = (abs.(qx*(momenta)[:, 1, :, : ] + qy*(momenta)[:, 2, :, : ] + qz*(momenta)[:, 3, :, : ])).^2##Get rid of extra axis now that summation has been performed
     
     energies = np.reshape(np.fromfile(eigfile), (numkpoints, numbands)) ./ eV
     
@@ -88,7 +93,7 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
                     f2 = heaviside(μ-energy2)
                     f1 = heaviside(μ-energy1)
 
-                    overlap = q^2ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)
+                    overlap = ħ^4/bohrtoangstrom^2*1/(mₑ)^2*1/(ω^2)*momentasquared
 
                     Impols[round(Int, histogram_width*ω)+1] = Impols[round(Int, histogram_width*ω)+1] + π*(f2-f1)/V*overlap*(1/numkpoints)*histogram_width*spin
 
@@ -97,4 +102,4 @@ function nonwannierimpol(filebase::String, lattice::Array{<:Array{<:Real, 1}, 1}
         end
     end
     return Impols
-ends
+end
