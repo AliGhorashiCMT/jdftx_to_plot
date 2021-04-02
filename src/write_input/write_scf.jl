@@ -44,6 +44,29 @@ function write_scf(scf::self_consistent_field, filename::String, ionpos_filename
     end
 end
 
+function write_scf(scf::self_consistent_field, filebase::String)
+    open("$(filebase).in", create=true, write=true, append=false) do io
+        write(io, "coulomb-interaction $(scf.coulomb_interaction) \n" )
+        write(io, "include  $(filebase).ionpos \n")
+        write(io, "include  $(filebase).lattice \n")
+        write(io, "ion-species $(scf.pseudopotential)\n")
+        write(io, "elec-cutoff 20 100\n")
+        write(io, "elec-initial-charge $(scf.charge)\n")
+        if scf.spintype != "no-spin"
+            write(io, "elec-initial-magnetization $(scf.magnetization) no \n")
+        end
+        write(io, "spintype $(scf.spintype)\n")
+        write(io, "electronic-SCF\n")
+        write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
+        write(io, "dump End $(scf.dump)\n")
+        write(io, "kpoint-folding $(scf.kpoints[1])  $(scf.kpoints[2])  $(scf.kpoints[3])\n")
+        write(io, "elec-smearing Fermi $(scf.smearing)\n")
+
+        write(io, "elec-ex-corr $(scf.xc)", "\n")
+    end
+end
+
+
 function write_kpoints(kvec_coords::Vector{<:Vector{<:Real}}, kvec_labels::Vector{<:AbstractString}, spacing::Real)
     total_kvecs = Vector{Vector{Any}}()
 
