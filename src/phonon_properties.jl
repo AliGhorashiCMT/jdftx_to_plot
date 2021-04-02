@@ -59,6 +59,21 @@ function phonon_force_matrix(phonon_cell_map::String, phononOmegaSq::String)
 
 end
 
+function phonon_force_matrix(filebase::String)
+
+    phonon_cell_map = "$(filebase).phononCellMap"
+    phononOmegaSq = "$(filebase).phononOmegaSq"
+
+    cellMapPh = np.loadtxt(phonon_cell_map)[:,1:3]
+    forceMatrixPh = np.fromfile(phononOmegaSq, dtype=np.float64)
+    nCellsPh = size(cellMapPh)[1]
+    nModesPh = Int(np.sqrt(size(forceMatrixPh)[1] / nCellsPh))
+    forceMatrixPh = np.reshape(forceMatrixPh, (nCellsPh,nModesPh,nModesPh))
+
+    return forceMatrixPh, cellMapPh
+
+end
+
 #=
 function plot_phononsjl(cell_map::String, phononOmegaSq::String, kpoints::String)
     cellMapPh=readdlm(cell_map)[2:end,1:3]
