@@ -35,7 +35,7 @@ function write_scf(scf::self_consistent_field, filename::String, ionpos_filename
         end
         write(io, "spintype $(scf.spintype)\n")
         write(io, "electronic-SCF\n")
-        write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
+        write(io, "dump-name $(string(filename[1:end-3], ".", "\$", "VAR"))\n")
         write(io, "dump End $(scf.dump)\n")
         write(io, "kpoint-folding $(scf.kpoints[1])  $(scf.kpoints[2])  $(scf.kpoints[3])\n")
         write(io, "elec-smearing Fermi $(scf.smearing)\n")
@@ -57,7 +57,7 @@ function write_scf(scf::self_consistent_field, filebase::String)
         end
         write(io, "spintype $(scf.spintype)\n")
         write(io, "electronic-SCF\n")
-        write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
+        write(io, "dump-name $(string(filebase, ".", "\$", "VAR"))\n")
         write(io, "dump End $(scf.dump)\n")
         write(io, "kpoint-folding $(scf.kpoints[1])  $(scf.kpoints[2])  $(scf.kpoints[3])\n")
         write(io, "elec-smearing Fermi $(scf.smearing)\n")

@@ -81,5 +81,62 @@ function write_eph_matrix_elements(cell_map::String, cell_weights::String, cell_
 
 end
 
+#= 
+We include a separate method in case the user only wants to provide a filebase name 
+=#
+
+function write_eph_matrix_elements(filebase::String, nModes::Int, qmesh::Array{Int, 1}, spin::Union{Val{'u'}, Val{'d'}, Val{'n'}})
+    
+    cell_map = "$filebase.mlwfCellMap"
+    cell_weights = "$filebase.mlwfCellWeights"
+    cell_map_ph = "$filebase.mlwfCellMapPh"
+    cell_map_ph_weights = "$filebase.mlwfCellWeightsPh"
+    HPh = "$filebase.mlwfHePh"
+
+    if spin isa Val{'u'}
+        cell_map = "$filebase.mlwfCellMapUp"
+        cell_weights = "$filebase.mlwfCellWeightsUp"
+        cell_map_ph = "$filebase.mlwfCellMapPhUp"
+        cell_map_ph_weights = "$filebase.mlwfCellWeightsPhUp"
+        HPh = "$filebase.mlwfHePh"        
+    elseif spin isa Val{'d'}
+        cell_map = "$filebase.mlwfCellMapDn"
+        cell_weights = "$filebase.mlwfCellWeightsDn"
+        cell_map_ph = "$filebase.mlwfCellMapPhDn"
+        cell_map_ph_weights = "$filebase.mlwfCellWeightsPhDn"
+        HPh = "$filebase.mlwfHePhDn"    
+    end
+
+    py"""
+    def write_eph(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh):
+        import numpy as np
+        cellMap = np.loadtxt(cell_map)[:,0:3].astype(np.int)
+        Wwannier = np.fromfile(cell_weights)
+        nCells = cellMap.shape[0]
+        nBands = int(np.sqrt(Wwannier.shape[0] / nCells))
+
+        cellMapEph = np.loadtxt(cell_map_ph, usecols=[0,1,2]).astype(int)
+        nCellsEph = cellMapEph.shape[0]
+
+        prodPhononSup = np.prod(qmesh)
+        phononSupStride = np.array([qmesh[1]*qmesh[2], qmesh[2], 1])
+
+        nAtoms = nModes // 3
+        cellWeightsEph = np.fromfile(cell_map_ph_weights).reshape((nCellsEph,nBands,nAtoms)).swapaxes(1,2)
+        cellWeightsEph = np.repeat(cellWeightsEph.reshape((nCellsEph,nAtoms,1,nBands)), 3, axis=2) #repeat atom weights for 3 directions
+        cellWeightsEph = cellWeightsEph.reshape((nCellsEph,nModes,nBands)) #coombine nAtoms x 3 into single dimension: nModes
+
+        iReducedEph = np.dot(np.mod(cellMapEph, qmesh[None,:]), phononSupStride)
+        HePhReduced = np.fromfile(HPh).reshape((prodPhononSup,prodPhononSup,nModes,nBands,nBands)).swapaxes(3,4)
+        HePhWannier = cellWeightsEph[:,None,:,:,None] * cellWeightsEph[None,:,:,None,:] * HePhReduced[iReducedEph][:,iReducedEph]
+        
+        return HePhWannier, cellMapEph
+
+    """
+    py"write_eph"(cell_map, cell_weights, cell_map_ph, cell_map_ph_weights, HPh, nModes, qmesh)
+
+end
+
+
 
 
