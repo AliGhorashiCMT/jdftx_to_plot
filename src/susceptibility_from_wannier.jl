@@ -340,6 +340,18 @@ function im_polarization_mixedmesh(HWannierup::Array{Float64, 3}, HWannierdn::Ar
     return (smooth(spin_up_pol + spin_dn_pol, win_len=win_len)+spin_defect_pol)
 end
 
+#=
+For direct momentum matrix elements calculations 
+=#
+
+function im_polarization_mixedmesh(filebase::String, HWannierdefect::Array{Float64, 3},  cell_map_defect::Array{Float64, 2}, nbands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; intraband_mesh::Int=100, win_len=50, kwargs...)
+    #Here we add the independent polarizations from different spin channels 
+    mixed_pol = nonwannierimpol(filebase, lattice_vectors, q, nbands, μ, Val(2), kwargs...)
+    spin_defect_pol = im_polarization(HWannierdefect, cell_map_defect, lattice_vectors, q, μ, mesh = intraband_mesh; kwargs... )
+    return (smooth(spin_up_pol + spin_dn_pol, win_len=win_len)+spin_defect_pol)
+end
+
+
 function im_polarization_mixedmesh_mc(HWannierup::Array{Float64, 3}, HWannierdn::Array{Float64, 3}, HWannierdefect::Array{Float64, 3},  cell_map_up::Array{Float64, 2}, cell_map_dn::Array{Float64, 2}, cell_map_defect::Array{Float64, 2}, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; interband_mesh::Int=10, intraband_mesh::Int=100, win_len=50, exclude_bands_up = Int[], exclude_bands_dn = Int[], kwargs...)
     #Here we add the independent polarizations from different spin channels 
     spin_up_pol = im_polarization_mc(HWannierup, cell_map_up, nbands, valence_bands_up, lattice_vectors, q, μ, mesh = interband_mesh, exclude_bands = exclude_bands_up; kwargs... )
