@@ -32,7 +32,7 @@ function dft_graphene_wannier_dispersion()
     return bands
 end
 
-function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1})
+function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1}, PhononBand::Integer)
 
     bands_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannierbands.txt")
     map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wanniercellmap.txt")
@@ -50,9 +50,77 @@ function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1}
     HePhWannier, cellMapEph=write_eph_matrix_elements(cell_map_dir, cell_weights_dir, cell_mapph_dir, cell_weightsph_dir, HePh_dir, 6, [2, 2, 1])
     forcemat, mapph = phonon_force_matrix(phonon_cellmap_dir, phonon_omegasq_dir)
 
-    return abs.(eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, 8)[4, 5, :])
+    return abs.(eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, 8)[PhononBand, 4, :])
 
 end
+
+function graphene_eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, PhononBand::Integer)
+    println("here111")
+    return abs.(eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, 8)[PhononBand, 4, :])
+end
+
+function graphene_eph_matrix_elements_compare(numpoints::Integer)
+
+    bands_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannierbands.txt")
+    map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wanniercellmap.txt")
+
+    cell_map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellMap")
+    cell_weights_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellWeights")
+
+    cell_mapph_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellMapPh")
+    cell_weightsph_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellWeightsPh")
+    HePh_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfHePh")
+
+    phonon_cellmap_dir = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.phononCellMap")
+    phonon_omegasq_dir = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.PhononOmegaSq")
+
+    HePhWannier, cellMapEph=write_eph_matrix_elements(cell_map_dir, cell_weights_dir, cell_mapph_dir, cell_weightsph_dir, HePh_dir, 6, [2, 2, 1])
+    forcemat, mapph = phonon_force_matrix(phonon_cellmap_dir, phonon_omegasq_dir)
+
+    K=[2/3, -1/3, 0]
+    numerical5 = Vector{Float64}()
+    numerical6 = Vector{Float64}()
+
+    analytic5 = Vector{Float64}()
+    analytic6 = Vector{Float64}()
+
+    for i in 1:numpoints
+        println("Progress: ", i)
+        delta1 = [.05*i/(3*numpoints)+.03, .02*i/(3*numpoints)+.02, 0]
+        delta2 = [.05-i*.001/(3*numpoints), .02-i*.02/(3*numpoints), 0]
+
+        kvector1 = K + delta1
+        kvector2 = K + delta2
+
+        kvector=delta1 #Wave vector of initial electron with respect to K point
+        qvector=delta2-delta1 ##Wave vector of phonon 
+        kplusqvector=delta2 #Wave vector of final electron with respect to K point
+
+        thetak = np.arctan(kvector[2]/kvector[1])
+        thetaq = np.arctan(qvector[2]/qvector[1])
+
+        thetakplusq = np.arctan(kplusqvector[2]/kplusqvector[1])
+        theta1 = thetak-thetaq
+        theta2 = thetakplusq-thetaq
+            
+        A1 = .045*(1+cos(theta1+theta2))
+        A2 = .045*(1-cos(theta1+theta2))
+
+        push!(numerical5, graphene_eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, kvector1, kvector2, 5)[5]^2)
+        push!(numerical6, graphene_eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, kvector1, kvector2, 6)[5]^2)
+
+        push!(analytic5, A1)
+        push!(analytic6, A2)
+
+    end
+    plot(numerical5, label = "Numerical 5th Phonon Band", color="black", linewidth = 5)
+    plot!(numerical6, label = "Numerical 6th Phonon Band", color="black", linewidth = 5)
+    plot!(analytic5, label = "Analytic 5th Phonon Band", color="red", linewidth = 5)
+    plot!(analytic6, label = "Analytic 6th Phonon Band", color="red", linewidth = 5, size = (1000, 500), xticks=false, ylabel = "g^2(eV^2)")
+
+end
+
+
 
 function graphene_dos_check()
     DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.dos")
