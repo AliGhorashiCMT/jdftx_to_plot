@@ -51,10 +51,16 @@ function dft_graphene_wannierbandsoverlayedDOS()
     for i in 1:100
         bands[:, i+200] = wannier_bands(Hwannier, cellmap, [2/3-2/3*i/100, -1/3+1/3*i/100, 0], 8)
     end
-    A = plot(transpose(bands), ylabel = "Energy (eV", legend=false, linewidth = 4, xticks = false)
-    B = plot(np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2, np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, linewidth=4, yticks = false, legend = false)
 
-    plot(A, B, ylims = [-9, 5], size = (1000, 500))
+    C = plot(2*density_of_states_wannier(Hwannier, cellmap, 8, histogram_width = 5, mesh = 200, offset = 25, energy_range=35), collect(0-25:1/5:35-25-1/5),  title = "Wannier DOS", linewidth = 4)
+    
+    analyticgraphenedos = 2*graphene_dos(-2.8, 2000, 5)
+
+    D = plot(analyticgraphenedos,1:length(analyticgraphenedos), yticks = false, linewidth=4, title = "Dirac Cone Model DOS")
+    A = plot(transpose(bands), ylabel = "Energy (eV)", legend=false, linewidth = 4, xticks = false)
+    B = plot(np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2, np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, linewidth=4, yticks = false, legend = false, title="DFT DOS")
+
+    plot(A, B, C,  D, size = (1000, 500))
     #return bands
 
 end
