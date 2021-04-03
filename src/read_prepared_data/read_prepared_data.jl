@@ -32,6 +32,33 @@ function dft_graphene_wannier_dispersion()
     return bands
 end
 
+function dft_graphene_wannierbandsoverlayedDOS()
+    bands_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannierbands.txt")
+    map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wanniercellmap.txt")
+
+    DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.dos")
+
+    Hwannier = hwannier(bands_dir, map_dir, 8)
+    cellmap = np.loadtxt(map_dir)
+    bands = zeros(8, 300)
+
+    for i in 1:100
+        bands[:, i] = wannier_bands(Hwannier, cellmap, [0, 0.5*i/100, 0], 8)
+    end
+    for i in 1:100
+        bands[:, i+100] = wannier_bands(Hwannier, cellmap,  [2/3*i/100, 0.5-(0.5+1/3)*i/100, 0], 8)
+    end
+    for i in 1:100
+        bands[:, i+200] = wannier_bands(Hwannier, cellmap, [2/3-2/3*i/100, -1/3+1/3*i/100, 0], 8)
+    end
+    A = plot(transpose(bands), ylabel = "Energy (eV", legend=false, linewidth = 4)
+    B = plot(np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2, np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, linewidth=4, yticks = false, legend = false)
+
+    plot(A, B, ylims = [-9, 5], size = (1000, 500))
+    #return bands
+
+end
+
 function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1}, PhononBand::Integer)
 
     bands_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannierbands.txt")
@@ -119,8 +146,6 @@ function graphene_eph_matrix_elements_compare(numpoints::Integer)
     plot!(analytic6, label = "Analytic 6th Phonon Band", color="red", linewidth = 5, size = (1000, 500), xticks=false, ylabel = "g^2(eV^2)")
 
 end
-
-
 
 function graphene_dos_check()
     DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.dos")
