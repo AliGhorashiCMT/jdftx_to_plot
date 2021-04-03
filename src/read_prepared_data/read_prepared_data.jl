@@ -51,7 +51,7 @@ function dft_graphene_wannierbandsoverlayedDOS()
     for i in 1:100
         bands[:, i+200] = wannier_bands(Hwannier, cellmap, [2/3-2/3*i/100, -1/3+1/3*i/100, 0], 8)
     end
-    A = plot(transpose(bands), ylabel = "Energy (eV", legend=false, linewidth = 4)
+    A = plot(transpose(bands), ylabel = "Energy (eV", legend=false, linewidth = 4, xticks = false)
     B = plot(np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2, np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, linewidth=4, yticks = false, legend = false)
 
     plot(A, B, ylims = [-9, 5], size = (1000, 500))
