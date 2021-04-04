@@ -98,7 +98,7 @@ function write_eph_matrix_elements(filebase::String, nModes::Int, qmesh::Array{I
         cell_weights = "$filebase.mlwfCellWeightsUp"
         cell_map_ph = "$filebase.mlwfCellMapPhUp"
         cell_map_ph_weights = "$filebase.mlwfCellWeightsPhUp"
-        HPh = "$filebase.mlwfHePh"        
+        HPh = "$filebase.mlwfHePhUp"        
     elseif spin isa Val{'d'}
         cell_map = "$filebase.mlwfCellMapDn"
         cell_weights = "$filebase.mlwfCellWeightsDn"
