@@ -180,7 +180,7 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
 end
 
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands=Int[], spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands=Int[], spin::Int=1, mesh::Int=100, histogram_width::Int=100, subset::Integer=1, Koffset::Array{<:Real, 1}=[0, 0, 0]) 
     
     Polarization_Array=zeros(histogram_width*100)
 
@@ -189,7 +189,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 
     for i in 1:mesh
         for j in 1:mesh
-            kvector=[i/mesh, j/mesh, 0]
+            kvector=[i/(subset*mesh), j/(subset*mesh), 0] + Koffset
             E1=wannier_bands(HWannier, cell_map, kvector, nbands  )
             E2=wannier_bands(HWannier, cell_map, kvector+qnormalized, nbands  )
             
@@ -207,7 +207,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
 
                         DeltaE=Eupper-Elower
                         if DeltaE>0
-                            Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*overlap*(1/mesh)^2*histogram_width*spin
+                            Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*overlap*(1/mesh)^2*histogram_width*spin*(1/subset^2)
                         end
                     end
                 end

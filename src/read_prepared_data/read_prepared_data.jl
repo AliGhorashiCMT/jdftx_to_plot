@@ -170,7 +170,9 @@ function graphene_wannier_impolarization(qx::Real; mesh::Int = 20, histogram_wid
     HWannier=hwannier(bands_dir, map_dir, 8);
     cell_map=np.loadtxt(map_dir);
     
-    im_pols = im_polarization(HWannier, cell_map, 8, 4, [[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]], [qx, 0, 0], -3;  spin=2, mesh=mesh, histogram_width=histogram_width) 
+    im_pols = im_polarization(HWannier, cell_map, 8, 4, [[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]], [qx, 0, 0], -3;  spin=4, Koffset=[2/3, -1/3, 0], subset=10, mesh=mesh, histogram_width=histogram_width) 
+    #im_pols = im_polarization_mc(HWannier, cell_map, 8, 4, [[a, 0, 0], [-a/2, a*sqrt(3)/2, 0], [0, 0, 10]], [qx, 0, 0], -3;  spin=2, mesh=mesh, histogram_width=histogram_width) 
+
     return im_pols
 end
 
@@ -178,9 +180,9 @@ function example_graphene_wannier_plasmon(nqs::Int, nomegas::Int; mesh=30)
     plasmon = zeros(nqs, nomegas)
     for i in 1:nqs
         println(i)
-        gimpol=graphene_wannier_impolarization(i/nqs*1/6, mesh=mesh)
+        gimpol=graphene_wannier_impolarization(i/nqs*1/6, mesh=mesh, histogram_width=100)
         for j in 1:nomegas
-            plasmon[i, j] = return_2d_epsilon_scipy(i/nqs*1/6, 2*j/nomegas, smooth(gimpol, win_len=10), 100, 10, 30)
+            plasmon[i, j] = return_2d_epsilon_scipy(i/nqs*1/6, 2*j/nomegas, smooth(gimpol, win_len=10), 100, 100, 30)
         end
     end
     return plasmon

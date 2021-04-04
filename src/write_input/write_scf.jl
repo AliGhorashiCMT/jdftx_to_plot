@@ -120,7 +120,7 @@ function write_nscf(scf::self_consistent_field, filename::String, scf_filename::
             write(io, "elec-initial-magnetization $(scf.magnetization) no \n")
         end
         write(io, "spintype $(scf.spintype)\n")
-        write(io, "dump-name $(string(filename, ".", "\$", "VAR"))\n")
+        write(io, "dump-name $(string(filename[1:end-3], ".", "\$", "VAR"))\n")
         write(io, "dump End $(scf.dump)\n")
         write(io, "include $(kpoints) \n")
         write(io, "fix-electron-density $(scf_filename).\$VAR \n")
@@ -129,6 +129,30 @@ function write_nscf(scf::self_consistent_field, filename::String, scf_filename::
         write(io, "elec-ex-corr $(scf.xc)", "\n")
     end
 end
+
+function write_nscf(scf::self_consistent_field, filebase::String, kpoints::String)
+    
+    open(filename, create=true, write=true, append=false) do io
+        write(io, "coulomb-interaction $(scf.coulomb_interaction) \n" )
+        write(io, "include  $(filebase).ionpos \n")
+        write(io, "include  $(filebase).lattice \n")
+        write(io, "ion-species $(scf.pseudopotential)\n")
+        write(io, "elec-cutoff 20 100\n")
+        write(io, "elec-initial-charge $(scf.charge)\n")
+        if scf.spintype != "no-spin"
+            write(io, "elec-initial-magnetization $(scf.magnetization) no \n")
+        end
+        write(io, "spintype $(scf.spintype)\n")
+        write(io, "dump-name $(string(filebase, ".", "\$", "VAR"))\n")
+        write(io, "dump End $(scf.dump)\n")
+        write(io, "include $(kpoints) \n")
+        write(io, "fix-electron-density $(filebase).\$VAR \n")
+        write(io, "elec-smearing Fermi $(scf.smearing)\n")
+
+        write(io, "elec-ex-corr $(scf.xc)", "\n")
+    end
+end
+
 
 function make_wannier_centers(scf::self_consistent_field; perturbation=10, norbitals=1)
     
