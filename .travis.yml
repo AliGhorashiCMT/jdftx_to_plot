@@ -1,12 +1,15 @@
+codecov: true
+coveralls: true
+
 language: julia
 os:
   - linux
   - osx
-  #- windows
+  - windows
 julia:
   - nightly
-  - 1.0.6
   - 1.5.2
+  - 1.6
 matrix: 
   - PYTHON=Conda-python
     #allow_failures: 
