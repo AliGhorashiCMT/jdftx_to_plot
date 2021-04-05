@@ -131,7 +131,6 @@ function write_nscf(scf::self_consistent_field, filename::String, scf_filename::
 end
 
 function write_nscf(scf::self_consistent_field, filebase::String, kpoints::String)
-    
     open("$(filebase).nscf.in", create=true, write=true, append=false) do io
         write(io, "coulomb-interaction $(scf.coulomb_interaction) \n" )
         write(io, "include  $(filebase).ionpos \n")

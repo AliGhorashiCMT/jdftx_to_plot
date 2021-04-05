@@ -381,12 +381,13 @@ end
 
 function graphene_epsilon( μ::Real, q::Real, ω::Real; kwargs... )
     delta=.01
-    A= hcubature( x-> x[1]/(pi^2)*real(lower_band_integrand(x[1], x[2], q, ω , delta)), [0, 0], [2, 2π]; kwargs...)
-    B=hcubature( x-> x[1]/(pi^2)*real(upper_band_integrand(x[1], x[2], q, ω, delta)), [0, 0], [μ/6, 2π]; kwargs...)
+    A = hcubature( x-> x[1]/(pi^2)*real(lower_band_integrand(x[1], x[2], q, ω , delta)), [0, 0], [2, 2π]; kwargs...)
+    B = hcubature( x-> x[1]/(pi^2)*real(upper_band_integrand(x[1], x[2], q, ω, delta)), [0, 0], [μ/6, 2π]; kwargs...)
     return 1-90.5/q*(B[1]+A[1])
 end
 
 function find_graphene_plasmon(μ::Real, q::Real; nomegas::Int=3, kwargs...)
+    @info "Numerical calculation of graphene plasmon relation, for exact dispersion use exact_graphene_plasmon"
     epsilon_array=Array{Float64, 1}(undef, nomegas)
     for i in 1:nomegas
         ω=i/nomegas*2μ
