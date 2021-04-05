@@ -12,9 +12,8 @@ julia:
   - 1.6
 jobs:
   allow_failures:
-  - os: windows
+  - os: windows, osx
   - julia: nightly
-
 matrix: 
   - PYTHON=Conda-python
     #allow_failures: 
