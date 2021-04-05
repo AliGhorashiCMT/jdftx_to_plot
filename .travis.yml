@@ -14,6 +14,6 @@ matrix:
       - julia: 1.0.6
       - julia: 1.5.2
 script:
-  - julia --project --check-bounds=yes -e 'import Pkg; Pkg.build(); Pkg.test("jdftx_to_plot"; coverage=true)'
+  - julia --project --check-bounds=yes -e 'import Pkg; ENV["PYTHON"]=""; Pkg.build("PyCall"); Pkg.build(); Pkg.test("jdftx_to_plot"; coverage=true)'
 notifications:
   email = true

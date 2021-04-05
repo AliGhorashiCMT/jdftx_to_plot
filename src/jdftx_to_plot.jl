@@ -59,7 +59,7 @@ function __init__()
     copy!(np, pyimport_conda("numpy", "numpy"))
     copy!(interpol, pyimport_conda("scipy.interpolate", "scipy"))
     copy!(pyintegrate, pyimport_conda("scipy.integrate", "scipy"))
-    copy!(spatial, pyimport_conda("scipy.spatial", scipy))
+    copy!(spatial, pyimport_conda("scipy.spatial", "scipy"))
     try
         copy!(helper_scripts, pyimport("helper_scripts"))
         println("Congratulations- Your version of python is linked to helper_scripts.py")
