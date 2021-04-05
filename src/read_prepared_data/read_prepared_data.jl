@@ -3,17 +3,14 @@ function dft_graphene_dos_per_area(;kwargs...)
     graphene_lattice = lattice([a -a/2 0; 0 a*sqrt(3)/2 0; 0 0 20])
     graphene_ucell_area = unit_cell_area(graphene_lattice)
     DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.dos")
-    print(DOS_DATA_PATH)
     plot(np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2/graphene_ucell_area, linewidth=4, size=(800, 400), xlims = (-2,-0.5), ylims = (0,500/27.2), label="Spin Unpolarized"; kwargs...)
 end
 
 function dft_graphene_phonon_dispersion(q::Array{<:Real, 1})
-
     cell_map_path = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.phononCellMap")
     phonon_omegasq_path = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.phononOmegaSq")
     graphene_force_matrix, graphene_cell_map = phonon_force_matrix(cell_map_path, phonon_omegasq_path)
     return phonon_dispersion(graphene_force_matrix, graphene_cell_map, q)
-
 end
 
 function dft_graphene_wannier_dispersion()
@@ -35,13 +32,10 @@ end
 function dft_graphene_wannierbandsoverlayedDOS(mesh1::Int=100, mesh2::Int=1000)
     bands_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannierbands.txt")
     map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wanniercellmap.txt")
-
     DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.dos")
-
     Hwannier = hwannier(bands_dir, map_dir, 8)
     cellmap = np.loadtxt(map_dir)
     bands = zeros(8, 300)
-
     for i in 1:100
         bands[:, i] = wannier_bands(Hwannier, cellmap, [0, 0.5*i/100, 0], 8)
     end
@@ -51,18 +45,13 @@ function dft_graphene_wannierbandsoverlayedDOS(mesh1::Int=100, mesh2::Int=1000)
     for i in 1:100
         bands[:, i+200] = wannier_bands(Hwannier, cellmap, [2/3-2/3*i/100, -1/3+1/3*i/100, 0], 8)
     end
-
     C = plot(2*density_of_states_wannier(Hwannier, cellmap, 8, histogram_width = 5, mesh = mesh1, offset = 25, energy_range=35), collect(0-25:1/5:35-25-1/5),  legend = false, title = "Wannier DOS", linewidth = 4)
-    
     analyticgraphenedos = 2*graphene_dos(-2.8, mesh2, 5)
-
     D = plot(analyticgraphenedos,1:length(analyticgraphenedos), yticks = false, linewidth=4, title = "Dirac Cone Model DOS", legend = false)
     A = plot(transpose(bands), ylabel = "Energy (eV)", legend=false, linewidth = 4, xticks = false)
     B = plot(np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2, np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, linewidth=4, yticks = false, legend = false, title="DFT DOS")
-
     plot(A, B, C,  D, size = (1000, 500))
     #return bands
-
 end
 
 function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1}, PhononBand::Integer)
@@ -84,7 +73,6 @@ function graphene_eph_matrix_elements(k1::Array{<:Real, 1}, k2::Array{<:Real, 1}
     forcemat, mapph = phonon_force_matrix(phonon_cellmap_dir, phonon_omegasq_dir)
 
     return abs.(eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, 8)[PhononBand, 4, :])
-
 end
 
 function graphene_eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, bands_dir, map_dir, k1, k2, PhononBand::Integer)
@@ -93,35 +81,26 @@ function graphene_eph_matrix_elements(HePhWannier, cellMapEph, forcemat, mapph, 
 end
 
 function graphene_eph_matrix_elements_compare(numpoints::Integer)
-
     bands_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannierbands.txt")
     map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wanniercellmap.txt")
-
     cell_map_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellMap")
     cell_weights_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellWeights")
-
     cell_mapph_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellMapPh")
     cell_weightsph_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfCellWeightsPh")
     HePh_dir = joinpath(@__DIR__, "../../data/graphene_examples/wannier.graphene.in.mlwfHePh")
-
     phonon_cellmap_dir = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.phononCellMap")
     phonon_omegasq_dir = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.PhononOmegaSq")
-
     HePhWannier, cellMapEph=write_eph_matrix_elements(cell_map_dir, cell_weights_dir, cell_mapph_dir, cell_weightsph_dir, HePh_dir, 6, [2, 2, 1])
     forcemat, mapph = phonon_force_matrix(phonon_cellmap_dir, phonon_omegasq_dir)
-
     K=[2/3, -1/3, 0]
     numerical5 = Vector{Float64}()
     numerical6 = Vector{Float64}()
-
     analytic5 = Vector{Float64}()
     analytic6 = Vector{Float64}()
-
     for i in 1:numpoints
         println("Progress: ", i)
         delta1 = [.05*i/(3*numpoints)+.03, .02*i/(3*numpoints)+.02, 0]
         delta2 = [.05-i*.001/(3*numpoints), .02-i*.02/(3*numpoints), 0]
-
         kvector1 = K + delta1
         kvector2 = K + delta2
 
@@ -155,9 +134,7 @@ end
 
 function graphene_dos_check()
     DOS_DATA_PATH = joinpath(@__DIR__, "../../data/graphene_examples/graphene.in.dos")
-
     x, y = np.loadtxt(DOS_DATA_PATH)[:, 1]*27.2, np.loadtxt(DOS_DATA_PATH)[:, 2]/27.2
-
     sum(y[2:end].*diff(x))
 end
 
@@ -189,7 +166,6 @@ function example_graphene_wannier_plasmon(nqs::Int, nomegas::Int; mesh=30)
 end
 
 function read_al_wannier_bands(k::Array{<:Real, 1})
-
     wannier_bands_path = joinpath(@__DIR__, "../../data/momentum_matrix_elements/Al_wannierbands.txt")
     cell_map_path = joinpath(@__DIR__, "../../data/momentum_matrix_elements/Al_cellmap.txt")
     Al_cellmap = np.loadtxt(cell_map_path)
@@ -198,7 +174,6 @@ function read_al_wannier_bands(k::Array{<:Real, 1})
 end
 
 function example_al_wannier_bands()
-
     Al_BANDS = zeros(5, 500)
     for i in 1:100
         kx, ky, kz = 0,  0.5*i/100, 0.5*i/100
@@ -220,14 +195,11 @@ function example_al_wannier_bands()
         kx, ky, kz = 0.375*i/100, 0.375*i/100, 0.375*i/100
         Al_BANDS[:, i+400] = read_al_wannier_bands([kx, ky, kz])
     end
-
     plot([Al_BANDS[i, :] for i in 1:5])
     return Al_BANDS
-
 end    
 
 function example_aluminum_imepsilon(;histogram_width=10, mesh=10)
-
     wannier_bands_path = joinpath(@__DIR__, "../../data/momentum_matrix_elements/Al_wannierbands.txt")
     cell_map_path = joinpath(@__DIR__, "../../data/momentum_matrix_elements/Al_cellmap.txt")
     Pwannier_path = joinpath(@__DIR__, "../../data/momentum_matrix_elements/AlP.txt")
