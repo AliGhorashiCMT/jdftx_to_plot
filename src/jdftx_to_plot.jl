@@ -52,10 +52,14 @@ export np, interpol, pyintegrate, spatial, helper_scripts
 
 ##Code that is loaded when jdftx_to_plot is loaded 
 function __init__()
-    copy!(np, pyimport("numpy"))
-    copy!(interpol, pyimport("scipy.interpolate"))
-    copy!(pyintegrate, pyimport("scipy.integrate"))
-    copy!(spatial, pyimport("scipy.spatial"))
+    #copy!(np, pyimport("numpy"))
+    #copy!(interpol, pyimport("scipy.interpolate"))
+    #copy!(pyintegrate, pyimport("scipy.integrate"))
+    #copy!(spatial, pyimport("scipy.spatial"))
+    copy!(np, pyimport_conda("numpy", "numpy"))
+    copy!(interpol, pyimport_conda("scipy.interpolate", "scipy"))
+    copy!(pyintegrate, pyimport_conda("scipy.integrate", "scipy"))
+    copy!(spatial, pyimport_conda("scipy.spatial", scipy))
     try
         copy!(helper_scripts, pyimport("helper_scripts"))
         println("Congratulations- Your version of python is linked to helper_scripts.py")
