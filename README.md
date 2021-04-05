@@ -1,4 +1,4 @@
-[![Build status][ci-status-url]]
+[![Build status][ci-status-img]][ci-status-url]
 
 
 # jdftx_to_plot
@@ -19,4 +19,5 @@ Current capabilities are: Density of states calculations, 2d and 3d polarization
 Throughout the package, the following conventions are used: Distance is in angstrom, wavevectors are in inverse angstrom, energies are in eV, time is in seconds
 
 
-[ci-status-url]: https://travis-ci.com/AliGhorashiCMT/jdftx_to_plot.svg?branch=main
+[ci-status-url]: https://travis-ci.com/github/AliGhorashiCMT/jdftx_to_plot/builds/222201217
+[ci-status-img]: https://travis-ci.com/AliGhorashiCMT/jdftx_to_plot.svg?branch=main
