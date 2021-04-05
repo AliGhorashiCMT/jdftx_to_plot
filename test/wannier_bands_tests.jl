@@ -16,5 +16,4 @@
     @test np.exp(np.array([1, 2, 3, 4])) ≈ exp.([1, 2, 3, 4])
     @test np.conj(conjugate_test_array) ≈ conj(conjugate_test_array) #Test that the conjugation method in Julia is equivalent to that in python
     @test vec(permutedims(reshape_test_array2, (5, 4, 3, 2, 1))) == np.ndarray.flatten(reshape_test_array2)
- 
 end
