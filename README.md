@@ -1,4 +1,4 @@
-[![Build status][ci-status-img]][ci-status-url]
+[![Build status]][ci-status-url]
 
 
 # jdftx_to_plot
