@@ -17,3 +17,8 @@ script:
   - julia --project --check-bounds=yes -e 'import Pkg; ENV["PYTHON"]=""; Pkg.build("PyCall"); Pkg.build(); Pkg.test("jdftx_to_plot"; coverage=true)'
 notifications:
   email = true
+
+
+
+
+  
