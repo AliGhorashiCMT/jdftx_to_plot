@@ -3,7 +3,6 @@ using PyCall
 using LinearAlgebra 
 using Distances
 
-
 """
 Plots the bands from a non self consistent calculation. First argument must be the file with 
 the corresponding band eigenvalues. num_bands is the number of bands included in the calculation. Note
@@ -12,15 +11,11 @@ the k points from 1:num_points will be for one spin species and those from num_p
 correspond to the other spin species.
 """
 function plot_bands(band_file::String, num_bands::Int, num_points::Int; spin::Int=1, kwargs...)
-
     if spin == 1
         reshaped = reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points )),(num_bands, num_points));
         exactenergies = permutedims(reshaped, [2, 1])*1/eV;
-
         plot(exactenergies, color="black", label="", linewidth=2; kwargs...)
-
     elseif spin ==2 
-
         reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));
         exactenergiesup=permutedims(reshaped, [2, 1])[1:num_points, :]*1/eV;
         exactenergiesdown=permutedims(reshaped, [2, 1])[num_points+1:2*num_points, :]*1/eV;
@@ -28,7 +23,6 @@ function plot_bands(band_file::String, num_bands::Int, num_points::Int; spin::In
         ##Note that Plots.jl automatically plots 2d arrays columnwise- which is why the band indices now correspond to column indices
         plot(exactenergiesdown, color="black", label="", linewidth=2; kwargs...)
         plot!(exactenergiesup, color="purple", label="", linewidth=2; kwargs...)
-
     end
 end
 

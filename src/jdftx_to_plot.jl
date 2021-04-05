@@ -1,5 +1,14 @@
 module jdftx_to_plot
 
+#=
+Style guide for all of jdftx_to_plot: all functions/methods are to be lower case, as will all file names. Different methods will be 
+spaced apart by one empty line. Different groupings of relevant lines will be separated by one space (for instance the import/using statemehts
+immediately below this comment). No spaces between the first statement of a method and the function name line. Similarly for the end of a method and 
+the last statement of that method. Comments explaining the function of the code immediately following it will not have a space between the comment and the code. 
+The upshot of all of this is that no more than one blank line will exist in any case. No empty lines in any functions and one line maximum between functions and other functions
+and functions and other statements/comments. One space for equals statements or similar
+=#
+
 #dependencies
 using Plots
 using PyCall
@@ -41,6 +50,7 @@ const pyintegrate = PyNULL()
 const helper_scripts = PyNULL()
 export np, interpol, pyintegrate, spatial, helper_scripts
 
+##Code that is loaded when jdftx_to_plot is loaded 
 function __init__()
     copy!(np, pyimport("numpy"))
     copy!(interpol, pyimport("scipy.interpolate"))
@@ -53,7 +63,6 @@ function __init__()
         println("Your version of python is not linked to helper_scripts.py")
     end  
 end
-
 
 include("input_file_structs.jl")
 export self_consistent_field, non_self_consistent_field, wannier_interpolation,
@@ -110,6 +119,7 @@ alevitov, Klevitov
 
 include("export_wannier_hamiltonians.jl")
 export write_momentum, write_map_write_h, write_eph_matrix_elements
+
 #=
 smoothing functions- useful for kramers kronig calculations for which a smooth imaginary susceptibility is preferable 
 for reliable numerics. 
