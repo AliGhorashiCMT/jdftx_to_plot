@@ -10,6 +10,11 @@ julia:
   - nightly
   - 1.5.2
   - 1.6
+jobs:
+  allow_failures:
+  - os: windows
+  - julia: nightly
+
 matrix: 
   - PYTHON=Conda-python
     #allow_failures: 
