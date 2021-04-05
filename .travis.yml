@@ -8,5 +8,7 @@ julia:
   - 1.5.2
 matrix: 
   - PYTHON=Conda-python
+script:
+  - julia --project --check-bounds=yes -e 'import Pkg; Pkg.build(); Pkg.test("jdftx_to_plot"; coverage=true)'
 notifications:
   email = true
