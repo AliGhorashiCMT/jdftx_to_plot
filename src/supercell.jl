@@ -84,6 +84,18 @@ function make_defectcell(small_lattice::lattice, small_ionpos::ionpos, cell_mult
     return defect_lattice, supercell_ionpos
 end
 
+function make_defectcells(small_lattice::lattice, small_ionpos::ionpos, cell_mults::Array{Array{<:Integer, 1}}, defect_atom::String)
+    defect_lattices = Vector{lattice}
+    defect_ionposes = Vector{ionpos}
+    for cell_mult in cell_mults
+        defect_lattice, supercell_ionpos = make_supercell(small_lattice, small_ionpos, cell_mult)
+        supercell_ionpos.ionpos[1][2] = defect_atom
+        push!(defect_lattices, defect_lattice)
+        push!(defect_ionposes, supercell_ionpos)
+    end
+    return defect_lattices, defect_ionposes
+end
+
 function make_bilayer(monolayer_lattice::lattice, monolayer_ionpos::ionpos, distance::Real, translation::Array{<:Real, 1})
     new_ionpos = []
     for (index, ion) in enumerate(monolayer_ionpos.ionpos)
