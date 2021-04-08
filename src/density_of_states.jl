@@ -226,8 +226,8 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
         for y_mesh in 1:mesh
             ϵup = wannier_bands(HWannierUp, cell_mapUp, [x_mesh/mesh, y_mesh/mesh, 0])
             ϵdn = wannier_bands(HWannierDn, cell_mapDn, [x_mesh/mesh, y_mesh/mesh, 0])
-            WannierDOSUp[round(Int, histogram_width*(ϵ+offset))]=WannierDOSUp[round(Int, histogram_width*(ϵup+offset))]+histogram_width*(1/mesh)^2
-            WannierDOSDn[round(Int, histogram_width*(ϵ+offset))]=WannierDOSDn[round(Int, histogram_width*(ϵdn+offset))]+histogram_width*(1/mesh)^2
+            WannierDOSUp[round(Int, histogram_width*(ϵup+offset))]=WannierDOSUp[round(Int, histogram_width*(ϵup+offset))]+histogram_width*(1/mesh)^2
+            WannierDOSDn[round(Int, histogram_width*(ϵdn+offset))]=WannierDOSDn[round(Int, histogram_width*(ϵdn+offset))]+histogram_width*(1/mesh)^2
         end
     end
     A = plot(energiesatkpoints, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)", linewidth=5)
