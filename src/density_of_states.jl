@@ -202,12 +202,37 @@ function wannierbandsoverlayedDOS(HWannier::Array{Float64, 3}, cell_map::Array{F
     WannierDOS = np.zeros(round(Int, histogram_width*energy_range))
     for x_mesh in 1:mesh
         for y_mesh in 1:mesh
-            ϵ =  wannier_bands(HWannier, cell_map, [x_mesh/mesh, y_mesh/mesh, 0])
+            ϵ = wannier_bands(HWannier, cell_map, [x_mesh/mesh, y_mesh/mesh, 0])
             WannierDOS[round(Int, histogram_width*(ϵ+offset))]=WannierDOS[round(Int, histogram_width*(ϵ+offset))]+histogram_width*(1/mesh)^2
         end
     end
     A = plot(energiesatkpoints, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)")
     B = plot( WannierDOS, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false)
+    plot(A, B, size=(1000, 500))
+end
+
+function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Array{Float64, 2}, HWannierDn::Array{Float64, 3}, cell_mapDn::Array{Float64, 2}, kpoints::String; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
+    kpointlist = np.loadtxt("bandstruct.kpoints", skiprows=2, usecols=[1, 2, 3])
+    num_kpoints = np.shape(kpointlist)[1]
+    energiesatkpointsUp = Vector{Float64}()
+    energiesatkpointsDn= Vector{Float64}()
+    for k in 1:num_kpoints
+        push!(energiesatkpointsUp, wannier_bands(HWannierUp, cell_mapUp, kpointlist[k, :]))
+        push!(energiesatkpointsDn, wannier_bands(HWannierDn, cell_mapDn, kpointlist[k, :]))
+    end
+    WannierDOSUp = np.zeros(round(Int, histogram_width*energy_range))
+    WannierDOSDn = np.zeros(round(Int, histogram_width*energy_range))
+    for x_mesh in 1:mesh
+        for y_mesh in 1:mesh
+            ϵup = wannier_bands(HWannierUp, cell_mapUp, [x_mesh/mesh, y_mesh/mesh, 0])
+            ϵdn = wannier_bands(HWannierDn, cell_mapDn, [x_mesh/mesh, y_mesh/mesh, 0])
+            WannierDOSUp[round(Int, histogram_width*(ϵ+offset))]=WannierDOSUp[round(Int, histogram_width*(ϵup+offset))]+histogram_width*(1/mesh)^2
+            WannierDOSDn[round(Int, histogram_width*(ϵ+offset))]=WannierDOSDn[round(Int, histogram_width*(ϵdn+offset))]+histogram_width*(1/mesh)^2
+        end
+    end
+    A = plot(energiesatkpoints, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)")
+    B = plot(WannierDOSUp, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false)
+    C = plot!(WannierDOSDn, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false)
     plot(A, B, size=(1000, 500))
 end
 
