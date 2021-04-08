@@ -18,9 +18,51 @@ function write_map_write_h(cell_map::String, cell_weights::String, H::String, km
         np.savetxt(band_file, HwannierUp.reshape(len(iReducedUp), nBandsUp*nBandsUp ))
         np.savetxt(cell_map_file, cellMapUp)
     """
-
     py"write_map_write_h_py"(cell_map, cell_weights, H, kmesh, band_file, cell_map_file)
 end
+
+function write_map_write_h(filebase::String, kmesh::Array{<:Real, 1}; spin::Union{Val{'u'}, Val{'d'}, Val{'n'}}=Val('n'))
+    if spin isa Val{'u'}
+        cell_map = "$filebase.mlwfCellMapUp"
+        cell_weights = "$filebase.mlwfCellWeightsUp"
+        H = "$filebase.mlwfHUp"
+        band_file = "$(filebase)Up.txt"
+        cell_map_file = "$(filbase)Up.map.txt"
+    elseif spin isa Val{'d'}
+        cell_map = "$filebase.mlwfCellMapDn"
+        cell_weights = "$filebase.mlwfCellWeightsDn"
+        H = "$filebase.mlwfHDn"
+        band_file = "$(filebase)Dn.txt"
+        cell_map_file = "$(filbase)Dn.map.txt"
+    elseif spin isa Val{'n'}
+        cell_map = "$filebase.mlwfCellMap"
+        cell_weights = "$filebase.mlwfCellWeights"
+        H = "$filebase.mlwfH"
+        band_file = "$filebase.txt"
+        cell_map_file = "$filbase.map.txt"
+    end
+    py"""   
+    def write_map_write_h_py(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
+        import numpy as np
+        cellMapUp = np.loadtxt(cell_map)[:,0:3].astype(np.int)
+        WwannierUp = np.fromfile(cell_weights)
+        nCellsUp = cellMapUp.shape[0]
+        nBandsUp = int(np.sqrt(WwannierUp.shape[0] / nCellsUp))
+        WwannierUp = WwannierUp.reshape((nCellsUp,nBandsUp,nBandsUp)).swapaxes(1,2)
+        kfold=np.array([kmesh[0], kmesh[1], kmesh[2]])
+        kfoldProd = np.prod(kfold)
+        kStride = np.array([kfold[1]*kfold[2], kfold[2], 1])
+
+        HreducedUp = np.fromfile(H).reshape((kfoldProd,nBandsUp,nBandsUp)).swapaxes(1,2)
+        iReducedUp = np.dot(np.mod(cellMapUp, kfold[None,:]), kStride)
+        HwannierUp = WwannierUp * HreducedUp[iReducedUp]
+
+        np.savetxt(band_file, HwannierUp.reshape(len(iReducedUp), nBandsUp*nBandsUp ))
+        np.savetxt(cell_map_file, cellMapUp)
+    """
+    py"write_map_write_h_py"(cell_map, cell_weights, H, kmesh, band_file, cell_map_file)
+end
+
 
 
 function write_momentum(cell_map::String, cell_weights::String, H::String, P::String, kmesh::Array{Int, 1}, momentum_file::String)
