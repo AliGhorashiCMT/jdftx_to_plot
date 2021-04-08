@@ -27,19 +27,19 @@ function write_map_write_h(filebase::String, kmesh::Array{<:Real, 1}; spin::Unio
         cell_weights = "$filebase.mlwfCellWeightsUp"
         H = "$filebase.mlwfHUp"
         band_file = "$(filebase)Up.txt"
-        cell_map_file = "$(filbase)Up.map.txt"
+        cell_map_file = "$(filebase)Up.map.txt"
     elseif spin isa Val{'d'}
         cell_map = "$filebase.mlwfCellMapDn"
         cell_weights = "$filebase.mlwfCellWeightsDn"
         H = "$filebase.mlwfHDn"
         band_file = "$(filebase)Dn.txt"
-        cell_map_file = "$(filbase)Dn.map.txt"
+        cell_map_file = "$(filebase)Dn.map.txt"
     elseif spin isa Val{'n'}
         cell_map = "$filebase.mlwfCellMap"
         cell_weights = "$filebase.mlwfCellWeights"
         H = "$filebase.mlwfH"
         band_file = "$filebase.txt"
-        cell_map_file = "$filbase.map.txt"
+        cell_map_file = "$filebase.map.txt"
     end
     py"""   
     def write_map_write_h_py(cell_map, cell_weights, H, kmesh, band_file, cell_map_file):
