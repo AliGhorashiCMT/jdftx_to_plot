@@ -230,10 +230,10 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
             WannierDOSDn[round(Int, histogram_width*(ϵ+offset))]=WannierDOSDn[round(Int, histogram_width*(ϵdn+offset))]+histogram_width*(1/mesh)^2
         end
     end
-    A = plot(energiesatkpoints, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)")
-    B = plot(WannierDOSUp, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false)
-    C = plot!(WannierDOSDn, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false)
-    plot(A, B, size=(1000, 500))
+    A = plot(energiesatkpoints, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)", linewidth=5)
+    B = plot(WannierDOSUp, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5,)
+    C = plot!(WannierDOSDn, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5)
+    plot(A, C, size=(1000, 500))
 end
 
 """
