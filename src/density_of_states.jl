@@ -1,17 +1,23 @@
-function bandsoverlayedDOS(dosfile::String, band_file::String, num_bands::Int, num_points::Int, energy_range::Tuple{<:Real, <:Real})
-    reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));
-    exactenergiesup=permutedims(reshaped, [2, 1])[1:num_points, :]*1/eV;
-    exactenergiesdown=permutedims(reshaped, [2, 1])[num_points+1:2*num_points, :]*1/eV;
-    A = plot(exactenergiesdown, color="black", label="", linewidth=2, ylims = collect(energy_range))
-    B = plot!(exactenergiesup, color="purple", label="", linewidth=2, ylims = collect(energy_range))
+function bandsoverlayedDOS(dosfile::String, band_file::String, num_bands::Int, num_points::Int, energy_range::Tuple{<:Real, <:Real}, spin::Int=1)
+    if spin == 2
+        reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points*2 )),(num_bands, num_points*2));
+        exactenergiesup=permutedims(reshaped, [2, 1])[1:num_points, :]*1/eV;
+        exactenergiesdown=permutedims(reshaped, [2, 1])[num_points+1:2*num_points, :]*1/eV;
+        A = plot(exactenergiesdown, color="black", label="", linewidth=2, ylims = collect(energy_range))
+        B = plot!(exactenergiesup, color="purple", label="", linewidth=2, ylabel = "Energy (eV)", ylims = collect(energy_range), xticks=false)    
+    elseif spin == 1
+        reshaped=reshape(read!(band_file, Array{Float64}(undef, num_bands*num_points)),(num_bands, num_points));
+        exactenergies=permutedims(reshaped, [2, 1])[1:num_points, :]*1/eV;
+        B = plot(exactenergies, color="purple", label="", linewidth=2, ylabel = "Energy (eV)", ylims = collect(energy_range), xticks=false)    
+    end
     C = try
             lowerDOS = argmin(abs.(np.loadtxt(dosfile)[:, 1]*1/eV .- energy_range[1]))
             upperDOS = argmin(abs.(np.loadtxt(dosfile)[:, 1]*1/eV .- energy_range[2]))
-            plot(np.loadtxt(dosfile_1)[:, 2]*eV, np.loadtxt(dosfile)[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, maximum((np.loadtxt(dosfile)[:, 2]*eV)[lowerDOS:upperDOS]) ])
+            plot(np.loadtxt(dosfile_1)[:, 2]*eV, np.loadtxt(dosfile)[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, maximum((np.loadtxt(dosfile)[:, 2]*eV)[lowerDOS:upperDOS]) ], xlabel = "DOS (1/eV)")
     catch ##
             lowerDOS = argmin(abs.(np.loadtxt(dosfile, skiprows=1)[:, 1]*1/eV .- energy_range[1]))
             upperDOS = argmin(abs.(np.loadtxt(dosfile, skiprows=1)[:, 1]*1/eV .- energy_range[2]))
-            plot(np.loadtxt(dosfile, skiprows=1)[:, 2]*eV, np.loadtxt(dosfile, skiprows=1)[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, maximum((np.loadtxt(dosfile, skiprows=1)[:, 2]*eV)[lowerDOS:upperDOS]) ])
+            plot(np.loadtxt(dosfile, skiprows=1)[:, 2]*eV, np.loadtxt(dosfile, skiprows=1)[:, 1]*1/eV, linewidth=2, ylims = collect(energy_range), xlims = [0, maximum((np.loadtxt(dosfile, skiprows=1)[:, 2]*eV)[lowerDOS:upperDOS]) ], xlabel = "DOS (1/eV)")
     end
     plot(B, C, size = (700, 500), legend = false)
 end

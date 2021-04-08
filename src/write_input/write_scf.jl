@@ -120,7 +120,6 @@ end
 
 function write_kpoints(kvec_coords::Vector{<:Vector{<:Real}}, kvec_labels::Vector{<:AbstractString}, spacing::Real)
     total_kvecs = Vector{Vector{Any}}()
-
     for (index, coord) in enumerate(kvec_coords)
         push!(total_kvecs, ["kpoint", coord..., kvec_labels[index]])
     end
@@ -135,7 +134,7 @@ end
 function write_randkpoints(numkpoints::Integer, ::Val{3})
     total_kvecs = Vector{Vector{Any}}()
     kpoints = []
-    open("bandstruct.kpoints", "w") do io
+    open("bandstruct.randkpoints", "w") do io
         write(io, "kpoint-folding 1 1 1 \n\n\n")
         for i in 1:numkpoints
             kpoint = ["kpoint", rand(3)..., 1/numkpoints]
