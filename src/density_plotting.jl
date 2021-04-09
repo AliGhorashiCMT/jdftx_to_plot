@@ -111,3 +111,87 @@ function plot_diffdensity(density_file1::String, density_file2::String, outfile:
     end
     heatmap(nup-ndn)
 end
+
+##Plots the wavefunction density 
+function plot_wfns(wfn_file::String, outfile::String, perpaxis::Union{Val{'x'}, Val{'y'}, Val{'z'}}, component::Union{Val{'r'}, Val{'i'}, Val{'a'}} )
+    ψ = np.fromfile(wfn_file, dtype=np.complex)   
+    ##Obtain volume and Chosen FFT Box from output file
+    S = Vector{Int}()
+    for r in readlines(outfile)
+    if contains(r, "Chosen fftbox")
+        if length(S) != 0 ##The wavefunction grid always comes second in the output file, so reset the grid if already read
+            S = Vector{Int}()
+        end
+        splittedfft = split(r)
+        for split in splittedfft
+            try
+                a = parse(Int, split)
+                push!(S, a)
+            catch
+
+            end
+        end
+    end
+    end
+    V=0
+    for r in readlines(outfile)
+    if contains(r, "volume")
+        splittedV = split(r)
+        for split in splittedV
+            try 
+                V = parse(Float64, split)
+            catch
+
+            end
+        end
+    end
+    end
+    println("The wavefunction grid is: ", S)
+    println("Unit Cell Volume: ", V)
+    dV = V / np.prod(S)
+    ψsquared = np.abs(ψ).^2
+    ψimag = imag(ψ)
+    ψreal = real(ψ)
+    println("Normalization of wavefunction: ", dV * np.sum(ψsquared))
+    ψsquared = np.reshape(ψsquared, S)
+    ψimag = np.reshape(ψimag, S)
+    ψreal = np.reshape(ψreal, S)
+    if perpaxis isa Val{'x'}
+        ψsquared = ψsquared[1,:,:]        
+        ψsquared = np.roll(ψsquared, Int(S[2]/2), axis=0) 
+        ψsquared = np.roll(ψsquared, Int(S[3]/2), axis=1) 
+        ψreal = ψreal[1,:,:]        
+        ψreal = np.roll(ψreal, Int(S[2]/2), axis=0) 
+        ψreal = np.roll(ψreal, Int(S[3]/2), axis=1) 
+        ψimag = ψimag[1,:,:]        
+        ψimag= np.roll(ψimag, Int(S[2]/2), axis=0) 
+        ψimag = np.roll(ψimag, Int(S[3]/2), axis=1) 
+    elseif perpaxis isa Val{'y'}
+        ψsquared = ψsquared[:,1,:]        
+        ψsquared = np.roll(ψsquared, Int(S[1]/2), axis=0) 
+        ψsquared = np.roll(ψsquared, Int(S[3]/2), axis=1) 
+        ψreal = ψreal[:,1,:]        
+        ψreal = np.roll(ψreal, Int(S[1]/2), axis=0) 
+        ψreal = np.roll(ψreal, Int(S[3]/2), axis=1) 
+        ψimag = ψimag[:,1,:]        
+        ψimag = np.roll(ψimag, Int(S[1]/2), axis=0) 
+        ψimag = np.roll(ψimag, Int(S[3]/2), axis=1) 
+    elseif perpaxis isa Val{'z'}
+        ψsquared = ψsquared[:,:,1]        
+        ψsquared = np.roll(ψsquared, Int(S[1]/2), axis=0) 
+        ψsquared = np.roll(ψsquared, Int(S[2]/2), axis=1) 
+        ψreal = ψreal[:,:,1]        
+        ψreal= np.roll(ψreal, Int(S[1]/2), axis=0) 
+        ψreal = np.roll(ψreal, Int(S[2]/2), axis=1) 
+        ψimag = ψimag[:,:,1]        
+        ψimag = np.roll(ψimag, Int(S[1]/2), axis=0) 
+        ψimag = np.roll(ψimag, Int(S[2]/2), axis=1) 
+    end
+    if component isa Val{'i'}
+        heatmap(ψimag)
+    elseif component isa Val{'r'}
+        heatmap(ψreal)
+    elseif component isa Val{'a'}
+        heatmap(ψsquared)
+    end
+end
