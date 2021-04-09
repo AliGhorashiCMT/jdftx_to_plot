@@ -165,7 +165,7 @@ include("band_projections.jl")
 export bandprojections, plotbandprojections
 
 include("density_plotting.jl")
-export plot_density
+export plot_density, plot_diffdensity
 
 end # module
 
