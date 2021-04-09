@@ -92,8 +92,8 @@ function plot_diffdensity(density_file1::String, density_file2::String, outfile:
         nup = np.roll(nup, Int(S[2]/2), axis=0) 
         nup = np.roll(nup, Int(S[3]/2), axis=1) 
         ndn = ndn[1,:,:]        
-        ndn = np.roll(n, Int(S[2]/2), axis=0) 
-        ndn = np.roll(n, Int(S[3]/2), axis=1) 
+        ndn = np.roll(ndn, Int(S[2]/2), axis=0) 
+        ndn = np.roll(ndn, Int(S[3]/2), axis=1) 
     elseif perpaxis isa Val{'y'}
         nup = nup[:,1,:]        
         nup = np.roll(nup, Int(S[1]/2), axis=0) 
