@@ -239,3 +239,73 @@ function wavefunctionoverlap(wfn_file1::String, wfn_file2::String, outfile::Stri
     println("The overlap of the two provided wavefunctions is: ", overlap)
     #return overlap
 end
+
+function plot_scfpotential(scf_file::String, outfile::String, perpaxis::Union{Val{'x'}, Val{'y'}, Val{'z'}}, )
+    scf = np.fromfile(scf_file, dtype=np.float64)   
+    ##Obtain volume and Chosen FFT Box from output file
+    S = Vector{Int}()
+    for r in readlines(outfile)
+        if contains(r, "Chosen fftbox")
+            splittedfft = split(r)
+            for split in splittedfft
+                try
+                    a = parse(Int, split)
+                    push!(S, a)
+                catch
+
+                end
+            end
+            break ##Only look at first instance of fftbox 
+        end
+    end
+    scf = np.reshape(scf, S)
+    if perpaxis isa Val{'x'}
+        scf = scf[1,:,:]        
+        scf = np.roll(scf, Int(S[2]/2), axis=0) 
+        scf = np.roll(scf, Int(S[3]/2), axis=1) 
+    elseif perpaxis isa Val{'y'}
+        scf = scf[:,1,:]        
+        scf = np.roll(scf, Int(S[1]/2), axis=0) 
+        scf = np.roll(scf, Int(S[3]/2), axis=1) 
+    elseif perpaxis isa Val{'z'}
+        scf = scf[:,:,1]        
+        scf = np.roll(scf, Int(S[1]/2), axis=0) 
+        scf = np.roll(scf, Int(S[2]/2), axis=1) 
+    end
+    heatmap(scf)
+end
+
+function plot_dtot(dtot_file::String, outfile::String, perpaxis::Union{Val{'x'}, Val{'y'}, Val{'z'}}, )
+    dtot = np.fromfile(dtot_file, dtype=np.float64)   
+    ##Obtain volume and Chosen FFT Box from output file
+    S = Vector{Int}()
+    for r in readlines(outfile)
+        if contains(r, "Chosen fftbox")
+            splittedfft = split(r)
+            for split in splittedfft
+                try
+                    a = parse(Int, split)
+                    push!(S, a)
+                catch
+
+                end
+            end
+            break ##Only look at first instance of fftbox 
+        end
+    end
+    dtot = np.reshape(dtot, S)
+    if perpaxis isa Val{'x'}
+        dtot = dtot[1,:,:]        
+        dtot = np.roll(dtot, Int(S[2]/2), axis=0) 
+        dtot = np.roll(dtot, Int(S[3]/2), axis=1) 
+    elseif perpaxis isa Val{'y'}
+        dtot = dtot[:,1,:]        
+        dtot = np.roll(dtot, Int(S[1]/2), axis=0) 
+        dtot = np.roll(dtot, Int(S[3]/2), axis=1) 
+    elseif perpaxis isa Val{'z'}
+        dtot = dtot[:,:,1]        
+        dtot = np.roll(dtot, Int(S[1]/2), axis=0) 
+        dtot = np.roll(dtot, Int(S[2]/2), axis=1) 
+    end
+    heatmap(dtot)
+end
