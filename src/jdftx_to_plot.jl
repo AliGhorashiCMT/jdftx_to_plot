@@ -164,5 +164,8 @@ export nonwannier3dimepsilon, nonwannierimpol
 include("band_projections.jl")
 export bandprojections, plotbandprojections
 
+include("density_plotting.jl")
+export plot_density
+
 end # module
 
