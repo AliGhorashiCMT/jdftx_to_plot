@@ -114,24 +114,25 @@ end
 
 ##Plots the wavefunction density 
 function plot_wfns(wfn_file::String, outfile::String, perpaxis::Union{Val{'x'}, Val{'y'}, Val{'z'}}, component::Union{Val{'r'}, Val{'i'}, Val{'a'}} )
+    @warn "For accurate results, make sure norm conserving pseudopotentials are being used"
     ψ = np.fromfile(wfn_file, dtype=np.complex)   
     ##Obtain volume and Chosen FFT Box from output file
     S = Vector{Int}()
     for r in readlines(outfile)
-    if contains(r, "Chosen fftbox")
-        if length(S) != 0 ##The wavefunction grid always comes second in the output file, so reset the grid if already read
-            S = Vector{Int}()
-        end
-        splittedfft = split(r)
-        for split in splittedfft
-            try
-                a = parse(Int, split)
-                push!(S, a)
-            catch
+        if contains(r, "Chosen fftbox")
+            if length(S) != 0 ##The wavefunction grid always comes second in the output file, so reset the grid if already read
+                S = Vector{Int}()
+            end
+            splittedfft = split(r)
+            for split in splittedfft
+                try
+                    a = parse(Int, split)
+                    push!(S, a)
+                catch
 
+                end
             end
         end
-    end
     end
     V=0
     for r in readlines(outfile)
@@ -194,4 +195,47 @@ function plot_wfns(wfn_file::String, outfile::String, perpaxis::Union{Val{'x'}, 
     elseif component isa Val{'a'}
         heatmap(ψsquared)
     end
+end
+
+function wavefunctionoverlap(wfn_file1::String, wfn_file2::String, outfile::String)
+    @warn "Make sure norm conserving (e.g. SG15 Pseudopotentials) are being used\n\n"
+    ψ₁ = np.fromfile(wfn_file1, dtype=np.complex) 
+    ψ₂ = np.fromfile(wfn_file2, dtype=np.complex)
+    ##Obtain volume and Chosen FFT Box from output file
+    S = Vector{Int}()
+    for r in readlines(outfile)
+    if contains(r, "Chosen fftbox")
+        if length(S) != 0 ##The wavefunction grid always comes second in the output file, so reset the grid if already read
+            S = Vector{Int}()
+        end
+        splittedfft = split(r)
+        for split in splittedfft
+            try
+                a = parse(Int, split)
+                push!(S, a)
+            catch
+
+            end
+        end
+    end
+    end
+    V=0
+    for r in readlines(outfile)
+    if contains(r, "volume")
+        splittedV = split(r)
+        for split in splittedV
+            try 
+                V = parse(Float64, split)
+            catch
+
+            end
+        end
+    end
+    end
+    println("The wavefunction grid is: ", S)
+    println("Unit Cell Volume: ", V)
+    dV = V / np.prod(S)
+    overlap = sum(conj(ψ₁).*ψ₂)*dV
+    println("The overlap of the two provided wavefunctions is: ", overlap)
+    #return overlap
 end
