@@ -291,13 +291,16 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
 end
 
 
-function bandstructkpoints2q(;filename="bandstruct.kpoints")
+function bandstructkpoints2q(;filename="bandstruct.kpoints", interpolate::Int=1)
     kpointlist = np.loadtxt(filename, skiprows=2, usecols=[1, 2, 3])
     num_kpoints = np.shape(kpointlist)[1]
     kpointsreshaped = Vector{Vector{Float64}}()
-    for k in 1:num_kpoints
-         push!(kpointsreshaped, kpointlist[k, :])
+    for k in 1:num_kpoints-1
+        for interpolatedk in 0:interpolate-1
+            push!(kpointsreshaped, kpointlist[k, :] .+ (kpointlist[k+1, :].-kpointlist[k, :])./interpolate.*interpolatedk)
+        end
     end
+    push!(kpointsreshaped, kpointlist[num_kpoints, :])
     return kpointsreshaped
 end
 
