@@ -3,10 +3,10 @@ Returns the imaginary value of the polarization at frequency omega (eV) and wave
 Several methods are provided. Wannier and cell map data may be given either through file names or through passing in 
 HWannier and cell-map as dim 3 and dim 2 arrays of floats, respectively.
 """
-function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int = 1, mesh::Int = 100, histogram_width::Real = 100) 
+function im_polarization(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int = 1, mesh::Int = 100, histogram_width::Real = 100; normalized::Bool=false) 
     Polarization_Array=zeros(histogram_width*100)
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    qnormalized = normalize_kvector(lattice_vectors, q)
+    qnormalized = normalized ? q : normalize_kvector(lattice_vectors, q)
     for i in 1:mesh
         for j in 1:mesh
             kvector=[i/mesh, j/mesh, 0]
@@ -23,10 +23,10 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattice_ve
     return Polarization_Array
 end
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100) 
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100, normalized::Bool=false) 
     Polarization_Array=zeros(histogram_width*100)
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    qnormalized = normalize_kvector(lattice_vectors, q)
+    qnormalized = normalized ? q : normalize_kvector(lattice_vectors, q)
     for i in 1:mesh
         for j in 1:mesh
             kvector=[i/mesh, j/mesh, 0]
@@ -43,10 +43,10 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
     return Polarization_Array
 end
 
-function im_polarization_mc(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100) 
+function im_polarization_mc(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100, normalized::Bool=false) 
     Polarization_Array=zeros(histogram_width*100)
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    qnormalized = normalize_kvector(lattice_vectors, q)
+    qnormalized = normalized ? q : normalize_kvector(lattice_vectors, q)
     xmesh = rand(mesh)
     ymesh = rand(mesh)
     for i in xmesh
@@ -86,11 +86,11 @@ function im_polarization(wannier_file::String, cell_map_file::String, lattvector
     return Polarization_Array
 end
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Int=100) 
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattvectors::lattice, q::Array{<:Real, 1}, μ::Real; spin::Int=1, mesh::Int=100, histogram_width::Int=100, normalized::Bool=false) 
     Polarization_Array=zeros(histogram_width*100)
     lattice_vectors = [lattvectors.rvectors[:, 1]*bohrtoangstrom, lattvectors.rvectors[:, 2]*bohrtoangstrom, lattvectors.rvectors[:, 3]*bohrtoangstrom]
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    qnormalized = normalize_kvector(lattice_vectors, q)
+    qnormalized = normalized ? q : normalize_kvector(lattice_vectors, q)
     for i in 1:mesh
         for j in 1:mesh
             kvector=[i/mesh, j/mesh, 0]
@@ -136,10 +136,10 @@ function im_polarization(wannier_file::String, cell_map_file::String, nbands::In
     return Polarization_Array
 end
 
-function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands=Int[], spin::Int=1, mesh::Int=100, histogram_width::Int=100, subset::Integer=1, Koffset::Array{<:Real, 1}=[0, 0, 0]) 
+function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, nbands::Int, valence_bands::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; exclude_bands=Int[], spin::Int=1, mesh::Int=100, histogram_width::Int=100, subset::Integer=1, Koffset::Array{<:Real, 1}=[0, 0, 0], normalized::Bool=false) 
     Polarization_Array=zeros(histogram_width*100)
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
-    qnormalized = normalize_kvector(lattice_vectors, q)
+    qnormalized = normalized ? q : normalize_kvector(lattice_vectors, q)
     for i in 1:mesh
         for j in 1:mesh
             kvector=[i/(subset*mesh), j/(subset*mesh), 0] + Koffset

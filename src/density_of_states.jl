@@ -287,7 +287,7 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
 
     B = plot(WannierDOSUp, collect(1:histogram_width*energy_range)./histogram_width .- offset, legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5; kwargs...)
     C = plot!(WannierDOSDn, collect(1:histogram_width*energy_range)./histogram_width .- offset,legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5; kwargs...)
-    plot(A, C, size=(700, 500))
+    plot(A, C, size=(1000, 500))
 end
 
 
