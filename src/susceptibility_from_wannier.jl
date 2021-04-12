@@ -223,7 +223,6 @@ function im_polarization_finite_temperature(HWannier::Array{Float64, 3}, cell_ma
     return Polarization_Array
 end
 
-
 function im_polarization_finite_temperature_mc(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real, T::Real; spin::Int=1, mesh::Int=100, histogram_width::Real=100) 
     Polarization_Array=zeros(histogram_width*100)
     V=(2π)^2/brillouin_zone_area(lattice_vectors)
@@ -235,10 +234,8 @@ function im_polarization_finite_temperature_mc(HWannier::Array{Float64, 3}, cell
             kvector=[i, j, 0]
             E1 = wannier_bands(HWannier, cell_map, kvector  )
             E2 = wannier_bands(HWannier, cell_map, kvector+qnormalized  )
-            
             f1=1/(1+exp((E1-μ)/(kB*T)))
             f2=1/(1+exp((E2-μ)/(kB*T)))
-
             DeltaE=E2-E1
             if DeltaE>0
                 Polarization_Array[round(Int, histogram_width*DeltaE+1)] = Polarization_Array[round(Int, histogram_width*DeltaE+1)]+π*(f2-f1)/V*(1/mesh)^2*histogram_width*spin
@@ -248,7 +245,6 @@ function im_polarization_finite_temperature_mc(HWannier::Array{Float64, 3}, cell
 
     return Polarization_Array
 end
-
 
 function im_polarization(wannier_file_up::String, wannier_file_dn::String,  cell_map_file_up::String, cell_map_file_dn::String, nbands::Int, valence_bands_up::Int, valence_bands_dn::Int, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, μ::Real; kwargs...) 
     #Here we add the independent polarizations from different spin channels 
@@ -322,97 +318,60 @@ function epsilon_integrand_imaginary(HWannier::Array{Float64, 3}, cell_map::Arra
     imag(1/(2π)^2*spin*2*f*(ϵ₁-ϵ₂)/((ϵ₁-ϵ₂)^2-(ω+1im*ϵ)^2))
 end
 
-
 function direct_epsilon(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...) 
-    
     kwargsdict=Dict()
-
     for kwarg in kwargs
         push!(kwargsdict, kwarg.first => kwarg.second)
     end
-
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
-
-    brillouin_area=brillouin_zone_area(lattice_vectors) 
-    
+    brillouin_area=brillouin_zone_area(lattice_vectors)     
     polarization=brillouin_area*pyintegrate.nquad((k₁, k₂) -> epsilon_integrand(wannier_file, cell_map_file, k₁, k₂, qnormalized, μ, ω, ϵ, spin=spin), [[0, 1], [0, 1]], opts=kwargsdict)[1]
-
     1-e²ϵ/(2qabs)*polarization
-
 end
 
 function direct_epsilon(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...) 
-    
     kwargsdict=Dict()
-
     for kwarg in kwargs
         push!(kwargsdict, kwarg.first => kwarg.second)
     end
-
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
-
     brillouin_area=brillouin_zone_area(lattice_vectors) 
-    
     polarization=brillouin_area*pyintegrate.nquad((k₁, k₂) -> epsilon_integrand(HWannier, cell_map, k₁, k₂, qnormalized, μ, ω, ϵ, spin=spin), [[0, 1], [0, 1]], opts=kwargsdict)[1]
-
     1-e²ϵ/(2qabs)*polarization
-
 end
-
 
 "Direct 2D integration for Epsilon with HCubature"
 function direct_epsilon_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
-
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
-
     brillouin_area=brillouin_zone_area(lattice_vectors) 
-    
     polarization=brillouin_area*hcubature((k) -> epsilon_integrand(wannier_file, cell_map_file, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [0, 0], [1, 1]; kwargs...)[1]
-
     1-e²ϵ/(2qabs)*polarization
-
 end
 
 function direct_epsilon_cubature(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int = 1, ϵ::Real = 0.01, kwargs...)
-
     qnormalized = normalize_kvector(lattice_vectors, q)
     qabs=sqrt(sum(q.^2))
-
     brillouin_area=brillouin_zone_area(lattice_vectors) 
-    
     polarization=brillouin_area*hcubature((k) -> epsilon_integrand(HWannier, cell_map, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [0, 0], [1, 1]; kwargs...)[1]
-
     1-e²ϵ/(2qabs)*polarization
-
 end
-
 
 "Find the imaginary value of polarization through hcubature "
 function im_polarization_cubature(wannier_file::String, cell_map_file::String, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int=1, ϵ::Real=0.01, kwargs...) 
-
     qnormalized = normalize_kvector(lattice_vectors, q)
-
     brillouin_area=brillouin_zone_area(lattice_vectors) 
-    
     polarization=brillouin_area*hcubature((k) -> epsilon_integrand_imaginary(wannier_file, cell_map_file, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [0, 0], [1, 1]; kwargs...)[1]
-
     return polarization
-
 end
 
 function im_polarization_cubature(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, lattice_vectors::Array{<:Array{<:Real, 1},1}, q::Array{<:Real, 1}, ω::Real, μ::Real; spin::Int=1, ϵ::Real=0.01, kwargs...) 
-
     qnormalized = normalize_kvector(lattice_vectors, q)
-
     brillouin_area=brillouin_zone_area(lattice_vectors) 
-    
     polarization=brillouin_area*hcubature((k) -> epsilon_integrand_imaginary(HWannier, cell_map, k[1], k[2], qnormalized, μ, ω, ϵ, spin=spin), [0, 0], [1, 1]; kwargs...)[1]
-
     return polarization
-
 end
 
 "returns the non-local, non-static dielectric function"
@@ -428,7 +387,6 @@ function return_2d_epsilon(q::Real, ω::Real, im_pol::Array{<:Real, 1}, max_ener
             epsilon_mat[i, j] = (i == j ? 1-e²ϵ/abs(2q)*polarization : -exp(-q*d)*e²ϵ/abs(2q)*polarization)
         end
     end
-
     return det(epsilon_mat)
 end
 

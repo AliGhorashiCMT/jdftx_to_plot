@@ -291,6 +291,16 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
 end
 
 
+function bandstructkpoints2q(;filename="bandstruct.kpoints")
+    kpointlist = np.loadtxt(filename, skiprows=2, usecols=[1, 2, 3])
+    num_kpoints = np.shape(kpointlist)[1]
+    kpointsreshaped = Vector{Vector{Float64}}()
+    for k in 1:num_kpoints
+         push!(kpointsreshaped, kpointlist[k, :])
+    end
+    return kpointsreshaped
+end
+
 """
 The standard DOS function using wannier functions returns the density of states per eV per unit cell. 
 At times it is more convenient to obtain the DOS per eV per angstrom^2 
