@@ -149,7 +149,7 @@ function im_polarization(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2
             V2=wannier_vectors(HWannier, cell_map, kvector+qnormalized )
             for lower in 1:valence_bands+1
                 for upper in valence_bands+1:nbands
-                    if lower ∉ exclude_bands && upper ∉ exclude_bands
+                    if lower ∉ exclude_bands || upper ∉ exclude_bands
                         Elower = E1[lower]
                         Eupper = E2[upper]
                         overlap=(np.abs(np.dot(V1[:, lower], np.conj(V2[:, upper]))))^2;
