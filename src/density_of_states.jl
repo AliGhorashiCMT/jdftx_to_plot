@@ -238,7 +238,7 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
     plot(A, C, size=(700, 500))
 end
 
-function wannierbandsoverlayedDOS(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, kpoints::String, nbands::Integer; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
+function wannierbandsoverlayedDOS(HWannier::Array{Float64, 3}, cell_map::Array{Float64, 2}, kpoints::String, nbands::Integer; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0, kwargs...)
     kpointlist = np.loadtxt("bandstruct.kpoints", skiprows=2, usecols=[1, 2, 3])
     num_kpoints = np.shape(kpointlist)[1]
     energiesatkpoints = Array{Float64, 2}(undef, (num_kpoints, nbands))
@@ -255,25 +255,25 @@ function wannierbandsoverlayedDOS(HWannier::Array{Float64, 3}, cell_map::Array{F
         end
     end
     A = plot(energiesatkpoints, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)")
-    B = plot( WannierDOS, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false)
-    plot(A, B, size=(1000, 500))
+    B = plot( WannierDOS, collect(1:histogram_width*energy_range)./histogram_width .-offset, legend=false, xlabel = "DOS (1/eV)", yticks = false)
+    plot(A, B, size=(1000, 500); kwargs...)
 end
 
-function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Array{Float64, 2}, HWannierDn::Array{Float64, 3}, cell_mapDn::Array{Float64, 2}, kpoints::String, nbands::Integer; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0)
+function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Array{Float64, 2}, HWannierDn::Array{Float64, 3}, cell_mapDn::Array{Float64, 2}, kpoints::String, nbands::Integer; mesh::Int = 100, histogram_width::Real = 100, energy_range::Real = 10, offset::Real = 0, kwargs...)
     kpointlist = np.loadtxt("bandstruct.kpoints", skiprows=2, usecols=[1, 2, 3])
     num_kpoints = np.shape(kpointlist)[1]
     energiesatkpointsUp = Array{Float64, 2}(undef, (num_kpoints, nbands))
     energiesatkpointsDn = Array{Float64, 2}(undef, (num_kpoints, nbands))
     for k in 1:num_kpoints
-        energiesatkpointsUp[k, :] = wannier_bands(HWannierUp, cell_mapUp, kpointlist[k, :])
-        energiesatkpointsDn[k, :] = wannier_bands(HWannierDn, cell_mapDn, kpointlist[k, :])
+        energiesatkpointsUp[k, :] = wannier_bands(HWannierUp, cell_mapUp, kpointlist[k, :], nbands)
+        energiesatkpointsDn[k, :] = wannier_bands(HWannierDn, cell_mapDn, kpointlist[k, :], nbands)
     end
     WannierDOSUp = np.zeros(round(Int, histogram_width*energy_range))
     WannierDOSDn = np.zeros(round(Int, histogram_width*energy_range))
     for x_mesh in 1:mesh
         for y_mesh in 1:mesh
-            ϵups = wannier_bands(HWannierUp, cell_mapUp, [x_mesh/mesh, y_mesh/mesh, 0])
-            ϵdns = wannier_bands(HWannierDn, cell_mapDn, [x_mesh/mesh, y_mesh/mesh, 0])
+            ϵups = wannier_bands(HWannierUp, cell_mapUp, [x_mesh/mesh, y_mesh/mesh, 0], nbands)
+            ϵdns = wannier_bands(HWannierDn, cell_mapDn, [x_mesh/mesh, y_mesh/mesh, 0], nbands)
             for ϵup in ϵups
                 WannierDOSUp[round(Int, histogram_width*(ϵup+offset))]=WannierDOSUp[round(Int, histogram_width*(ϵup+offset))]+histogram_width*(1/mesh)^2
             end
@@ -282,11 +282,11 @@ function wannierbandsoverlayedDOS(HWannierUp::Array{Float64, 3}, cell_mapUp::Arr
             end
         end
     end
-    A = plot(energiesatkpointsUp, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)", linewidth=5)
-    Aprim = plot!(energiesatkpointsDn, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)", linewidth=5)
+    A = plot(energiesatkpointsUp, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)", linewidth=5; kwargs...)
+    Aprim = plot!(energiesatkpointsDn, ylims=[-offset, energy_range-offset], xticks = false, legend=false, ylabel = "Energy (eV)", linewidth=5; kwargs...)
 
-    B = plot(WannierDOSUp, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5,)
-    C = plot!(WannierDOSDn, collect(1:histogram_width*energy_range), legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5)
+    B = plot(WannierDOSUp, collect(1:histogram_width*energy_range)./histogram_width .- offset, legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5; kwargs...)
+    C = plot!(WannierDOSDn, collect(1:histogram_width*energy_range)./histogram_width .- offset,legend=false, xlabel = "DOS (1/eV)", yticks = false, linewidth=5; kwargs...)
     plot(A, C, size=(700, 500))
 end
 
